@@ -1,0 +1,147 @@
+@font-face {
+    font-family: "NauryzRedKeds";
+    src: url("fonts/NauryzRedKeds.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Helvetica-regular";
+    src: url("fonts/helvetica_regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: Helvetica-regular, sans-serif;
+    background-color: #F4F4F4;
+    color: #5E5B67;
+}
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 16px;
+}
+.back-arrow {
+    position: absolute;
+    left: 16px;
+}
+
+header h1 {
+    font-family:"NauryzRedKeds",sans-serif;
+    font-size: 38.53px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.subtitle {
+    position: relative;
+    display: inline-block;
+    font-size: 24px;
+    margin-left: 16px;
+}
+.flex-container {
+    display: flex;
+    align-items: center;
+    padding-left: 24px;
+    margin-bottom: 27px;
+}
+.arrow {
+    display: flex;
+}
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 16px;
+}
+.category-btn {
+    font-family: "Helvetica-regular", sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #5E5B67;
+    border-radius: 16px;
+    padding: 8px 16px;
+    background-color: #F4F4F4;
+    color: #5E5B67;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s, color 0.2s;
+}
+.category-btn:hover {
+    background-color: #ecebec;
+}
+.category-btn.selected {
+    background-color: #5E5B67;
+    color: #000;
+    border-color: black;
+}
+.category-btn svg{
+    fill: #7B7B89;
+}
+.category-btn.selected svg{
+    background-color: #5E5B67;
+    fill: #000;
+}
+
+.category-btn.theater {
+    display: flex;
+    gap: 16px;
+}
+.category-btn.concert {
+    display: flex;
+    gap: 16px;
+}
+.category-btn.exhibition {
+    display: flex;
+    gap: 16px;
+}
+.category-btn.standup {
+    display: flex;
+    gap: 16px;
+}
+.category-btn.excursion {
+    display: flex;
+    gap: 16px;
+}
+.category-btn.sport {
+    display: flex;
+    gap: 16px;
+}
+.category-btn.bar {
+    display: flex;
+    gap: 16px;
+}
+.category-btn.restaurant {
+    display: flex;
+    gap: 16px;
+}
+.category-btn.cafe {
+    display: flex;
+    gap: 16px;
+}
+footer {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 16px;
+}
+.logo {
+    font-weight: 500;
+    font-size: 14px;
+}
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    background-color: #F4F4F4;
+    padding: 10px 0;
+    z-index: 9999;
+}
