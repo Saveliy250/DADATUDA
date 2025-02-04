@@ -17,8 +17,8 @@
 }
 body {
     font-family: Helvetica-regular, sans-serif;
-    background-color: #F4F4F4;
-    color: #5E5B67;
+    background-color: #191919;
+    color: #FFFFFF;
 }
 header {
     display: flex;
@@ -65,11 +65,11 @@ header h1 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #5E5B67;
+    border: 2px solid #FFFFFF;
     border-radius: 16px;
     padding: 8px 16px;
-    background-color: #F4F4F4;
-    color: #5E5B67;
+    background-color: #191919;
+    color: #FFFFFF;
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.2s, color 0.2s;
@@ -78,16 +78,16 @@ header h1 {
     background-color: #ecebec;
 }
 .category-btn.selected {
-    background-color: #5E5B67;
-    color: #000;
-    border-color: black;
+    background-color: #FFFFFF;
+    color: #000000;
+    border-color: #FFFFFF;
 }
 .category-btn svg{
-    fill: #7B7B89;
+    fill: #FFFFFF;
 }
 .category-btn.selected svg{
-    background-color: #5E5B67;
-    fill: #000;
+    background-color: #FFFFFF;
+    fill: #000000;
 }
 
 .category-btn.theater {
@@ -141,7 +141,7 @@ footer {
     left: 0;
     right: 0;
     text-align: center;
-    background-color: #F4F4F4;
+    background-color: #191919;
     padding: 10px 0;
     z-index: 9999;
 }
