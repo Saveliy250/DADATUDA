@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4a46f8b2-d187-4b9d-9cff-c71a93a6d1d3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/swagger-settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mainScreen.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/yourCategories.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/filtresft.html" beforeDir="false" afterPath="$PROJECT_DIR$/filtresft.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/FiltersScript.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mainScreen.html" beforeDir="false" afterPath="$PROJECT_DIR$/mainScreen.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +21,7 @@
       <list>
         <option value="HTML File" />
         <option value="CSS File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -65,6 +64,7 @@
       <recent name="$PROJECT_DIR$/fonts" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Scripts" />
       <recent name="$PROJECT_DIR$/img" />
     </key>
   </component>
@@ -84,7 +84,7 @@
       <option name="presentableId" value="Default" />
       <updated>1738490848978</updated>
       <workItem from="1738490850023" duration="27050000" />
-      <workItem from="1738719966667" duration="9237000" />
+      <workItem from="1738719966667" duration="11182000" />
     </task>
     <servers />
   </component>
