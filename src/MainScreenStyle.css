@@ -1,8 +1,4 @@
-body {
-    font-family: Helvetica-regular, sans-serif;
-    background-color: #191919;
-    color: #FFFFFF;
-}
+
 .fixed-footer{
     position: fixed;
     bottom: 0;
@@ -20,7 +16,7 @@ body {
     margin-right: 78px;
     margin-left: 80px;
 }
-.filters-button{
+.filter-button{
     position: fixed;
     right: 16px;
     top: 8px;
@@ -37,6 +33,6 @@ body {
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
 }
-.filters-button:hover{
+.filter-button:hover{
     background-color: #ecebec;
 }

@@ -1,0 +1,23 @@
+@font-face {
+    font-family: "NauryzRedKeds";
+    src: url("../fonts/NauryzRedKeds.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Helvetica-regular";
+    src: url("../fonts/helvetica_regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Helvetica-regular, sans-serif;
+    background-color: #191919;
+    color: #FFFFFF;
+}
