@@ -16,6 +16,12 @@
     box-sizing: border-box;
 }
 
+@font-face {
+    font-family: "Soyuz-Grotesk-Bold";
+    src: url("../fonts/Soyuz_Grotesk_Bold.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
 body {
     font-family: Helvetica-regular, sans-serif;
     background-color: #191919;
