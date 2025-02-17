@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Компилируем TypeScript-приложение (если необходимо)
-RUN npm run build
+RUN npm run dev
 
 # Открываем порт 5173
 EXPOSE 5173
