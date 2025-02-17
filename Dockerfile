@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 5173
 
 # Запускаем приложение
-CMD ["npm", "run", "dev", "--", "--host"]
+CMD ["npm", "run", "dev", "--host"]
