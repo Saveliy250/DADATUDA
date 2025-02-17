@@ -6,7 +6,7 @@ build:
     tags:
         - dind
     script:
-        - docker build- t miniapp:latest .
+        - docker build -t miniapp:latest .
 run:
     stage: run
     tags: 
