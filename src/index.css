@@ -22,8 +22,15 @@
     font-weight: normal;
     font-style: normal;
 }
+
+html {
+    margin: 0;
+    padding: 0;
+}
 body {
     font-family: Helvetica-regular, sans-serif;
     background-color: #191919;
     color: #FFFFFF;
+    margin: 0;
+    padding: 0;
 }

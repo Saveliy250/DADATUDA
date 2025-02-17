@@ -1,23 +1,52 @@
-h1 {
+
+
+.favorites-header {
     color: #ECFE54;
     font-size: 35px;
     text-align: center;
-    font-family: "Soyuz-Grotesk-Bold";
+    font-family: "Soyuz-Grotesk-Bold", sans-serif;
+    padding-top: 16px;
+    padding-bottom: 24px;
+}
 
+.arrow-favorites {
+    display: flex;
+    align-items: center;
+    font-family: "Soyuz-Grotesk-Bold", sans-serif;
+    font-size: 32px;
+    color: #FF6CF1;
+    padding-left: 15px;
+    padding-bottom: 24px;
+    gap: 15px;
+}
+
+.arrow-liked {
+    display: flex;
+    align-items: center;
+    font-family: "Soyuz-Grotesk-Bold", sans-serif;
+    font-size: 32px;
+    color: #8CF63B;
+    padding-left: 15px;
+    padding-bottom: 24px;
+    padding-top: 24px;
+    gap: 15px;
 }
 
 .liked-card {
-    width: 178px;
+    width: 100%;
     border-radius: 12px;
     background-color: #FFFFFF;
     padding: 4px;
     position: relative;
-    color: #FFFFFF;
 
 }
 
 .liked-card-img-wrapper {
+    width: 100%;
+    aspect-ratio: 16 / 9;
     position: relative;
+    overflow: hidden;
+    border-radius: 12px;
 }
 
 .liked-card-img {
@@ -46,6 +75,8 @@ h1 {
 }
 
 .liked-card-date {
+    font-family: "Soyuz-Grotesk-Bold", sans-serif;
+    font-size: 14px;
     position: absolute;
     bottom: 8px;
     right: 8px;
@@ -56,11 +87,24 @@ h1 {
     color: black;
 }
 
+.liked-card-title {
+    font-family: "Soyuz-Grotesk-Bold", sans-serif;
+    font-size: 20px;
+    margin-left: 8px;
+}
+
+.liked-card-address {
+    font-family: "Helvetica-regular", sans-serif;
+    font-size: 12px;
+    margin-bottom: 16px;
+    margin-left: 8px;
+}
+
 .liked-cards {
-    display: flex;
-    gap: 8px;
-    margin-right: 15px;
-    margin-left: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 0 16px;
 }
 
 .fixed-footer{
@@ -70,6 +114,5 @@ h1 {
     right: 0;
     background: #191919;
     text-align: center;
-    padding: 16px;
     z-index: 999;
 }

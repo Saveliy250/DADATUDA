@@ -3,11 +3,27 @@ import './index.css'
 import './FavoritesPageStyle.css'
 import {Footer} from "./MainScreen.jsx";
 
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+
+    const hour = String(date.getHours()).padStart(2, '0');
+    const minute = String(date.getMinutes()).padStart(2, '0');
+
+    return `${day}.${month} ${hour}:${minute}`;
+}
+
 const YourFavorites = () => {
     return (
         <div className={"arrow-favorites"}>
-
-            <h2>избранное</h2>
+            <svg width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.4745 18.7925L23.8558 18.7925" stroke="#FF6CF1" strokeWidth="3.35446"/>
+                <path d="M19.0019 10.0492L26.0002 18.8338L19.0019 27.4502" stroke="#FF6CF1" strokeWidth="3.35446" strokeLinejoin="round"/>
+                <path d="M25.9548 2H11.6037C-1.20125 2 -1.20122 18.7921 11.6037 18.7921H25.9548" stroke="#FF6CF1" strokeWidth="3.35446"/>
+            </svg>
+            <p>избранное</p>
         </div>
     )
 }
@@ -15,8 +31,12 @@ const YourFavorites = () => {
 const YourLiked = () => {
     return (
         <div className={"arrow-liked"}>
-
-            <h2>понравившиеся</h2>
+            <svg width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.4745 18.7925L23.8558 18.7925" stroke="#8CF63B" strokeWidth="3.35446"/>
+                <path d="M19.0019 10.0492L26.0002 18.8338L19.0019 27.4502" stroke="#8CF63B" strokeWidth="3.35446" strokeLinejoin="round"/>
+                <path d="M25.9548 2H11.6037C-1.20125 2 -1.20122 18.7921 11.6037 18.7921H25.9548" stroke="#8CF63B" strokeWidth="3.35446"/>
+            </svg>
+            <p>понравившиеся</p>
         </div>
     )
 }
@@ -26,6 +46,16 @@ const FavoriteButton = () => {
         <button className={"favorite-button"}>
             <svg width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18.9559 0C17.7365 0.019926 16.5437 0.377534 15.498 1.03671C14.4522 1.69589 13.5906 2.63329 13 3.75426C12.4094 2.63329 11.5478 1.69589 10.502 1.03671C9.45627 0.377534 8.26346 0.019926 7.04407 0C5.10021 0.0887265 3.26877 0.982085 1.94989 2.4849C0.631004 3.98772 -0.0681244 5.97784 0.00524241 8.02047C0.00524241 13.1934 5.18798 18.843 9.53473 22.6735C10.5052 23.5303 11.7323 24 13 24C14.2677 24 15.4948 23.5303 16.4653 22.6735C20.812 18.843 25.9948 13.1934 25.9948 8.02047C26.0681 5.97784 25.369 3.98772 24.0501 2.4849C22.7312 0.982085 20.8998 0.0887265 18.9559 0Z" fill="#FF6CF1"/>
+            </svg>
+        </button>
+    )
+}
+
+const FavoriteButtonBlank = () => {
+    return (
+        <button className={"favorite-button"}>
+            <svg width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.9559 0C17.7365 0.019926 16.5437 0.377535 15.498 1.03671C14.4522 1.69589 13.5906 2.63329 13 3.75426C12.4094 2.63329 11.5478 1.69589 10.502 1.03671C9.45627 0.377535 8.26346 0.019926 7.04407 0C5.10021 0.0887265 3.26877 0.982085 1.94989 2.4849C0.631004 3.98772 -0.0681244 5.97784 0.00524241 8.02047C0.00524241 13.1934 5.18798 18.843 9.53473 22.6735C10.5052 23.5303 11.7323 24 13 24C14.2677 24 15.4948 23.5303 16.4653 22.6735C20.812 18.843 25.9948 13.1934 25.9948 8.02047C26.0681 5.97784 25.369 3.98772 24.0501 2.4849C22.7312 0.982085 20.8998 0.0887265 18.9559 0ZM15.0737 20.9329C14.4933 21.4464 13.7588 21.728 13 21.728C12.2412 21.728 11.5067 21.4464 10.9263 20.9329C5.36233 16.0284 2.17104 11.3231 2.17104 8.02047C2.09701 6.58101 2.56777 5.1692 3.48065 4.09294C4.39353 3.01669 5.67446 2.36331 7.04407 2.27531C8.41368 2.36331 9.69461 3.01669 10.6075 4.09294C11.5204 5.1692 11.9911 6.58101 11.9171 8.02047C11.9171 8.32219 12.0312 8.61156 12.2343 8.82491C12.4374 9.03826 12.7128 9.15812 13 9.15812C13.2872 9.15812 13.5626 9.03826 13.7657 8.82491C13.9688 8.61156 14.0829 8.32219 14.0829 8.02047C14.0089 6.58101 14.4796 5.1692 15.3925 4.09294C16.3054 3.01669 17.5863 2.36331 18.9559 2.27531C20.3255 2.36331 21.6065 3.01669 22.5194 4.09294C23.4322 5.1692 23.903 6.58101 23.829 8.02047C23.829 11.3231 20.6377 16.0284 15.0737 20.9283V20.9329Z" fill="#FF6CF1"/>
             </svg>
         </button>
     )
@@ -44,16 +74,19 @@ const TrashButton = () => {
 }
 
 const LikedCard = ({event}) => {
+    const formattedDate = formatDate(event.date)
+    const [datePart, timePart] = formattedDate.split(' ')
+
     return (
         <div className={"liked-card"}>
             <div className={"liked-card-img-wrapper"}>
                 <img src={event.imageURL[event.imageURL.length -1]} alt={event.name} className={"liked-card-img"}/>
-                <FavoriteButton />
+                {(event.starred) ? <FavoriteButton /> : <FavoriteButtonBlank />}
                 <TrashButton />
-                <p className={"liked-card-date"}>{event.date}</p>
+                <p className={"liked-card-date"}>{datePart}<br />{timePart}</p>
             </div>
             <div className={"liked-card-content"}>
-                <h3 className={"liked-card-title"}>{event.name}</h3>
+                <p className={"liked-card-title"}>{event.name}</p>
                 <p className={"liked-card-address"}>{event.address}</p>
             </div>
         </div>
@@ -91,13 +124,21 @@ function Favorites() {
         return <div>{error.message}</div>;
     }
 
+    const starredEvents = favorites.filter(event => event.starred === true);
+    const notStarredEvents = favorites.filter(event => !event.starred);
+
     return (
         <>
-            <h1>Ваши мероприятия</h1>
+            <p className={"favorites-header"}>Ваши мероприятия</p>
             <YourFavorites />
+            <div className={"liked-cards"}>
+                {starredEvents.map((event) => (
+                    <LikedCard key={event.id} event={event} />
+                ))}
+            </div>
             <YourLiked />
             <div className={"liked-cards"}>
-                {favorites.map((event) => (
+                {notStarredEvents.map((event) => (
                     <LikedCard key={event.id} event={event} />
                 ))}
             </div>
