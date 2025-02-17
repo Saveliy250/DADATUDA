@@ -2,7 +2,8 @@ stages:
     - build
 build:
     stage: build
+    image: node
     tags:
         - dind
     script:
-        - echo "OK"
+        - npn run dev
