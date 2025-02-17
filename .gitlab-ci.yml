@@ -1,10 +1,15 @@
 stages:
     - build
+    - run
 build:
     stage: build
-    image: node
     tags:
         - dind
     script:
-        - npm install
-        - npm run dev
+        - docker build miniapp .
+run:
+    stage: run
+    tags: 
+        - dind
+    script:
+        - docker run -p 5173:5173 miniapp
