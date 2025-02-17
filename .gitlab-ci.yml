@@ -6,4 +6,5 @@ build:
     tags:
         - dind
     script:
-        - npn run dev
+        - npm install
+        - npm run dev
