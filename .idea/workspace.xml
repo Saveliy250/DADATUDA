@@ -6,11 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="4a46f8b2-d187-4b9d-9cff-c71a93a6d1d3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FavoritesPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/FavoritesPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FavoritesPageStyle.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/FavoritesPageStyle.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/FiltersPageStyles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/FiltersPageStyles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MainScreenStyle.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainScreenStyle.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MainScreen.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainScreen.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +26,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/SCRUM-193" />
+        <entry key="$PROJECT_DIR$" value="develop" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -52,7 +49,7 @@
     "Node.js.index.js.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "feature/SCRUM-200",
+    "git-widget-placeholder": "feature/SCRUM-194",
     "last_opened_file_path": "/Users/savelijpoplavskij/WebstormProjects/DADATUDA/public/img",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",

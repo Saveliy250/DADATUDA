@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import './index.css'
 import './MainScreenStyle.css'
 import {Link, useLocation} from 'react-router-dom'
@@ -7,6 +7,8 @@ import WhiteLogoIco from "./icons/WhiteLogoIco.jsx";
 import HeartIcoOff from "./icons/HeartIcoOff.jsx";
 import MainScreenOffIco from "./icons/MainScreenOffIco.jsx";
 import HeartIcoOn from "./icons/HeartIcoOn.jsx";
+import MainCard from "./MainCard.jsx";
+import FullscreenToggle from "./tools/FullScreenToggle.jsx";
 
 function Footer () {
     const location = useLocation();
@@ -53,9 +55,48 @@ const FiltersButton = () => {
 
 
 function MainScreen() {
+    const [events, setEvents] = useState([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetch("http://90.156.170.125:8080/feedback-service/shortlist/1?page_size=10&page_number=0")
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Ошибка при загрузке данных');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setEvents(data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                setError(error);
+                setLoading(false);
+            })
+    }, [])
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>{error.message}</div>;
+    }
+
+    const currentEvent = events[currentIndex];
+
+
+
     return (
         <>
             <FiltersButton/>
+            <MainCard
+            event={currentEvent}
+
+            />
             <Footer/>
         </>
     )

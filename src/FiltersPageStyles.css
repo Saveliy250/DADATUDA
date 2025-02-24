@@ -53,9 +53,7 @@ header h1 {
     font-size: 14px;
     transition: background-color 0.2s, color 0.2s;
 }
-.category-btn:hover {
-    background-color: #ecebec;
-}
+
 .category-btn.selected {
     background-color: #FFFFFF;
     color: #000000;
@@ -63,6 +61,7 @@ header h1 {
 }
 .category-btn svg{
     fill: #FFFFFF;
+    transition: fill 0.3s ease;
 }
 .category-btn.selected svg{
     background-color: #FFFFFF;

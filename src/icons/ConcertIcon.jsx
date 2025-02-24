@@ -8,7 +8,7 @@ const ConcertIcon = () => {
             </g>
             <defs>
                 <clipPath id="clip0_1200_301">
-                    <rect width="24" height="24" fill="white"/>
+                    <rect width="24" height="24"/>
                 </clipPath>
             </defs>
         </svg>
