@@ -8,7 +8,8 @@ import HeartIcoOff from "./icons/HeartIcoOff.jsx";
 import MainScreenOffIco from "./icons/MainScreenOffIco.jsx";
 import HeartIcoOn from "./icons/HeartIcoOn.jsx";
 import MainCard from "./MainCard.jsx";
-import FullscreenToggle from "./tools/FullScreenToggle.jsx";
+import sendFeedback from "./tools/SendFeedback.js";
+import DefaultCard from "./DefaultCard.jsx";
 
 function Footer () {
     const location = useLocation();
@@ -55,13 +56,14 @@ const FiltersButton = () => {
 
 
 function MainScreen() {
-    const [events, setEvents] = useState([]);
+    const [currentEvent, setCurrentEvent] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetch("http://90.156.170.125:8080/feedback-service/shortlist/1?page_size=10&page_number=0")
+    const fetchEvent = () => {
+        setLoading(true);
+        fetch("http://90.156.170.125:8080/event-service/api/v1/events/for/1")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Ошибка при загрузке данных');
@@ -69,13 +71,17 @@ function MainScreen() {
                 return response.json();
             })
             .then((data) => {
-                setEvents(data);
+                setCurrentEvent(data);
                 setLoading(false);
             })
             .catch((error) => {
                 setError(error);
                 setLoading(false);
-            })
+            });
+    }
+
+    useEffect(() => {
+        fetchEvent();
     }, [])
 
     if (loading) {
@@ -86,16 +92,28 @@ function MainScreen() {
         return <div>{error.message}</div>;
     }
 
-    const currentEvent = events[currentIndex];
+    const handleLike = () => {
+        sendFeedback("1", true, currentEvent.id)
+            .then(() => {
+                fetchEvent();
+            })
+    }
+    const handleDisLike = () => {
+        sendFeedback("1", false, currentEvent.id)
+            .then(() => {
+                fetchEvent();
+            })
+    }
 
-
+    console.log(currentEvent.id)
 
     return (
         <>
             <FiltersButton/>
             <MainCard
-            event={currentEvent}
-
+                event={currentEvent}
+                onLike={handleLike}
+                onDisLike={handleDisLike}
             />
             <Footer/>
         </>

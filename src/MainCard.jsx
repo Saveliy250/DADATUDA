@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import "./MainScreenStyle.css"
 import formatDate from "../src/tools/FormatDate.jsx"
 import MainFavoriteButtonIco from "./icons/MainFavoriteButtonIco.jsx";
 import MainDislikeButtonIco from "./icons/MainDislikeButtonIco.jsx";
@@ -12,6 +13,7 @@ import SportIco from "./icons/SportIco.jsx";
 import StandupIco from "./icons/StandupIco.jsx";
 import CafeIco from "./icons/CafeIco.jsx";
 import RoundBackArrowIco from "./icons/RoundBackArrowIco.jsx";
+import TheaterIcon from "./icons/TheatreIcon.jsx";
 
 
 const CategoryIcons = {
@@ -30,8 +32,6 @@ function MainCard({event, onSwipeLeft, onSwipeRight, onLike, onDisLike}) {
     const [currentSlide, setCurrentSlide] = useState(0);
     const formattedDate = formatDate(event.date)
     const [datePart, timePart] = formattedDate.split(' ')
-    const IconComponent = CategoryIcons[event.categories[0]][0]
-    const CategoryName = CategoryIcons[event.categories[0]][1]
 
     const handleNextSlide = () => {
         setCurrentSlide((prev) => {
@@ -56,8 +56,8 @@ function MainCard({event, onSwipeLeft, onSwipeRight, onLike, onDisLike}) {
                     alt={event.name}
                     className="main-card-img"
                 />
-                <div className={"main-card-category"}>{CategoryName}</div>
-                <div className={"main-category-ico"}><IconComponent/></div>
+                <div className={"main-card-category"}>{event.categories[0]}</div>
+                <div className={"main-category-ico"}><TheaterIcon/></div>
                 <div className={"main-card-content"}>
                     <div className={"main-card-name-flex"}>
                         <RoundBackArrowIco/>
