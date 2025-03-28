@@ -1,7 +1,7 @@
 
 
 const sendFeedback = async (userId, like, eventId) => {
-    const url = 'https://api.dada-tuda.ru/feedback-service/feedback';
+    const url = 'http://90.156.170.125:8080/feedback-service/feedback';
     const data = {
         eventId: eventId,
         like: like,
@@ -17,6 +17,9 @@ const sendFeedback = async (userId, like, eventId) => {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': '*/*',
+                'Vary': 'Origin',
+
+
             }
 
         })
@@ -26,10 +29,10 @@ const sendFeedback = async (userId, like, eventId) => {
             alert("Отзыв отправлен успешно!")
         } else {
             const errorData = await response.json();
-            throw new Error(`Error: ${response.status} - ${errorData.message || 'Unknown error'}`)
+            throw new Error(`Error: ${response.status} - ${errorData.message || 'Unknown error'} - ${errorData}`);
         }
     } catch (error) {
-        console.error('Ошибка при отправке:', error.message);
+        console.error('Ошибка при отправке:', error);
         if (error.response) {
             console.error('Тело ошибки:', await error.response.text());
         }

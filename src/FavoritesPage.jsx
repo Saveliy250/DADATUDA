@@ -89,7 +89,10 @@ function Favorites() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch("http://90.156.170.125:8080/feedback-service/shortlist/1?page_size=10&page_number=0")
+        fetch("http://90.156.170.125:8080/feedback-service/shortlist/1?page_size=10&page_number=0", {
+            method: "GET",
+            headers: {}
+        })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Ошибка при загрузке данных');
