@@ -7,9 +7,9 @@
     <list default="true" id="4a46f8b2-d187-4b9d-9cff-c71a93a6d1d3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/FavoritesPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/FavoritesPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tools/FullScreenToggle.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tools/SendFeedback.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tools/SendFeedback.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MainCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainCard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MainScreen.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainScreen.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MainScreenStyle.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainScreenStyle.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

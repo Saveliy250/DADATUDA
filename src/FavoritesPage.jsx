@@ -89,9 +89,11 @@ function Favorites() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch("http://90.156.170.125:8080/feedback-service/shortlist/1?page_size=10&page_number=0", {
+        fetch("https://api.dada-tuda.ru/api/v1/shortlist/1?page_size=10&page_number=0", {
             method: "GET",
-            headers: {}
+            headers: {
+
+            }
         })
             .then((response) => {
                 if (!response.ok) {

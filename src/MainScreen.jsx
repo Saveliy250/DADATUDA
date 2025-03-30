@@ -56,14 +56,14 @@ const FiltersButton = () => {
 
 
 function MainScreen() {
-    const [currentEvent, setCurrentEvent] = useState([]);
+    const [currentEvent, setCurrentEvent] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const fetchEvent = () => {
         setLoading(true);
-        fetch("http://90.156.170.125:8080/event-service/api/v1/events/for/1")
+        fetch("https://api.dada-tuda.ru/api/v1/events/random?categories=")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Ошибка при загрузке данных');
