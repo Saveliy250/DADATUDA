@@ -8,9 +8,7 @@ import HeartIcoOff from "./icons/HeartIcoOff.jsx";
 import MainScreenOffIco from "./icons/MainScreenOffIco.jsx";
 import HeartIcoOn from "./icons/HeartIcoOn.jsx";
 import MainCard from "./MainCard.jsx";
-import sendFeedback from "./tools/SendFeedback.js";
-import DefaultCard from "./DefaultCard.jsx";
-
+import {fetchRandomEvent, sendFeedback} from "./tools/api.js";
 function Footer () {
     const location = useLocation();
     const isFavorites = location.pathname === "/favorites";
@@ -56,54 +54,46 @@ const FiltersButton = () => {
 
 
 function MainScreen() {
-    const [currentEvent, setCurrentEvent] = useState([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentEvent, setCurrentEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchEvent = () => {
-        setLoading(true);
-        fetch("http://90.156.170.125:8080/event-service/api/v1/events/for/1")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Ошибка при загрузке данных');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setCurrentEvent(data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                setError(error);
-                setLoading(false);
-            });
-    }
-
     useEffect(() => {
-        fetchEvent();
-    }, [])
+        loadRandomEvent();
+    }, []);
 
-    if (loading) {
-        return <div>Loading...</div>;
+    async function loadRandomEvent() {
+        setLoading(true);
+        try {
+            const event = await fetchRandomEvent('');
+            setCurrentEvent(event);
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
     }
 
-    if (error) {
-        return <div>{error.message}</div>;
+    async function handleLike() {
+        try {
+            await sendFeedback('1', true, currentEvent.id);
+            loadRandomEvent();
+        } catch (err) {
+            console.error('Ошибка при лайке:', err);
+        }
+    }
+    async function handleDisLike() {
+        try {
+            await sendFeedback('1', false, currentEvent.id);
+            loadRandomEvent();
+        } catch (err) {
+            console.error('Ошибка при дизлайке:', err);
+        }
     }
 
-    const handleLike = () => {
-        sendFeedback("1", true, currentEvent.id)
-            .then(() => {
-                fetchEvent();
-            })
-    }
-    const handleDisLike = () => {
-        sendFeedback("1", false, currentEvent.id)
-            .then(() => {
-                fetchEvent();
-            })
-    }
+    if (loading) return <div>Загрузка...</div>;
+    if (error) return <div>Ошибка: {error.message}</div>;
+    if (!currentEvent) return <div>Нет данных...</div>;
 
     console.log(currentEvent.id)
 

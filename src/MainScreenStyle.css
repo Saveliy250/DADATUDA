@@ -44,7 +44,7 @@
 }
 
 .main-card-img-wrapper{
-    width: 90%;
+    width: 100%;
     height: 70%;
     aspect-ratio: 9/16;
     position: relative;
@@ -95,7 +95,7 @@
 }
 
 .main-card-content{
-    width: 100%;
+    width: 90%;
     height: 30%;
     position: absolute;
     bottom: 14%;
@@ -111,7 +111,7 @@
 }
 .main-card-name{
     font-family: "Soyuz-Grotesk-Bold", sans-serif;
-    font-size: 40px;
+    font-size: 30px;
     color: #ECFE54;
 }
 .main-like-button{
