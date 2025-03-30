@@ -21,7 +21,7 @@ async function post(path, data) {
         const errorText = await response.text();
         throw new Error(`Ошибка POST ${path}: ${errorText} - ${response.status}`)
     }
-    return response.json();
+    return response.text();
 }
 
 // ================================================================
@@ -47,12 +47,13 @@ export async function getShortlist(userId, pageSize, pageNumber) {
 
 export async function sendFeedback(userId, like, eventId){
     const data = {
-        eventId: eventId,
-        like: like,
-        viewedSeconds: 5,
-        moreOpened: false,
-        reported: false,
-        userId: userId,
+        "eventId": eventId,
+        "like": like,
+        "viewedSeconds": 5,
+        "moreOpened": false,
+        "reported": false,
+        "starred": false,
+        "userId": userId
     };
-    return post(`/api/v1/feedback`);
+    return post(`/api/v1/feedback`, data);
 }
