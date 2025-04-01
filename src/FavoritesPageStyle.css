@@ -105,6 +105,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     padding: 0 16px;
+    margin-bottom: 60px;
 }
 
 .fixed-footer{

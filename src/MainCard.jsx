@@ -52,7 +52,7 @@ function MainCard({event, onSwipeLeft, onSwipeRight, onLike, onDisLike}) {
         <div className="MainCard" onClick={handleNextSlide}>
             <div className={"main-card-img-wrapper"} >
                 <img
-                    src={"https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg"}
+                    src={event.imageURL[0]}
                     alt={event.name}
                     className="main-card-img"
                 />
