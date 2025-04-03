@@ -1,5 +1,26 @@
 const BASE_URL = "https://api.dada-tuda.ru";
 
+export async function loginUser(username, password) {
+    const response = await fetch('https://auth.dada-tuda.ru/realms/master/protocol/openid-connect/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "client_id": "service-client",
+            "client_secret": "***",
+            "grant_type":"password",
+            "username": username,
+            "password": password
+        })
+    })
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Ошибка при аутентификации: ${errorText}`);
+    }
+    return await response.json();
+}
+
 async function get(path) {
     const response = await fetch(`${BASE_URL}${path}`);
     if (!response.ok) {
