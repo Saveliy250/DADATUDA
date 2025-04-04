@@ -21,6 +21,24 @@ export async function loginUser(username, password) {
     return await response.json();
 }
 
+export function getAccessToken() {
+    return localStorage.getItem("access-token");
+}
+
+export function getRefreshToken() {
+    return localStorage.getItem("refresh-token");
+}
+
+export function saveTokens(accessToken, refreshToken) {
+    localStorage.setItem("access-token", accessToken);
+    localStorage.setItem("refresh-token", refreshToken);
+}
+
+export function clearTokens() {
+    localStorage.removeItem("access-token");
+    localStorage.removeItem("refresh-token");
+}
+
 async function get(path) {
     const response = await fetch(`${BASE_URL}${path}`);
     if (!response.ok) {
