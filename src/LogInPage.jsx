@@ -19,6 +19,7 @@ function LogInPage() {
     return (
         <>
             <div>Вход в аккаунт</div>
+            {error && <p style={{color: 'red'}}>{error.message}</p>}
             <form onSubmit={handleSubmit}>
                 <label>Логин</label>
                 <input value={username} onChange={(e) => setUsername(e.target.value)} />

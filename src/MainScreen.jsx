@@ -8,7 +8,8 @@ import HeartIcoOff from "./icons/HeartIcoOff.jsx";
 import MainScreenOffIco from "./icons/MainScreenOffIco.jsx";
 import HeartIcoOn from "./icons/HeartIcoOn.jsx";
 import MainCard from "./MainCard.jsx";
-import {fetchRandomEvent, sendFeedback} from "./tools/api.js";
+import {eventForUser, sendFeedback} from "./tools/api.js";
+import useAuth from "./hooks/useAuth.js";
 function Footer () {
     const location = useLocation();
     const isFavorites = location.pathname === "/favorites";
@@ -54,18 +55,22 @@ const FiltersButton = () => {
 
 
 function MainScreen() {
+    const {isAuthenticated, logout} = useAuth();
     const [currentEvent, setCurrentEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        loadRandomEvent();
-    }, []);
+        //logout();
+        if (isAuthenticated) {
+            loadEventForUser()
+        }
+    }, [isAuthenticated]);
 
-    async function loadRandomEvent() {
+    async function loadEventForUser() {
         setLoading(true);
         try {
-            const event = await fetchRandomEvent('');
+            const event = await await eventForUser(1, '')[0];
             setCurrentEvent(event);
         } catch (error) {
             setError(error);
@@ -77,7 +82,7 @@ function MainScreen() {
     async function handleLike() {
         try {
             await sendFeedback('1', true, currentEvent.id);
-            loadRandomEvent();
+            loadEventForUser();
         } catch (err) {
             console.error('Ошибка при лайке:', err);
         }
@@ -85,7 +90,7 @@ function MainScreen() {
     async function handleDisLike() {
         try {
             await sendFeedback('1', false, currentEvent.id);
-            loadRandomEvent();
+            loadEventForUser();
         } catch (err) {
             console.error('Ошибка при дизлайке:', err);
         }

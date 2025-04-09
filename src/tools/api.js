@@ -1,24 +1,32 @@
+
 const BASE_URL = "https://api.dada-tuda.ru";
 
 export async function loginUser(username, password) {
+
+    const data = {
+        client_id: "service-client",
+        client_secret: "qYz5m2pnIQAW1dWjqzPsRirfD3rdYGh3",
+        grant_type:"password",
+        username: username,
+        password: password
+    }
+    const formBody = new URLSearchParams(data).toString();
+
     const response = await fetch('https://auth.dada-tuda.ru/realms/master/protocol/openid-connect/token', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json',
         },
-        body: JSON.stringify({
-            "client_id": "service-client",
-            "client_secret": "***",
-            "grant_type":"password",
-            "username": username,
-            "password": password
-        })
+        body: formBody,
     })
     if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Ошибка при аутентификации: ${errorText}`);
     }
-    return await response.json();
+    const resp = await response.json();
+    const {access_token, refresh_token} = resp;
+    return {accessToken: access_token, refreshToken: refresh_token};
 }
 
 export function getAccessToken() {
@@ -61,6 +69,62 @@ async function post(path, data) {
         throw new Error(`Ошибка POST ${path}: ${errorText} - ${response.status}`)
     }
     return response.text();
+}
+let onLogoutCallback = null;
+
+export function setOnLogoutCallback(callback) {
+    onLogoutCallback = callback;
+}
+
+export async function authFetch(path, options = {}) {
+    const accessToken = getAccessToken();
+    console.log(accessToken);
+    const refreshToken = getRefreshToken();
+
+    const headers = {
+        "Content-Type": "application/json",
+        ...options.headers,
+    };
+
+    if (accessToken) {
+        headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+    if (refreshToken) {
+        headers["X-Refresh-Token"] = refreshToken;
+    }
+    console.log(headers);
+        const response = await fetch(path, {
+            ...options,
+            headers,
+        });
+        const newAccessToken = response.headers.get("Access-Token");
+        const newRefreshToken = response.headers.get("Refresh-Token");
+
+        if (newRefreshToken && newAccessToken) {
+            saveTokens(newAccessToken, newRefreshToken);
+        }
+
+        if (!response.ok) {
+            if (response.status === 401 && onLogoutCallback) {
+                onLogoutCallback();
+            }
+            const errorText = await response.text()
+            throw new Error(`Ошибка в авторизованном запросе: ${errorText}`);
+        }
+
+        return response.json();
+}
+
+export async function eventForUser(pageSize = 0, categories = '') {
+    const params = new URLSearchParams();
+    if (pageSize) {
+        params.set('page_size', pageSize);
+    }
+    if (categories) {
+        params.set('categories', categories);
+    }
+    const queryString = params.toString();
+    return authFetch(`${BASE_URL}/api/v3/events/for?${queryString}`, {method: "GET"})
 }
 
 // ================================================================
