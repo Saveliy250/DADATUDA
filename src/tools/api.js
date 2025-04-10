@@ -80,26 +80,29 @@ export async function authFetch(path, options = {}) {
     const accessToken = getAccessToken();
     console.log(accessToken);
     const refreshToken = getRefreshToken();
+    console.log(refreshToken);
 
-    const headers = {
+    const myHeaders = {
         "Content-Type": "application/json",
         ...options.headers,
     };
 
     if (accessToken) {
-        headers["Authorization"] = `Bearer ${accessToken}`;
+        myHeaders["Authorization"] = `Bearer ${accessToken}`;
     }
     if (refreshToken) {
-        headers["X-Refresh-Token"] = refreshToken;
+        myHeaders["X-Refresh-Token"] = refreshToken;
     }
-    console.log(headers);
+    console.log(options)
+    console.log(myHeaders);
         const response = await fetch(path, {
-            ...options,
-            headers,
+            method: "GET",
+            headers: {myHeaders},
         });
+
         const newAccessToken = response.headers.get("Access-Token");
         const newRefreshToken = response.headers.get("Refresh-Token");
-
+        console.log(response);
         if (newRefreshToken && newAccessToken) {
             saveTokens(newAccessToken, newRefreshToken);
         }
@@ -140,8 +143,8 @@ export async function fetchRandomEvent(categories = '') {
 // Получение шортлиста по айдишнику пользователя, позже через авторизацию
 // ======================================================================
 
-export async function getShortlist(userId, pageSize, pageNumber) {
-    return get(`/api/v1/shortlist/${userId}?page_size=${pageSize}&page_number=${pageNumber}`)
+export async function getShortlist(pageSize, pageNumber) {
+    return authFetch(`/api/v3/shortlist/?page_size=${pageSize}&page_number=${pageNumber}`, {method: "GET"})
 }
 
 // =====================================

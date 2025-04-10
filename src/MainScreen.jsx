@@ -61,7 +61,6 @@ function MainScreen() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        //logout();
         if (isAuthenticated) {
             loadEventForUser()
         }

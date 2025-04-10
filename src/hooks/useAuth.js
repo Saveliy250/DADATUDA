@@ -33,7 +33,7 @@ export default function useAuth() {
             const {accessToken, refreshToken} = await loginUser(username, password);
             saveTokens(accessToken, refreshToken);
             setIsAuthenticated(true);
-            navigate("/");
+            navigate("/filters");
         } catch (error) {
             setError(error);
             setIsAuthenticated(false);

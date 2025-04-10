@@ -6,10 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4a46f8b2-d187-4b9d-9cff-c71a93a6d1d3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LogInPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/LogInPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MainScreen.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainScreen.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/PrivateRoute.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrivateRoute.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/useAuth.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useAuth.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tools/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tools/api.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -134,13 +130,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/tools/api.js</url>
-          <line>103</line>
+          <line>101</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/tools/api.js</url>
-          <line>104</line>
+          <line>102</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="8" />
         </line-breakpoint>
