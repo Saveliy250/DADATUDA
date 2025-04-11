@@ -69,7 +69,7 @@ function MainScreen() {
     async function loadEventForUser() {
         setLoading(true);
         try {
-            const event = await await eventForUser(1, '')[0];
+            const event = await eventForUser(1, '')[0];
             setCurrentEvent(event);
         } catch (error) {
             setError(error);

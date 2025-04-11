@@ -97,7 +97,11 @@ export async function authFetch(path, options = {}) {
     console.log(myHeaders);
         const response = await fetch(path, {
             method: "GET",
-            headers: {myHeaders},
+            headers: {
+                "Authorization": "Bearer " + accessToken,
+                "Content-Type": "application/json",
+                "X-Refresh-Token": refreshToken,
+            },
         });
 
         const newAccessToken = response.headers.get("Access-Token");
@@ -114,7 +118,7 @@ export async function authFetch(path, options = {}) {
             const errorText = await response.text()
             throw new Error(`Ошибка в авторизованном запросе: ${errorText}`);
         }
-
+        console.log(response.json());
         return response.json();
 }
 
