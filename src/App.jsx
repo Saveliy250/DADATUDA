@@ -7,6 +7,7 @@ import Favorites from "./FavoritesPage.jsx";
 import EventPage from "./EventPage.jsx";
 import LogInPage from "./LogInPage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
+import {RegistrationPage} from "./RegistrationPage.jsx";
 
 
 
@@ -16,6 +17,7 @@ function App() {
         <>
             <Routes>
                 <Route path="/login" element={<LogInPage/>} />
+                <Route path="/registration" element={<RegistrationPage/>} />
                 <Route path="/" element={
                     <PrivateRoute>
                         <MainScreen />

@@ -4,7 +4,7 @@ import {
     clearTokens,
     getAccessToken,
     getRefreshToken,
-    loginUser,
+    loginUser, registrUser,
     saveTokens,
     setOnLogoutCallback
 } from "../tools/api.js";
@@ -25,6 +25,19 @@ export default function useAuth() {
         });
     }, []);
 
+    async function registration(data) {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await registrUser(data);
+            navigate("/login")
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     async function login(username, password) {
         setLoading(true);
         setError(null);
@@ -33,7 +46,7 @@ export default function useAuth() {
             const {accessToken, refreshToken} = await loginUser(username, password);
             saveTokens(accessToken, refreshToken);
             setIsAuthenticated(true);
-            navigate("/filters");
+            navigate("/");
         } catch (error) {
             setError(error);
             setIsAuthenticated(false);
@@ -51,6 +64,7 @@ export default function useAuth() {
 
 
     return {
+        registration,
         loading,
         isAuthenticated,
         error,

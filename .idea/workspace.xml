@@ -6,7 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="4a46f8b2-d187-4b9d-9cff-c71a93a6d1d3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FavoritesPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/FavoritesPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LogInPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/LogInPage.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MainScreen.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainScreen.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useAuth.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useAuth.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tools/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tools/api.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -107,7 +111,7 @@
       <workItem from="1741067720750" duration="5131000" />
       <workItem from="1743550673233" duration="300000" />
       <workItem from="1744368962187" duration="277000" />
-      <workItem from="1744370131867" duration="2676000" />
+      <workItem from="1744370131867" duration="29899000" />
     </task>
     <servers />
   </component>
@@ -133,13 +137,25 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/tools/api.js</url>
-          <line>104</line>
+          <line>108</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/tools/api.js</url>
-          <line>105</line>
+          <line>109</line>
           <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/MainScreen.jsx</url>
+          <line>91</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/hooks/useAuth.js</url>
+          <line>31</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="10" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

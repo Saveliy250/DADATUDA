@@ -1,6 +1,21 @@
 
 const BASE_URL = "https://api.dada-tuda.ru";
 
+export async function registrUser(data) {
+    const response = await fetch(`${BASE_URL}/api/v2/users/register`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "*/*",
+        },
+        body: data,
+    })
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Ошибка при регистрации: ${errorText}`);
+    }
+}
+
 export async function loginUser(username, password) {
 
     const data = {
@@ -82,21 +97,8 @@ export async function authFetch(path, options = {}) {
     const refreshToken = getRefreshToken();
     console.log(refreshToken);
 
-    const myHeaders = {
-        "Content-Type": "application/json",
-        ...options.headers,
-    };
-
-    if (accessToken) {
-        myHeaders["Authorization"] = `Bearer ${accessToken}`;
-    }
-    if (refreshToken) {
-        myHeaders["X-Refresh-Token"] = refreshToken;
-    }
-    console.log(options)
-    console.log(myHeaders);
         const response = await fetch(path, {
-            method: "GET",
+            ...options,
             headers: {
                 "Authorization": "Bearer " + accessToken,
                 "Content-Type": "application/json",
@@ -106,7 +108,6 @@ export async function authFetch(path, options = {}) {
 
         const newAccessToken = response.headers.get("Access-Token");
         const newRefreshToken = response.headers.get("Refresh-Token");
-        console.log(response);
         if (newRefreshToken && newAccessToken) {
             saveTokens(newAccessToken, newRefreshToken);
         }
@@ -118,8 +119,8 @@ export async function authFetch(path, options = {}) {
             const errorText = await response.text()
             throw new Error(`Ошибка в авторизованном запросе: ${errorText}`);
         }
-        console.log(response.json());
-        return response.json();
+        if (options.method === "GET") {return response.json();}
+
 }
 
 export async function eventForUser(pageSize = 0, categories = '') {
@@ -148,14 +149,14 @@ export async function fetchRandomEvent(categories = '') {
 // ======================================================================
 
 export async function getShortlist(pageSize, pageNumber) {
-    return authFetch(`/api/v3/shortlist/?page_size=${pageSize}&page_number=${pageNumber}`, {method: "GET"})
+    return authFetch(`${BASE_URL}/api/v3/shortlist?page_size=${pageSize}&page_number=${pageNumber}`, {method: "GET"})
 }
 
 // =====================================
 // Отправка фидбэка пока без авторизации
 // =====================================
 
-export async function sendFeedback(userId, like, eventId){
+export async function sendFeedback(eventId, like){
     const data = {
         "eventId": eventId,
         "like": like,
@@ -163,7 +164,7 @@ export async function sendFeedback(userId, like, eventId){
         "moreOpened": false,
         "reported": false,
         "starred": false,
-        "userId": userId
+        "userId": "stringi"
     };
-    return post(`/api/v1/feedback`, data);
+    return authFetch(`${BASE_URL}/api/v3/feedback`, {method: "POST", body: JSON.stringify(data)});
 }

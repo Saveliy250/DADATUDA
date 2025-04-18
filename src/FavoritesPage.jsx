@@ -93,7 +93,7 @@ function Favorites() {
 
     useEffect(() => {
         if (isAuthenticated) {
-            loadShortlist;
+            loadShortlist();
         }
     }, [isAuthenticated])
 

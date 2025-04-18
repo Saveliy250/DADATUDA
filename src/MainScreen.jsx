@@ -69,8 +69,8 @@ function MainScreen() {
     async function loadEventForUser() {
         setLoading(true);
         try {
-            const event = await eventForUser(1, '')[0];
-            setCurrentEvent(event);
+            const event = await eventForUser(1, '');
+            setCurrentEvent(event[0]);
         } catch (error) {
             setError(error);
         } finally {
@@ -80,16 +80,17 @@ function MainScreen() {
 
     async function handleLike() {
         try {
-            await sendFeedback('1', true, currentEvent.id);
-            loadEventForUser();
+            await sendFeedback(currentEvent.id, true);
+            await loadEventForUser();
         } catch (err) {
             console.error('Ошибка при лайке:', err);
         }
     }
     async function handleDisLike() {
         try {
-            await sendFeedback('1', false, currentEvent.id);
-            loadEventForUser();
+            await sendFeedback(currentEvent.id, false);
+            logout()
+            await loadEventForUser();
         } catch (err) {
             console.error('Ошибка при дизлайке:', err);
         }
@@ -98,8 +99,6 @@ function MainScreen() {
     if (loading) return <div>Загрузка...</div>;
     if (error) return <div>Ошибка: {error.message}</div>;
     if (!currentEvent) return <div>Нет данных...</div>;
-
-    console.log(currentEvent.id)
 
     return (
         <>

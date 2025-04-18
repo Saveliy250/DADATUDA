@@ -1,16 +1,22 @@
 import useAuth from "./hooks/useAuth.js";
 import {useState} from "react";
-import {Link} from "react-router-dom";
 
-function LogInPage() {
+export function RegistrationPage() {
 
-    const {login,loading, error, isAuthenticated} = useAuth();
+    const {registration, login, loading, error, isAuthenticated} = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
+
+    const data = JSON.stringify({
+        "username": username,
+        "password": password,
+        "email": email,
+    })
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        login(username, password);
+        registration(data);
     };
 
     if (isAuthenticated) {
@@ -19,22 +25,19 @@ function LogInPage() {
 
     return (
         <>
-            <div>Вход в аккаунт</div>
+            <div>Регистрация</div>
             {error && <p style={{color: 'red'}}>{error.message}</p>}
             <form onSubmit={handleSubmit}>
                 <label>Логин</label>
                 <input value={username} onChange={(e) => setUsername(e.target.value)} />
                 <label>Пароль</label>
                 <input type={"password"} value={password} onChange={(e) => setPassword(e.target.value)} />
+                <label>Почта</label>
+                <input type={"email"} value={email} onChange={(e) => setEmail(e.target.value)} />
                 <button type="submit" disabled={loading}>
-                    {loading ? `Загрузка...` : `Войти`}
+                    {loading ? `Загрузка...` : `Зарегистрироваться`}
                 </button>
             </form>
-            <div>Нет аккаунта?
-                <Link to={'/registration'}>Зарегистрироваться</Link>
-            </div>
         </>
     )
 }
-
-export default LogInPage;
