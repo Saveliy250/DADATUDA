@@ -89,7 +89,6 @@ function MainScreen() {
     async function handleDisLike() {
         try {
             await sendFeedback(currentEvent.id, false);
-            logout()
             await loadEventForUser();
         } catch (err) {
             console.error('Ошибка при дизлайке:', err);
