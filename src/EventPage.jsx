@@ -11,7 +11,7 @@ function EventPage() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch(`http://90.156.170.125:8080/event-service/api/v1/events/${eventId}`)
+        fetch(`https://api.dada-tuda.ru/api/v1/events/${eventId}`)
             .then((response) => {
                 if (response.status === 204) {
                     setNoEvent(true);
@@ -67,7 +67,7 @@ function EventPage() {
                             <path d="M19.0019 10.0492L26.0002 18.8338L19.0019 27.4502" stroke="#ECFE54" strokeWidth="3.35446" strokeLinejoin="round"/>
                             <path d="M25.9548 2H11.6037C-1.20125 2 -1.20122 18.7921 11.6037 18.7921H25.9548" stroke="#ECFE54" strokeWidth="3.35446"/>
                         </svg>
-                        <button className={"event-button"}>Перейти на сайт мероприятия</button>
+                        <a className={"event-button"} href={`${eventData.referralLink}`} target="_blank" rel="noopener noreferrer">Перейти на сайт мероприятия</a>
                     </div>
                 </div>
             </div>
