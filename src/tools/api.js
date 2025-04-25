@@ -105,7 +105,7 @@ export async function authFetch(path, options = {}) {
                 "X-Refresh-Token": refreshToken,
             },
         });
-
+        // TODO: разобраться с получением токенов
         const newAccessToken = response.headers.get("Access-Token");
         const newRefreshToken = response.headers.get("Refresh-Token");
         if (newRefreshToken && newAccessToken) {

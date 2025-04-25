@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import "./MainScreenStyle.css"
+import "./MainScreen.css"
 import formatDate from "../src/tools/FormatDate.jsx"
 import MainFavoriteButtonIco from "./icons/MainFavoriteButtonIco.jsx";
 import MainDislikeButtonIco from "./icons/MainDislikeButtonIco.jsx";
@@ -14,6 +14,7 @@ import StandupIco from "./icons/StandupIco.jsx";
 import CafeIco from "./icons/CafeIco.jsx";
 import RoundBackArrowIco from "./icons/RoundBackArrowIco.jsx";
 import TheaterIcon from "./icons/TheatreIcon.jsx";
+import {cutWords} from "./tools/strings.js";
 
 
 const CategoryIcons = {
@@ -29,15 +30,16 @@ const CategoryIcons = {
 }
 
 function MainCard({event, onSwipeLeft, onSwipeRight, onLike, onDisLike}) {
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const formattedDate = formatDate(event.date)
-    const [datePart, timePart] = formattedDate.split(' ')
+    const [slide , setSlide]      = useState(0);          // будущее слайд-шоу
+    const [expanded, setExpanded] = useState(false);      // режим «подробнее»
 
-    const handleNextSlide = () => {
-        setCurrentSlide((prev) => {
-            const next = prev + 1;
-            return next < event.imageURL.length ? next : 0;
-        })
+    const [datePart,timePart] = formatDate(event.date).split(" ");
+    const price = event.price !== '0' ? `${event.price} рублей` : "Бесплатно"
+
+    function handleTap(){
+        if (!expanded){
+            setSlide( n => (n+1) % event.imageURL.length );
+        }
     }
 
     const handleLike = () => {
@@ -49,7 +51,7 @@ function MainCard({event, onSwipeLeft, onSwipeRight, onLike, onDisLike}) {
 
     // Позже добавить обработчик свайпа
     return (
-        <div className="MainCard" onClick={handleNextSlide}>
+        <div className="MainCard" >
             <div className={"main-card-img-wrapper"} >
                 <img
                     src={event.imageURL[0]}
@@ -58,15 +60,45 @@ function MainCard({event, onSwipeLeft, onSwipeRight, onLike, onDisLike}) {
                 />
                 <div className={"main-card-category"}>{event.categories[0]}</div>
                 <div className={"main-category-ico"}><TheaterIcon/></div>
-                <div className={"main-card-content"}>
-                    <div className={"main-card-name-flex"}>
+                <div className={`card-compact ${expanded ? "hide" : ""}`}>
+                    <div className="main-card-name-flex">
                         <RoundBackArrowIco/>
-                        <p className={"main-card-name"}>{event.name}</p>
+                        <p className="main-card-name">{cutWords(event.name, 3)}</p>
                     </div>
-                    <p className={"main-card-address"}>{event.address}</p>
-                    <p className={"main-card-date"}>Ближайшее {datePart} {timePart}</p>
-                    <p className={"main-card-price"}>{event.price}</p>
+                    <p className="main-card-address">{cutWords(event.address, 5)}</p>
+                    <p className="main-card-date">Ближайшее {datePart} {timePart}</p>
+                    <p className="main-card-price">{price}</p>
+                    <button className="main-more-btn"              /* << ========= */
+                            onClick={(e)=>{e.stopPropagation();setExpanded(true);}}>
+                        Подробнее
+                    </button>
                 </div>
+
+                {/* ---------- РАСШИРЕННЫЙ ВИД ---------- */}
+                <div className={`card-details ${expanded ? "show" : ""}`}>
+                    <div className="card-details__scroll">
+                        <h2>{event.name}</h2>
+                        <h3>Адрес:</h3>
+                        <p>{event.address}</p>
+                        <h3>Время:</h3>
+                        <p>Ближайшее {datePart} {timePart}</p>
+                        <h3>Цена:</h3>
+                        <p>{price}</p>
+                        <h3>О мероприятии:</h3>
+                        <p>{event.description}</p>
+                    </div>
+                    <div className="card-details__actions">
+                        {event.referralLink && (
+                            <a className="card-details__go" href={event.referralLink}
+                               target="_blank" rel="noreferrer">Перейти на сайт мероприятия</a>
+                        )}
+                        <button className="card-details__hide"
+                                onClick={(e)=>{e.stopPropagation();setExpanded(false);}}>
+                            Скрыть
+                        </button>
+                    </div>
+                </div>
+
                 <button className={"main-like-button"} onClick={(e) => {
                     e.stopPropagation();
                     handleLike();

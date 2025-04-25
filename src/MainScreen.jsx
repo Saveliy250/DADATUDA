@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import './index.css'
-import './MainScreenStyle.css'
+import './MainScreen.css'
 import {Link, useLocation} from 'react-router-dom'
 import MainScreenOnIco from "./icons/MainScreenOnIco.jsx";
 import WhiteLogoIco from "./icons/WhiteLogoIco.jsx";
@@ -81,7 +81,8 @@ function MainScreen() {
     async function handleLike() {
         try {
             await sendFeedback(currentEvent.id, true);
-            await loadEventForUser();
+            setCurrentEvent(null);
+            setTimeout(loadEventForUser, 300);
         } catch (err) {
             console.error('Ошибка при лайке:', err);
         }
@@ -102,11 +103,13 @@ function MainScreen() {
     return (
         <>
             <FiltersButton/>
-            <MainCard
-                event={currentEvent}
-                onLike={handleLike}
-                onDisLike={handleDisLike}
-            />
+            <div className={"MainCard-holder"}>
+                <MainCard
+                    event={currentEvent}
+                    onLike={handleLike}
+                    onDisLike={handleDisLike}
+                />
+            </div>
             <Footer/>
         </>
     )
