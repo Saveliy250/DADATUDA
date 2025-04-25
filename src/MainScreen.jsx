@@ -7,8 +7,8 @@ import WhiteLogoIco from "./icons/WhiteLogoIco.jsx";
 import HeartIcoOff from "./icons/HeartIcoOff.jsx";
 import MainScreenOffIco from "./icons/MainScreenOffIco.jsx";
 import HeartIcoOn from "./icons/HeartIcoOn.jsx";
-import MainCard from "./MainCard.jsx";
-import {eventForUser, sendFeedback} from "./tools/api.js";
+import {MainCard} from "./MainCard.jsx";
+import {eventForUser} from "./tools/api.js";
 import useAuth from "./hooks/useAuth.js";
 function Footer () {
     const location = useLocation();
@@ -78,22 +78,9 @@ function MainScreen() {
         }
     }
 
-    async function handleLike() {
-        try {
-            await sendFeedback(currentEvent.id, true);
-            setCurrentEvent(null);
-            setTimeout(loadEventForUser, 300);
-        } catch (err) {
-            console.error('Ошибка при лайке:', err);
-        }
-    }
-    async function handleDisLike() {
-        try {
-            await sendFeedback(currentEvent.id, false);
-            await loadEventForUser();
-        } catch (err) {
-            console.error('Ошибка при дизлайке:', err);
-        }
+    async function loadNext(){
+        const e = await eventForUser(1,'');
+        setCurrentEvent(e[0]);
     }
 
     if (loading) return <div>Загрузка...</div>;
@@ -106,8 +93,7 @@ function MainScreen() {
             <div className={"MainCard-holder"}>
                 <MainCard
                     event={currentEvent}
-                    onLike={handleLike}
-                    onDisLike={handleDisLike}
+                    loadNext={loadNext}
                 />
             </div>
             <Footer/>

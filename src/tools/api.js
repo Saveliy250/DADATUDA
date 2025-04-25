@@ -93,9 +93,7 @@ export function setOnLogoutCallback(callback) {
 
 export async function authFetch(path, options = {}) {
     const accessToken = getAccessToken();
-    console.log(accessToken);
     const refreshToken = getRefreshToken();
-    console.log(refreshToken);
 
         const response = await fetch(path, {
             ...options,
@@ -156,12 +154,13 @@ export async function getShortlist(pageSize, pageNumber) {
 // Отправка фидбэка пока без авторизации
 // =====================================
 
-export async function sendFeedback(eventId, like){
+export async function sendFeedback(eventId, like, viewedSeconds, moreOpened, refClicked){
     const data = {
         "eventId": eventId,
         "like": like,
-        "viewedSeconds": 5,
-        "moreOpened": false,
+        "viewedSeconds": viewedSeconds,
+        "moreOpened": moreOpened,
+        "referralLinkOpened": refClicked,
         "reported": false,
         "starred": false,
         "userId": "stringi"
