@@ -89,7 +89,6 @@ function MainScreen() {
 
     return (
         <>
-            <FiltersButton/>
             <div className={"MainCard-holder"}>
                 <MainCard
                     event={currentEvent}

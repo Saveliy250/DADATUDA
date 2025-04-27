@@ -15,37 +15,37 @@
     margin-right: 20vw;
     margin-left: 20vw;
 }
-.filter-button{
-    z-index: 1001;
-    position: fixed;
-    right: 4vw;
-    top: 8vh;
-    background-color: #191919;
-    color: white;
-    border: 2px solid #FFFFFF;
-    border-radius: 16px;
-    font-size: 14px;
-    padding: 8px 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-}
-.filter-button:hover{
-    background-color: #ecebec;
-}
+/*.filter-button{*/
+/*    z-index: 1001;*/
+/*    position: fixed;*/
+/*    right: 4vw;*/
+/*    top: 8vh;*/
+/*    background-color: #191919;*/
+/*    color: white;*/
+/*    border: 2px solid #FFFFFF;*/
+/*    border-radius: 16px;*/
+/*    font-size: 14px;*/
+/*    padding: 8px 16px;*/
+/*    display: inline-flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    gap: 16px;*/
+/*    cursor: pointer;*/
+/*    transition: background-color 0.2s, color 0.2s;*/
+/*}*/
+/*.filter-button:hover{*/
+/*    background-color: #ecebec;*/
+/*}*/
 
 .MainCard{
     position: fixed;
     top: 50%;                       /* кладём верхний-левый угол точно в центр окна */
     left: 50%;
-    transform: translate(-50%, -50%);/* и смещаем обратно на ½ собственных размеров */
+    transform: translate(-50%, -55%);/* и смещаем обратно на ½ собственных размеров */
 
     width: 90vw;                    /* адаптивная ширина */
     max-width: 560px;               /* «потолок», чтобы на планшетах не разъезжалась */
-    height: 70vh;                   /* высота от окна */
+    height: 80vh;                   /* высота от окна */
     max-height: calc(560px * 16 / 9);/* не выше корректного aspect-ratio            */
 
     border-radius: 16px;
@@ -68,12 +68,13 @@
 .main-card-img-wrapper::after{
     content: "";
     position: absolute;
-    bottom: 0;
+    bottom: 20px;
     left: 0;
     right: 0;
     height: 40%;
     background: linear-gradient(
             to top,
+            rgba(255, 96, 28, 0) 0%,
             rgba(255, 96, 28, 0.3) 20%,
             rgba(255, 96, 28, 0.7) 40%,
             rgba(255, 96, 28, 0.9) 60%,
@@ -93,19 +94,6 @@
     object-position: center;
 }
 
-.main-category-ico svg{
-    position: absolute;
-    right: 16px;
-    top: 36px;
-    background: none;
-    fill : #FF6CF1;
-}
-
-.main-card-category {
-    position: absolute;
-    top: 36px;
-    left: 16px;
-}
 
 .main-card-content{
     width: 90%;
@@ -124,7 +112,7 @@
 }
 .main-card-name{
     font-family: "Soyuz-Grotesk-Bold", sans-serif;
-    font-size: 30px;
+    font-size: 20px;
     color: #ECFE54;
 }
 .main-like-button{
@@ -163,7 +151,7 @@
 
 /* ---------- компактный блок (по умолчанию виден) ---------- */
 .card-compact{
-    position:absolute;inset:auto 4% 4%;
+    position:absolute;inset:auto 4% 10%;
     z-index:3;
     transition:opacity .35s ease,max-height .35s ease;
     max-height:40%;                   /* плавная сворачиваемость   */
@@ -177,7 +165,7 @@
 .main-more-btn{
     z-index: 1;
     display:block;                         /* центрирование */
-    margin:1.1em auto 0;
+    margin:2.3em auto -1.8em;
     border:none;border-radius:1.3em;
     background:var(--acid);color:#191919;
     font-size:clamp(14px,3.6vw,18px);

@@ -77,15 +77,11 @@ export function MainCard({event, onSwipeLeft, onSwipeRight, loadNext}) {
                     alt={event.name}
                     className="main-card-img"
                 />
-                <div className={"main-card-category"}>{event.categories[0]}</div>
-                <div className={"main-category-ico"}><TheaterIcon/></div>
                 <div className={`card-compact ${expanded ? "hide" : ""}`}>
                     <div className="main-card-name-flex">
                         <RoundBackArrowIco/>
-                        <p className="main-card-name">{cutWords(event.name, 3)}</p>
+                        <p className="main-card-name">{cutWords(event.name, 6)}</p>
                     </div>
-                    <p className="main-card-address">{cutWords(event.address, 5)}</p>
-                    <p className="main-card-date">Ближайшее {datePart} {timePart}</p>
                     <p className="main-card-price">{price}</p>
                     <button className="main-more-btn"              /* << ========= */
                             onClick={(e)=>{e.stopPropagation();setExpanded(true);handleMoreOpened()}}>
