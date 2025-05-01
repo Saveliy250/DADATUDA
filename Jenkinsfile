@@ -1,21 +1,3 @@
- pipeline {
-     agent { label 'dev-runner' }
-       stages {
-         stage('Build') {
-             steps {
-                 script {
-                     sh 'docker build -t miniapp:latest .'
-                 }
-             }
-         }
-
-         stage('Run') {
-             steps {
-                
-             }
-         }
-     }
- }
 pipeline {
 
     	agent {
