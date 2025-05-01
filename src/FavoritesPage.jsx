@@ -124,17 +124,19 @@ function Favorites() {
         <>
             <p className={"favorites-header"}>Ваши мероприятия</p>
             <YourFavorites />
-            <div className={"liked-cards"}>
+            {favorites.length > 0 && (<div className={"liked-cards"}>
                 {starredEvents.map((event) => (
                     <LikedCard key={event.id} event={event} />
                 ))}
-            </div>
+            </div>)}
+
             <YourLiked />
-            <div className={"liked-cards"}>
+            {favorites.length > 0 && (<div className={"liked-cards"}>
                 {notStarredEvents.map((event) => (
                     <LikedCard key={event.id} event={event} />
                 ))}
-            </div>
+            </div>)}
+
             <Footer />
         </>
     )

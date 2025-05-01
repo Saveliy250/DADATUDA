@@ -117,7 +117,12 @@ export async function authFetch(path, options = {}) {
             const errorText = await response.text()
             throw new Error(`Ошибка в авторизованном запросе: ${errorText}`);
         }
-        if (options.method === "GET") {return response.json();}
+        if (options.method === "GET") {
+            if (response.status === 204 || response.headers.get('Content-Length') === '0') {
+                return [];                     // ⟵ что вернуть – решайте сами
+            }
+            return response.json();
+        }
 
 }
 

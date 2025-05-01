@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import './index.css'
 import './MainScreen.css'
 import {Link, useLocation} from 'react-router-dom'
 import MainScreenOnIco from "./icons/MainScreenOnIco.jsx";
@@ -10,6 +9,7 @@ import HeartIcoOn from "./icons/HeartIcoOn.jsx";
 import {MainCard} from "./MainCard.jsx";
 import {eventForUser} from "./tools/api.js";
 import useAuth from "./hooks/useAuth.js";
+import {AnimatePresence} from "framer-motion";
 function Footer () {
     const location = useLocation();
     const isFavorites = location.pathname === "/favorites";
@@ -56,45 +56,50 @@ const FiltersButton = () => {
 
 function MainScreen() {
     const {isAuthenticated, logout} = useAuth();
-    const [currentEvent, setCurrentEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [cards, setCards] = useState([]);
 
     useEffect(() => {
-        if (isAuthenticated) {
-            loadEventForUser()
+        if (!isAuthenticated) return
+        if (cards.length < 1) {
+            const need = 10 - cards.length          // 5-cards, но минимум 2
+            prefetch(Math.max(2, need))
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, cards])
 
-    async function loadEventForUser() {
-        setLoading(true);
-        try {
-            const event = await eventForUser(1, '');
-            setCurrentEvent(event[0]);
-        } catch (error) {
-            setError(error);
-        } finally {
-            setLoading(false);
-        }
+    async function prefetch(n = 1) {
+        const next = await eventForUser(n, '');
+        setCards(prev => {
+            const seen = new Set(prev.map(e => e.id));          // уже на экране
+            const unique = next.filter(e => !seen.has(e.id));   // только «новые»
+            return [...prev, ...unique];
+        });
     }
 
-    async function loadNext(){
-        const e = await eventForUser(1,'');
-        setCurrentEvent(e[0]);
+    function handleCardFinish(victimId) {
+        setCards(prev => prev.filter(c => c.id !== victimId));
     }
 
-    if (loading) return <div>Загрузка...</div>;
+
+
+    if (!cards.length) return <div>Загрузка...</div>;
     if (error) return <div>Ошибка: {error.message}</div>;
-    if (!currentEvent) return <div>Нет данных...</div>;
 
     return (
         <>
-            <div className={"MainCard-holder"}>
-                <MainCard
-                    event={currentEvent}
-                    loadNext={loadNext}
-                />
-            </div>
+            <AnimatePresence>
+                {cards.map((ev, i) => (
+                    <div className={'card-holder'} key={ev.id}>
+                        <MainCard
+                            key={ev.id}
+                            event={ev}
+                            canDrag={i === 0}
+                            loadNext={handleCardFinish}
+                        />
+                    </div>
+                ))}
+            </AnimatePresence>
             <Footer/>
         </>
     )

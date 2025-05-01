@@ -8,11 +8,27 @@ import EventPage from "./EventPage.jsx";
 import LogInPage from "./LogInPage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import {RegistrationPage} from "./RegistrationPage.jsx";
-
-
+import WebApp from '@twa-dev/sdk';
+import {useEffect} from "react";
 
 
 function App() {
+    useEffect(() => {
+        if (!WebApp.initData) {            // значит, мы не внутри Telegram
+            console.log('Run inside Telegram to get WebApp features');
+            return;
+        }
+
+        WebApp.ready();                    // сообщаем, что мини-апп загрузилась
+        WebApp.expand();                   // опционально
+        WebApp.setupSwipeBehavior({        // 🔒 блокируем «смахни вниз»
+            allow_vertical_swipe: false
+        });
+
+        return () => {                     // при размонтировании → возвращаем по умолчанию
+            WebApp.setupSwipeBehavior({ allow_vertical_swipe: true });
+        };
+    }, []);
     return (
         <>
             <Routes>
