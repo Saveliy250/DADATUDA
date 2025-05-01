@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: '0.0.0.0',
-    allowedHosts: ['ui.dada-tuda.ru'], // Разрешение доступа к хосту
+    allowedHosts: ['ui.dada-tuda.ru', 'dada-tuda.ru'], // Разрешение доступа к хосту
   },
 })
