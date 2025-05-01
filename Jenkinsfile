@@ -21,7 +21,7 @@ pipeline {
         stage('UpProd') {
             when {
                 expression {
-                    return env.BRANCH_NAME.startsWith('release/') || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'staging'
+                    return env.BRANCH_NAME.startsWith('release/')
                 }
             }
             agent {
