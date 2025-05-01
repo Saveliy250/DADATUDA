@@ -10,9 +10,10 @@ pipeline {
                     return env.BRANCH_NAME.startsWith('release/') || env.BRANCH_NAME == 'develop'
                 }
             }
-            steps {
+             steps {
                 script {
                    	sh 'docker build -t miniapp:latest .'
+                  	sh 'docker rm -f miniapp || true'
                     sh 'docker run -d --network=shared-network --name miniapp -p 5173:5173 miniapp:latest'
                 }
             }
@@ -29,6 +30,7 @@ pipeline {
             steps {
                 script {
                    	sh 'docker build -t miniapp:latest .'
+                  	sh 'docker rm -f miniapp || true'
                     sh 'docker run -d --network=shared-network --name miniapp -p 5173:5173 miniapp:latest'
                 }
             }
