@@ -9,18 +9,22 @@ import LogInPage from "./LogInPage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import {RegistrationPage} from "./RegistrationPage.jsx";
 import {logTelegramVersion} from "./tools/logTelegramVersion.js";
-import { initMiniApp } from '@telegram-apps/sdk';
+import { init, backButton } from '@telegram-apps/sdk';
+
+
 
 
 function App() {
     useEffect(() => {
-        const [miniApp] = initMiniApp();
+        // Initialize the SDK.
+        init();
+        logTelegramVersion();
 
-        if (!miniApp.platform) return;
+// Mount the Back Button.
+        backButton.mount();
 
-        miniApp.ready();
-        logTelegramVersion()
-        miniApp.web_app_setup_swipe_behavior({allow_vertical_swipe:true})
+// Show the Back Button.
+        backButton.show();
     }, []);
 
 
