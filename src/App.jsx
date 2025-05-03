@@ -9,7 +9,7 @@ import LogInPage from "./LogInPage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import {RegistrationPage} from "./RegistrationPage.jsx";
 import {logTelegramVersion} from "./tools/logTelegramVersion.js";
-import { init, backButton } from '@telegram-apps/sdk';
+import { init, isSwipeBehaviorMounted, swipeBehavior } from '@telegram-apps/sdk';
 
 
 
@@ -20,11 +20,10 @@ function App() {
         init();
         logTelegramVersion();
 
-// Mount the Back Button.
-        backButton.mount();
+        swipeBehavior().mount();
 
-// Show the Back Button.
-        backButton.show();
+        console.log(isSwipeBehaviorMounted());
+
     }, []);
 
 
