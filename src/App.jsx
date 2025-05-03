@@ -9,12 +9,13 @@ import LogInPage from "./LogInPage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import {RegistrationPage} from "./RegistrationPage.jsx";
 import WebApp from '@twa-dev/sdk'
+import {logTelegramVersion} from "./tools/logTelegramVersion.js";
 
 
 function App() {
     useEffect(() => {
         if (!WebApp.initDataUnsafe) return;
-
+        logTelegramVersion();
         WebApp.ready();
 
         if (typeof WebApp.setupSwipeBehavior === 'function') {
