@@ -21,7 +21,7 @@ function LogInPage() {
     return (
 
         <main className="login">
-            <div className={"dev-version"}>V0.0.4</div>
+            <div className={"dev-version"}>V0.0.5</div>
             <h1 className="login__title">
                 <svg width="28" height="29" viewBox="0 0 28 29" fill="none">
                     <path d="M10.5 18.8H23.9" stroke="#ECFE54" strokeWidth="3.4"/>
