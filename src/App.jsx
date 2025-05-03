@@ -8,19 +8,19 @@ import EventPage from "./EventPage.jsx";
 import LogInPage from "./LogInPage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import {RegistrationPage} from "./RegistrationPage.jsx";
-import {initWebApp} from '@telegram-apps/sdk'
 import {logTelegramVersion} from "./tools/logTelegramVersion.js";
+import { initMiniApp } from '@telegram-apps/sdk';
 
 
 function App() {
     useEffect(() => {
-        const WebApp = initWebApp();
+        const [miniApp] = initMiniApp();
 
-        if (!WebApp.platform) return;
+        if (!miniApp.platform) return;
 
-        WebApp.ready();
-
-        WebApp.web_app_setup_swipe_behavior({allow_vertical_swipe:true})
+        miniApp.ready();
+        logTelegramVersion()
+        miniApp.web_app_setup_swipe_behavior({allow_vertical_swipe:true})
     }, []);
 
 
