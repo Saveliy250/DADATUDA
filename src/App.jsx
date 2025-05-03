@@ -8,30 +8,33 @@ import EventPage from "./EventPage.jsx";
 import LogInPage from "./LogInPage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import {RegistrationPage} from "./RegistrationPage.jsx";
-import WebApp from '@twa-dev/sdk'
+import {initWebApp, versionAtLeast} from '@telegram-apps/sdk'
 import {logTelegramVersion} from "./tools/logTelegramVersion.js";
 
 
 function App() {
     useEffect(() => {
-        if (!WebApp.initData) return;
+        const WebApp = initWebApp();
+
+
+        if (!WebApp.platform) {
+            console.log('Запустите мини‑приложение внутри Telegram');
+            return;
+        }
+        logTelegramVersion()
 
         WebApp.ready();
 
-        logTelegramVersion()
-
-        const ok = WebApp.setupSwipeBehavior({ allow_vertical_swipe: false });
-        console.log("Я схожу с ума")
-
-        if (!ok) {
-            console.warn(
-                'setupSwipeBehavior unavailable: ' +
-                'откройте мини‑аппу в Telegram версии ≥ 7.7 мобильного клиента'
-            );
+        if (versionAtLeast('7.7')) {
+            WebApp.setupSwipeBehavior({ allow_vertical_swipe: false });
+        } else {
+            console.warn('Клиент Telegram < 7.7 — заблокировать свайп нельзя');
         }
 
         return () => {
-            WebApp.setupSwipeBehavior({ allow_vertical_swipe: true });
+            if (versionAtLeast('7.7')) {
+                WebApp.setupSwipeBehavior({ allow_vertical_swipe: true });
+            }
         };
     }, []);
 
