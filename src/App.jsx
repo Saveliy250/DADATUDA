@@ -20,7 +20,6 @@ function App() {
         init();
         logTelegramVersion();
 
-        swipeBehavior().mount();
 
         console.log(isSwipeBehaviorMounted());
 
