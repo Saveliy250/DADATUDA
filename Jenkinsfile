@@ -7,7 +7,7 @@ pipeline {
         stage('UpDev') {
             when {
                 expression {
-                    return env.BRANCH_NAME.startsWith('release/') || env.BRANCH_NAME == 'develop'
+                    return  env.BRANCH_NAME == 'develop'
                 }
             }
              steps {
