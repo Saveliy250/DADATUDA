@@ -14,20 +14,24 @@ import {logTelegramVersion} from "./tools/logTelegramVersion.js";
 
 function App() {
     useEffect(() => {
-        if (!WebApp.initDataUnsafe) return;
-        logTelegramVersion();
+        if (!WebApp.initData) return;
+
         WebApp.ready();
 
-        if (typeof WebApp.setupSwipeBehavior === 'function') {
-            WebApp.setupSwipeBehavior({ allow_vertical_swipe: false });
-        } else {
-            console.warn('setupSwipeBehavior is unavailable: open the mini‑app in Telegram mobile ≥ 7.7');
+        logTelegramVersion()
+
+        const ok = WebApp.setupSwipeBehavior({ allow_vertical_swipe: false });
+        console.log("Я схожу с ума")
+
+        if (!ok) {
+            console.warn(
+                'setupSwipeBehavior unavailable: ' +
+                'откройте мини‑аппу в Telegram версии ≥ 7.7 мобильного клиента'
+            );
         }
 
         return () => {
-            if (typeof WebApp.setupSwipeBehavior === 'function') {
-                WebApp.setupSwipeBehavior({ allow_vertical_swipe: true });
-            }
+            WebApp.setupSwipeBehavior({ allow_vertical_swipe: true });
         };
     }, []);
 
