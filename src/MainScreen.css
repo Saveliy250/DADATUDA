@@ -1,4 +1,14 @@
+#root {
+    height: 100%;
+}
 
+html, body {
+    height: 100%;          /* без этого iOS всё‑равно даёт прокрутить */
+    margin: 0;
+    overflow: hidden;      /* отключаем scrollbar */
+    touch-action: none;    /* запрет panning / zoom */
+    overscroll-behavior: none;  /* убираем bounce‑эффект на iOS/Android */
+}
 .fixed-footer{
     position: fixed;
     bottom: 0;
