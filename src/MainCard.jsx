@@ -1,87 +1,167 @@
-import React, {useState} from "react";
-import "./MainScreenStyle.css"
+import React, {useState, useRef, useEffect} from "react";
+import "./MainScreen.css"
+import {
+    motion,
+    useMotionValue,
+    useTransform,
+    useAnimation, AnimatePresence,
+} from "framer-motion";
 import formatDate from "../src/tools/FormatDate.jsx"
 import MainFavoriteButtonIco from "./icons/MainFavoriteButtonIco.jsx";
 import MainDislikeButtonIco from "./icons/MainDislikeButtonIco.jsx";
-import ConcertIcon from "./icons/ConcertIcon.jsx";
-import TheatreIcon from "./icons/TheatreIcon.jsx";
-import ExhibitionIco from "./icons/ExhibitionIco.jsx";
-import ExcursionIco from "./icons/ExcursionIco.jsx";
-import BarIco from "./icons/BarIco.jsx";
-import RestaurantIco from "./icons/RestaurantIco.jsx";
-import SportIco from "./icons/SportIco.jsx";
-import StandupIco from "./icons/StandupIco.jsx";
-import CafeIco from "./icons/CafeIco.jsx";
 import RoundBackArrowIco from "./icons/RoundBackArrowIco.jsx";
-import TheaterIcon from "./icons/TheatreIcon.jsx";
+import {cutWords} from "./tools/strings.js";
+import {sendFeedback} from "./tools/api.js";
 
 
-const CategoryIcons = {
-    concert: [ConcertIcon, "Концерт"],
-    theatre: [TheatreIcon, "Спектакль"],
-    exhibition: [ExhibitionIco, "Выставка"],
-    excursion: [ExcursionIco, "Экскурсия"],
-    bar: [BarIco, "Бар"],
-    restaurant: [RestaurantIco, "Ресторан"],
-    sport: [SportIco, "Спорт"],
-    standup: [StandupIco, "Стендап"],
-    cafe: [CafeIco, "Кафе"],
-}
 
-function MainCard({event, onSwipeLeft, onSwipeRight, onLike, onDisLike}) {
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const formattedDate = formatDate(event.date)
-    const [datePart, timePart] = formattedDate.split(' ')
+export function MainCard({event,canDrag, loadNext}) {
+    const [slide , setSlide]      = useState(0);          // будущее слайд-шоу
+    const [datePart,timePart] = formatDate(event.date).split(" ");
+    const price = event.price !== '0' ? `${event.price} рублей` : "Бесплатно"
 
-    const handleNextSlide = () => {
-        setCurrentSlide((prev) => {
-            const next = prev + 1;
-            return next < event.imageURL.length ? next : 0;
-        })
+    const [expanded, setExpanded] = useState(false);
+    const start = useRef(Date.now());
+    const [moreOpened , setMoreOpened ] = useState(false);
+    const [refClicked    , setRefClicked    ] = useState(false);
+
+    const x         = useMotionValue(0);
+    const rotate    = useTransform(x, [-250, 250], [-15, 15]);
+    const opacity   = useTransform(x, [-250, -160, 0, 160, 250],
+        [0,     1,   1,   1,   0]);
+    const controls  = useAnimation();
+
+    async function handleDragEnd(_, info){
+        const offsetX   = info.offset.x;          // Δ-смещение
+        const threshold = window.innerWidth * .25; // 25 % ширины
+
+        if (Math.abs(offsetX) < threshold){
+            await controls.start({x:0, rotate:0});
+            return;
+        }
+
+        await controls.start({
+            x: offsetX < 0 ? -window.innerWidth : window.innerWidth,
+            opacity:0, transition:{duration:.25}
+        });
+        await finishCard(offsetX > 0);
     }
 
-    const handleLike = () => {
-        onLike(event);
-    }
-    const handleDisLike = () => {
-        onDisLike(event);
+    const [isDragging, setIsDragging] = useState(false);
+    function onTap() {
+        if (!expanded && !isDragging) {
+            setSlide((n) => (n + 1) % event.imageURL.length);
+        }
     }
 
-    // Позже добавить обработчик свайпа
+    function handleRefClicked(){
+        setRefClicked(true)
+    }
+
+    const openDetails = () => {
+        setMoreOpened(true);
+        setExpanded(true);
+    };
+
+    useEffect(() => {
+        start.current = Date.now();
+    }, [event.id]);
+
+    async function finishCard(like) {
+        const viewedSeconds = Math.round((Date.now() - start.current)/1000);
+        try {
+            sendFeedback(event.id, like, viewedSeconds, moreOpened, refClicked);
+        } catch (err) {
+            console.warn(err);
+        }
+        loadNext(event.id);
+    }
+
     return (
-        <div className="MainCard" onClick={handleNextSlide}>
+        <motion.div
+    className="MainCard"
+    style={{ x, rotate, opacity }}
+    drag={!expanded ? "x" : false}
+    dragConstraints={{ left: -1000, right: 1000 }}
+    onDragEnd={handleDragEnd}
+    onDragStart={() => setIsDragging(true)}
+    onDragTransitionEnd={() => setIsDragging(false)}
+    animate={controls}
+    onTap={onTap}>
             <div className={"main-card-img-wrapper"} >
                 <img
-                    src={"https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg"}
+                    src={event.imageURL[slide]}
                     alt={event.name}
                     className="main-card-img"
                 />
-                <div className={"main-card-category"}>{event.categories[0]}</div>
-                <div className={"main-category-ico"}><TheaterIcon/></div>
-                <div className={"main-card-content"}>
-                    <div className={"main-card-name-flex"}>
+                <motion.div
+                    className="card-compact"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: .2 }}>
+                    <div className="main-card-name-flex">
                         <RoundBackArrowIco/>
-                        <p className={"main-card-name"}>{event.name}</p>
+                        <p className="main-card-name">{cutWords(event.name, 6)}</p>
                     </div>
-                    <p className={"main-card-address"}>{event.address}</p>
-                    <p className={"main-card-date"}>Ближайшее {datePart} {timePart}</p>
-                    <p className={"main-card-price"}>{event.price}</p>
-                </div>
+                    <p className="main-card-price">{price}</p>
+                    <button className="main-more-btn"
+                            onClick={(e)=>{e.stopPropagation();openDetails()}}>
+                        Подробнее
+                    </button>
+                </motion.div>
+
+                {/* ---------- РАСШИРЕННЫЙ ВИД ---------- */}
+                <AnimatePresence motion={"wait"}>
+                    {expanded && (
+                        <motion.div
+                        key = "details"
+                        className={`card-details`}
+                        initial={{ y: '40%', opacity: 0 }}
+                        animate={{ y: 0,        opacity: 1 }}
+                        exit={{   y: '40%', opacity: 0 }}
+                        transition={{ duration: .28, ease: 'easeOut' }}
+                        onClick={e => e.stopPropagation()} >
+                        <div className="card-details__scroll">
+                            <h2>{event.name}</h2>
+                            <h3>Адрес:</h3>
+                            <p>{event.address}</p>
+                            <h3>Время:</h3>
+                            <p>Ближайшее {datePart} {timePart}</p>
+                            <h3>Цена:</h3>
+                            <p>{price}</p>
+                            <h3>О мероприятии:</h3>
+                            <p>{event.description}</p>
+                        </div>
+                        <div className="card-details__actions">
+                            {event.referralLink && (
+                                <a className="card-details__go" href={event.referralLink}
+                                   target="_blank" rel="noreferrer" onClick={handleRefClicked}>Перейти на сайт мероприятия</a>
+                            )}
+                            <button className="card-details__hide"
+                                    onClick={(e)=>{e.stopPropagation();setExpanded(false);}}>
+                                Скрыть
+                            </button>
+                        </div>
+                    </motion.div>
+                        )}
+                </AnimatePresence>
+
                 <button className={"main-like-button"} onClick={(e) => {
                     e.stopPropagation();
-                    handleLike();
+                    controls.start({ x: window.innerWidth, opacity: 0, transition: { duration: 0.25 } })
+                        .then(() => finishCard(true));
                 }}><MainFavoriteButtonIco/>
                 </button>
                 <button className={"main-dislike-button"} onClick={(e) => {
                     e.stopPropagation();
-                    handleDisLike();
+                    controls.start({ x: -window.innerWidth, opacity: 0, transition: { duration: 0.25 } })
+                        .then(() => finishCard(false));
                 }}>
                     <MainDislikeButtonIco/>
                 </button>
             </div>
 
-        </div>
+        </motion.div>
     )
 }
-
-export default MainCard;

@@ -1,14 +1,15 @@
 import React, {useEffect, useState} from "react";
-import './index.css'
-import './MainScreenStyle.css'
+import './MainScreen.css'
 import {Link, useLocation} from 'react-router-dom'
 import MainScreenOnIco from "./icons/MainScreenOnIco.jsx";
 import WhiteLogoIco from "./icons/WhiteLogoIco.jsx";
 import HeartIcoOff from "./icons/HeartIcoOff.jsx";
 import MainScreenOffIco from "./icons/MainScreenOffIco.jsx";
 import HeartIcoOn from "./icons/HeartIcoOn.jsx";
-import MainCard from "./MainCard.jsx";
-import {fetchRandomEvent, sendFeedback} from "./tools/api.js";
+import {MainCard} from "./MainCard.jsx";
+import {eventForUser} from "./tools/api.js";
+import useAuth from "./hooks/useAuth.js";
+import {AnimatePresence} from "framer-motion";
 function Footer () {
     const location = useLocation();
     const isFavorites = location.pathname === "/favorites";
@@ -54,57 +55,51 @@ const FiltersButton = () => {
 
 
 function MainScreen() {
-    const [currentEvent, setCurrentEvent] = useState(null);
+    const {isAuthenticated, logout} = useAuth();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [cards, setCards] = useState([]);
 
     useEffect(() => {
-        loadRandomEvent();
-    }, []);
-
-    async function loadRandomEvent() {
-        setLoading(true);
-        try {
-            const event = await fetchRandomEvent('');
-            setCurrentEvent(event);
-        } catch (error) {
-            setError(error);
-        } finally {
-            setLoading(false);
+        if (!isAuthenticated) return
+        if (cards.length < 1) {
+            const need = 10 - cards.length          // 5-cards, но минимум 2
+            prefetch(Math.max(2, need))
         }
+    }, [isAuthenticated, cards])
+
+    async function prefetch(n = 1) {
+        const next = await eventForUser(n, '');
+        setCards(prev => {
+            const seen = new Set(prev.map(e => e.id));          // уже на экране
+            const unique = next.filter(e => !seen.has(e.id));   // только «новые»
+            return [...prev, ...unique];
+        });
     }
 
-    async function handleLike() {
-        try {
-            await sendFeedback('1', true, currentEvent.id);
-            loadRandomEvent();
-        } catch (err) {
-            console.error('Ошибка при лайке:', err);
-        }
-    }
-    async function handleDisLike() {
-        try {
-            await sendFeedback('1', false, currentEvent.id);
-            loadRandomEvent();
-        } catch (err) {
-            console.error('Ошибка при дизлайке:', err);
-        }
+    function handleCardFinish(victimId) {
+        setCards(prev => prev.filter(c => c.id !== victimId));
     }
 
-    if (loading) return <div>Загрузка...</div>;
+
+
+    if (!cards.length) return <div>Загрузка...</div>;
     if (error) return <div>Ошибка: {error.message}</div>;
-    if (!currentEvent) return <div>Нет данных...</div>;
-
-    console.log(currentEvent.id)
 
     return (
         <>
-            <FiltersButton/>
-            <MainCard
-                event={currentEvent}
-                onLike={handleLike}
-                onDisLike={handleDisLike}
-            />
+            <AnimatePresence>
+                {cards.map((ev, i) => (
+                    <div className={'card-holder'} key={ev.id}>
+                        <MainCard
+                            key={ev.id}
+                            event={ev}
+                            canDrag={i === 0}
+                            loadNext={handleCardFinish}
+                        />
+                    </div>
+                ))}
+            </AnimatePresence>
             <Footer/>
         </>
     )

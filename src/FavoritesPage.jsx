@@ -3,6 +3,8 @@ import './index.css'
 import './FavoritesPageStyle.css'
 import {Footer} from "./MainScreen.jsx";
 import formatDate from "../src/tools/FormatDate.jsx"
+import useAuth from "./hooks/useAuth.js";
+import {getShortlist} from "./tools/api.js";
 
 
 const YourFavorites = () => {
@@ -84,32 +86,28 @@ const LikedCard = ({event}) => {
 }
 
 function Favorites() {
+    const {isAuthenticated, logout} = useAuth()
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch("https://api.dada-tuda.ru/api/v1/shortlist/1?page_size=10&page_number=0", {
-            method: "GET",
-            headers: {
+        if (isAuthenticated) {
+            loadShortlist();
+        }
+    }, [isAuthenticated])
 
-            }
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Ошибка при загрузке данных');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setFavorites(data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                setError(error);
-                setLoading(false);
-            })
-    }, [])
+    async function loadShortlist() {
+        setLoading(true);
+        try {
+            const shortlist = await getShortlist(10, 0)
+            setFavorites(shortlist)
+        } catch (error) {
+            setError(error)
+        } finally {
+            setLoading(false);
+        }
+    }
 
     if (loading) {
         return <div>Loading...</div>;
@@ -126,17 +124,19 @@ function Favorites() {
         <>
             <p className={"favorites-header"}>Ваши мероприятия</p>
             <YourFavorites />
-            <div className={"liked-cards"}>
+            {favorites.length > 0 && (<div className={"liked-cards"}>
                 {starredEvents.map((event) => (
                     <LikedCard key={event.id} event={event} />
                 ))}
-            </div>
+            </div>)}
+
             <YourLiked />
-            <div className={"liked-cards"}>
+            {favorites.length > 0 && (<div className={"liked-cards"}>
                 {notStarredEvents.map((event) => (
                     <LikedCard key={event.id} event={event} />
                 ))}
-            </div>
+            </div>)}
+
             <Footer />
         </>
     )

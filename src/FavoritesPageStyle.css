@@ -5,7 +5,7 @@
     font-size: 35px;
     text-align: center;
     font-family: "Soyuz-Grotesk-Bold", sans-serif;
-    padding-top: 16px;
+    padding-top: 10vh;
     padding-bottom: 24px;
 }
 
@@ -105,6 +105,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     padding: 0 16px;
+    margin-bottom: 60px;
 }
 
 .fixed-footer{
