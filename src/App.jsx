@@ -9,7 +9,7 @@ import LogInPage from "./LogInPage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import {RegistrationPage} from "./RegistrationPage.jsx";
 import {logTelegramVersion} from "./tools/logTelegramVersion.js";
-import { init, swipeBehavior, retrieveLaunchParams } from '@telegram-apps/sdk';
+import { init, swipeBehavior, retrieveLaunchParams, retrieveRawInitData } from '@telegram-apps/sdk';
 
 
 
@@ -21,6 +21,9 @@ function App() {
             logTelegramVersion();
             const launchParams = retrieveLaunchParams()
             console.log(launchParams);
+
+            const rawInitData = retrieveRawInitData();
+            console.log(rawInitData);
 
             if (swipeBehavior.mount.isAvailable()) {
                 swipeBehavior.mount();
