@@ -68,6 +68,7 @@ export function MainCard({event,canDrag, loadNext}) {
     }, [event.id]);
 
     async function finishCard(like) {
+        console.log(event.imageURL[0], event.referralLink);
         const viewedSeconds = Math.round((Date.now() - start.current)/1000);
         try {
             sendFeedback(event.id, like, viewedSeconds, moreOpened, refClicked);
