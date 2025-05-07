@@ -19,8 +19,8 @@ function App() {
         try{
             init();
             logTelegramVersion();
-            const {initDataRaw, initData} = retrieveLaunchParams()
-            console.log(initDataRaw, initData);
+            const launchParams = retrieveLaunchParams()
+            console.log(launchParams);
 
             if (swipeBehavior.mount.isAvailable()) {
                 swipeBehavior.mount();
