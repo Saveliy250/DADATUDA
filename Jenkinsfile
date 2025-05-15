@@ -1,4 +1,4 @@
-@Library('maven-lib@1.0.3') _
+@Library('maven-lib@1.0.4') _
 pipeline {
 
     agent {
@@ -26,14 +26,7 @@ pipeline {
                                 docker rmi ${image} || true
                                """
                                 }
-                                build job: '/DEVOPS-JOBS/ARGO_CD_IMAGE_UPDATE',
-                                    wait: true,
-                                    parameters: [
-                                        string(name: 'REPO_SSH_URL', value: 'ssh://git@bitbucket.dada-tuda.ru:7999/dada/dada-argo.git'),
-                                        string(name: 'VALUES_FILE_PATH', value: 'services/tg-miniapp/charts/app/values.yaml'),
-                                        string(name: 'NEW_TAG', value: result.getTag()),
-                                        string(name: 'BRANCH', value: 'develop')
-                                    ]
+                                deployToArgo('ssh://git@bitbucket.dada-tuda.ru:7999/dada/dada-argo.git', 'services/tg-miniapp/charts/app/values.yaml', result.getTag(), 'develop')
                             }
                         }
                     }
