@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import './index.css'
 import {Route, Routes} from "react-router-dom";
 import MainScreen from "./MainScreen.jsx";
@@ -8,22 +8,16 @@ import EventPage from "./EventPage.jsx";
 import LogInPage from "./LogInPage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import {RegistrationPage} from "./RegistrationPage.jsx";
-import {logTelegramVersion} from "./tools/logTelegramVersion.js";
-import { init, swipeBehavior, retrieveLaunchParams, retrieveRawInitData } from '@telegram-apps/sdk';
+import { init} from '@telegram-apps/sdk';
 import {useLaunchParams} from "@telegram-apps/sdk-react";
 
 
 
 
 function App() {
-    useEffect(() => {
-        try {
-            init();
-            console.log(useLaunchParams())
-        } catch (e) {
-            console.error(e);
-        }
-    }, [])
+    init();
+    const initData = useLaunchParams()
+    console.log(initData);
 
 
 
