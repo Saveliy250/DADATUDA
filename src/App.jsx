@@ -1,4 +1,3 @@
-import {useEffect} from 'react';
 import './index.css'
 import {Route, Routes} from "react-router-dom";
 import MainScreen from "./MainScreen.jsx";
@@ -8,18 +7,12 @@ import EventPage from "./EventPage.jsx";
 import LogInPage from "./LogInPage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import {RegistrationPage} from "./RegistrationPage.jsx";
-import { init} from '@telegram-apps/sdk';
-import {useLaunchParams} from "@telegram-apps/sdk-react";
+
 
 
 
 
 function App() {
-    init();
-    const initData = useLaunchParams()
-    console.log(initData);
-
-
 
     return (
         <>
