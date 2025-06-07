@@ -1,5 +1,5 @@
 
-const BASE_URL = "https://api.dada-tuda.ru";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export async function registrUser(data) {
     const response = await fetch(`${BASE_URL}/api/v2/users/register`, {
@@ -171,4 +171,12 @@ export async function sendFeedback(eventId, like, viewedSeconds, moreOpened, ref
         "userId": "stringi"
     };
     return authFetch(`${BASE_URL}/api/v3/feedback`, {method: "POST", body: JSON.stringify(data)});
+}
+
+export async function toggleFavorite(isFavorite, id) {
+    const newFavorite = !isFavorite
+
+    return authFetch(`${BASE_URL}/api/v3/feedback/${id}`, {method: "PATCH", body: JSON.stringify({
+            starred: newFavorite,
+        })});
 }

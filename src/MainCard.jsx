@@ -16,7 +16,7 @@ import {sendFeedback} from "./tools/api.js";
 
 
 export function MainCard({event,canDrag, loadNext}) {
-    const [slide , setSlide]      = useState(0);          // будущее слайд-шоу
+    const [slide , setSlide]      = useState(0);
     const [datePart,timePart] = formatDate(event.date).split(" ");
     const price = event.price !== '0' ? `${event.price} рублей` : "Бесплатно"
 
@@ -32,8 +32,8 @@ export function MainCard({event,canDrag, loadNext}) {
     const controls  = useAnimation();
 
     async function handleDragEnd(_, info){
-        const offsetX   = info.offset.x;          // Δ-смещение
-        const threshold = window.innerWidth * .25; // 25 % ширины
+        const offsetX   = info.offset.x;
+        const threshold = window.innerWidth * .25;
 
         if (Math.abs(offsetX) < threshold){
             await controls.start({x:0, rotate:0});
@@ -49,7 +49,7 @@ export function MainCard({event,canDrag, loadNext}) {
 
     const [isDragging, setIsDragging] = useState(false);
     function onTap() {
-        if (!expanded && !isDragging) {
+        if (!isDragging) {
             setSlide((n) => (n + 1) % event.imageURL.length);
         }
     }
@@ -82,7 +82,7 @@ export function MainCard({event,canDrag, loadNext}) {
         <motion.div
     className="MainCard"
     style={{ x, rotate, opacity }}
-    drag={!expanded ? "x" : false}
+    drag={"x"}
     dragConstraints={{ left: -1000, right: 1000 }}
     onDragEnd={handleDragEnd}
     onDragStart={() => setIsDragging(true)}
@@ -112,7 +112,6 @@ export function MainCard({event,canDrag, loadNext}) {
                     </button>
                 </motion.div>
 
-                {/* ---------- РАСШИРЕННЫЙ ВИД ---------- */}
                 <AnimatePresence motion={"wait"}>
                     {expanded && (
                         <motion.div

@@ -10,6 +10,7 @@ import {MainCard} from "./MainCard.jsx";
 import {eventForUser} from "./tools/api.js";
 import useAuth from "./hooks/useAuth.js";
 import {AnimatePresence} from "framer-motion";
+import {LoadingScreen} from "./shared/ui/LoadingScreen.jsx";
 function Footer () {
     const location = useLocation();
     const isFavorites = location.pathname === "/favorites";
@@ -58,12 +59,19 @@ function MainScreen() {
     const {isAuthenticated, logout} = useAuth();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [cards, setCards] = useState([]);
+    const [cards, setCards] = useState(() => {
+        const saved = localStorage.getItem('сards');
+        return saved ? JSON.parse(saved) : [];
+    });
+
+    useEffect(() => {
+        localStorage.setItem('сards', JSON.stringify(cards));
+    }, [cards]);
 
     useEffect(() => {
         if (!isAuthenticated) return
         if (cards.length < 1) {
-            const need = 10 - cards.length          // 5-cards, но минимум 2
+            const need = 10 - cards.length
             prefetch(Math.max(2, need))
         }
     }, [isAuthenticated, cards])
@@ -83,7 +91,7 @@ function MainScreen() {
 
 
 
-    if (!cards.length) return <div>Загрузка...</div>;
+    if (!cards.length) return <LoadingScreen/>;
     if (error) return <div>Ошибка: {error.message}</div>;
 
     return (
