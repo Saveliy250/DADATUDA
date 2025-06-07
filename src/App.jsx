@@ -7,13 +7,36 @@ import EventPage from "./EventPage.jsx";
 import LogInPage from "./LogInPage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import {RegistrationPage} from "./RegistrationPage.jsx";
-
+import {useEffect} from "react";
+import {logTelegramVersion} from "./tools/logTelegramVersion.js";
+import { init, swipeBehavior, retrieveLaunchParams, retrieveRawInitData } from '@telegram-apps/sdk';
 
 
 
 
 function App() {
+    useEffect(() => {
+        try{
+            init();
+            logTelegramVersion();
+            const launchParams = retrieveLaunchParams()
+            console.log(launchParams);
 
+            const rawInitData = retrieveRawInitData();
+            console.log(rawInitData);
+
+            if (swipeBehavior.mount.isAvailable()) {
+                swipeBehavior.mount();
+                console.log(swipeBehavior.isMounted()); // true
+            }
+            if (swipeBehavior.disableVertical.isAvailable()) {
+                swipeBehavior.disableVertical();
+                console.log(swipeBehavior.isVerticalEnabled()); // false
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }, []);
     return (
         <>
             <Routes>

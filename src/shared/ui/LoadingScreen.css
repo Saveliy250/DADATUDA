@@ -1,0 +1,34 @@
+
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #191919;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-content {
+    text-align: center;
+    color: #ff6cf1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.loading-title h1{
+    color: #ff6cf1;
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+}
+
+.loading-illustration svg {
+    max-width: 80vw;
+    height: auto;
+}
+
