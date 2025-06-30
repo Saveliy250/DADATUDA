@@ -1,7 +1,9 @@
 import './index.css'
+import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import {Route, Routes} from "react-router-dom";
 import MainScreen from "./MainScreen.jsx";
-import Filters from "./filters";
+import FiltersPage from "./pages/FiltersPage.jsx";
 import Favorites from "./FavoritesPage.jsx";
 import EventPage from "./EventPage.jsx";
 import LogInPage from "./LogInPage.jsx";
@@ -48,7 +50,7 @@ function App() {
                     </PrivateRoute>} />
                 <Route path="/filters" element={
                     <PrivateRoute>
-                        <Filters />
+                        <FiltersPage />
                     </PrivateRoute>
                     }  />
                 <Route path="/favorites" element={
