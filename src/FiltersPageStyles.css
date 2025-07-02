@@ -1,13 +1,24 @@
+.filters {
+    padding: 16px 16px 20vh 16px;
+    height: 100%;
+    overflow: auto;
+}
+
+@media screen and (min-width: 1000px) {
+    .filters {
+        max-width: 70%;
+    }
+}
 
 header {
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    padding: 16px;
 }
+
 .back-arrow {
-    position: absolute;
+    position: fixed;
     left: 16px;
 }
 
@@ -24,21 +35,23 @@ header h1 {
     font-size: 24px;
     margin-left: 16px;
 }
+
 .flex-container {
     display: flex;
     align-items: center;
-    padding-left: 24px;
     margin-bottom: 27px;
 }
+
 .arrow {
     display: flex;
 }
+
 .categories {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin: 0 16px;
 }
+
 .category-btn {
     font-family: "Helvetica-regular", sans-serif;
     display: inline-flex;
@@ -54,15 +67,21 @@ header h1 {
     transition: background-color 0.2s, color 0.2s;
 }
 
+.category-block, .price-block, .calendar-block {
+    margin-bottom: 12px;
+}
+
 .category-btn.selected {
     background-color: #FFFFFF;
     color: #000000;
     border-color: #FFFFFF;
 }
+
 .category-btn svg{
     fill: #FFFFFF;
     transition: fill 0.3s ease;
 }
+
 .category-btn.selected svg{
     background-color: #FFFFFF;
     fill: #000000;
@@ -72,34 +91,42 @@ header h1 {
     display: flex;
     gap: 16px;
 }
+
 .category-btn.concert {
     display: flex;
     gap: 16px;
 }
+
 .category-btn.exhibition {
     display: flex;
     gap: 16px;
 }
+
 .category-btn.standup {
     display: flex;
     gap: 16px;
 }
+
 .category-btn.excursion {
     display: flex;
     gap: 16px;
 }
+
 .category-btn.sport {
     display: flex;
     gap: 16px;
 }
+
 .category-btn.bar {
     display: flex;
     gap: 16px;
 }
+
 .category-btn.restaurant {
     display: flex;
     gap: 16px;
 }
+
 .category-btn.cafe {
     display: flex;
     gap: 16px;
@@ -109,6 +136,7 @@ header h1 {
     font-weight: 500;
     font-size: 14px;
 }
+
 footer {
     position: fixed;
     bottom: 0;
