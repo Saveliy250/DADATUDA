@@ -9,8 +9,8 @@ build:
         - docker build -t miniapp:latest .
 run:
     stage: run
-    tags: 
+    tags:
         - dind
     script:
         - docker rm -f miniapp || true
-        - docker run -d --network=shared-network --name miniapp -p 5173:5173 miniapp:latest 
+        - docker run -d --network=shared-network --name miniapp -p 5173:5173 miniapp:latest

@@ -1,27 +1,29 @@
-import './index.css'
+import { useEffect } from 'react';
+
+import './index.css';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
-import {Route, Routes} from "react-router-dom";
-import MainScreen from "./MainScreen.jsx";
-import FiltersPage from "./pages/FiltersPage.jsx";
-import Favorites from "./FavoritesPage.jsx";
-import EventPage from "./EventPage.jsx";
-import LogInPage from "./LogInPage.jsx";
-import PrivateRoute from "./PrivateRoute.jsx";
-import {RegistrationPage} from "./RegistrationPage.jsx";
-import {useEffect} from "react";
-import {logTelegramVersion} from "./tools/logTelegramVersion.js";
-import { init, swipeBehavior, retrieveLaunchParams, retrieveRawInitData } from '@telegram-apps/sdk';
 
+import { Route, Routes } from 'react-router-dom';
 
+import { logTelegramVersion } from './tools/logTelegramVersion.js';
+import { init, retrieveLaunchParams, retrieveRawInitData, swipeBehavior } from '@telegram-apps/sdk';
 
+import { MainPage } from './pages/MainPage/MainPage.jsx';
+import { FiltersPage } from './pages/FiltersPage/FiltersPage.jsx';
+import { FavoritesPage } from './pages/FavoritesPage/FavoritesPage.jsx';
+import { EventPage } from './pages/EventPage/EventPage.jsx';
+import { LoginPage } from './pages/LoginPage/LoginPage.jsx';
+import { RegistrationPage } from './pages/RegistrationPage/RegistrationPage.jsx';
 
-function App() {
+import { PrivateRoute } from './shared/components/PrivateRoute.jsx';
+
+export const App = () => {
     useEffect(() => {
-        try{
+        try {
             init();
             logTelegramVersion();
-            const launchParams = retrieveLaunchParams()
+            const launchParams = retrieveLaunchParams();
             console.log(launchParams);
 
             const rawInitData = retrieveRawInitData();
@@ -39,29 +41,38 @@ function App() {
             console.log(e);
         }
     }, []);
+
     return (
         <>
             <Routes>
-                <Route path="/login" element={<LogInPage/>} />
-                <Route path="/registration" element={<RegistrationPage/>} />
-                <Route path="/" element={
-                    <PrivateRoute>
-                        <MainScreen />
-                    </PrivateRoute>} />
-                <Route path="/filters" element={
-                    <PrivateRoute>
-                        <FiltersPage />
-                    </PrivateRoute>
-                    }  />
-                <Route path="/favorites" element={
-                    <PrivateRoute>
-                        <Favorites />
-                    </PrivateRoute>
-                    } />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/registration" element={<RegistrationPage />} />
+                <Route
+                    path="/"
+                    element={
+                        <PrivateRoute>
+                            <MainPage />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/filters"
+                    element={
+                        <PrivateRoute>
+                            <FiltersPage />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/favorites"
+                    element={
+                        <PrivateRoute>
+                            <FavoritesPage />
+                        </PrivateRoute>
+                    }
+                />
                 <Route path="/events/:eventId" element={<EventPage />} />
             </Routes>
         </>
-    )
-}
-
-export default App
+    );
+};

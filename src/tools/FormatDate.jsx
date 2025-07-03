@@ -1,6 +1,4 @@
-
-
-function formatDate(dateStr) {
+export const formatDate = (dateStr) => {
     const date = new Date(dateStr);
 
     const day = String(date.getDate()).padStart(2, '0');
@@ -10,5 +8,4 @@ function formatDate(dateStr) {
     const minute = String(date.getMinutes()).padStart(2, '0');
 
     return `${day}.${month} ${hour}:${minute}`;
-}
-export default formatDate;
+};
