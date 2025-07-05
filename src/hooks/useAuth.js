@@ -1,15 +1,18 @@
-import {useState, useEffect, useCallback} from "react";
-import {useNavigate} from "react-router-dom";
+import { useEffect, useState } from 'react';
+
+import { useNavigate } from 'react-router-dom';
+
 import {
     clearTokens,
     getAccessToken,
     getRefreshToken,
-    loginUser, registrUser,
+    loginUser,
+    registerUser,
     saveTokens,
-    setOnLogoutCallback
-} from "../tools/api.js";
+    setOnLogoutCallback,
+} from '../tools/api.js';
 
-export default function useAuth() {
+export const useAuth = () => {
     const [loading, setLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [error, setError] = useState(null);
@@ -29,8 +32,8 @@ export default function useAuth() {
         setLoading(true);
         setError(null);
         try {
-            const response = await registrUser(data);
-            navigate("/login")
+            const response = await registerUser(data);
+            navigate('/login');
         } catch (error) {
             setError(error);
         } finally {
@@ -43,10 +46,10 @@ export default function useAuth() {
         setError(null);
 
         try {
-            const {accessToken, refreshToken} = await loginUser(username, password);
+            const { accessToken, refreshToken } = await loginUser(username, password);
             saveTokens(accessToken, refreshToken);
             setIsAuthenticated(true);
-            navigate("/");
+            navigate('/');
         } catch (error) {
             setError(error);
             setIsAuthenticated(false);
@@ -58,10 +61,8 @@ export default function useAuth() {
     function logout() {
         clearTokens();
         setIsAuthenticated(false);
-        navigate("/login");
+        navigate('/login');
     }
-
-
 
     return {
         registration,
@@ -71,4 +72,4 @@ export default function useAuth() {
         login,
         logout,
     };
-}
+};

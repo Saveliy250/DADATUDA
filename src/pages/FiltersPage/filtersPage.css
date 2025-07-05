@@ -1,0 +1,145 @@
+.filters {
+    padding: 16px 16px 20vh 16px;
+    height: 100%;
+    overflow: auto;
+}
+
+@media screen and (min-width: 1000px) {
+    .filters {
+        max-width: 70%;
+    }
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.back-arrow {
+    position: fixed;
+    left: 16px;
+}
+
+header h1 {
+    font-family: 'NauryzRedKeds', sans-serif;
+    font-size: 38.53px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.subtitle {
+    position: relative;
+    display: inline-block;
+    font-size: 24px;
+    margin-left: 16px;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+}
+
+.arrow {
+    display: flex;
+}
+
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.category-btn {
+    font-family: 'Helvetica-regular', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+    border-radius: 16px;
+    padding: 8px 16px;
+    background-color: #191919;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    transition:
+        background-color 0.2s,
+        color 0.2s;
+}
+
+.category-block,
+.price-block,
+.calendar-block {
+    margin-bottom: 12px;
+}
+
+.category-gap {
+    margin-bottom: 20px;
+}
+
+.category-btn.selected {
+    background-color: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+}
+
+.category-btn svg {
+    fill: #ffffff;
+    transition: fill 0.3s ease;
+}
+
+.category-btn.selected svg {
+    background-color: #ffffff;
+    fill: #000000;
+}
+
+.category-btn.theater {
+    display: flex;
+    gap: 16px;
+}
+
+.category-btn.concert {
+    display: flex;
+    gap: 16px;
+}
+
+.category-btn.exhibition {
+    display: flex;
+    gap: 16px;
+}
+
+.category-btn.standup {
+    display: flex;
+    gap: 16px;
+}
+
+.category-btn.excursion {
+    display: flex;
+    gap: 16px;
+}
+
+.category-btn.sport {
+    display: flex;
+    gap: 16px;
+}
+
+.category-btn.bar {
+    display: flex;
+    gap: 16px;
+}
+
+.category-btn.restaurant {
+    display: flex;
+    gap: 16px;
+}
+
+.category-btn.cafe {
+    display: flex;
+    gap: 16px;
+}
+
+.logo {
+    font-weight: 500;
+    font-size: 14px;
+}

@@ -1,0 +1,94 @@
+.favoritesPage {
+    padding: 16px;
+}
+
+.favorites-header {
+    color: #ecfe54;
+    font-size: 35px;
+    text-align: center;
+    font-family: 'Soyuz-Grotesk-Bold', sans-serif;
+    padding-bottom: 24px;
+}
+
+.liked-card {
+    width: 100%;
+    border-radius: 12px;
+    background-color: #ffffff;
+    padding: 4px;
+    position: relative;
+}
+
+.liked-card-img-wrapper {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.liked-card-img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.favorite-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.trash-button {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.liked-card-date {
+    font-family: 'Soyuz-Grotesk-Bold', sans-serif;
+    font-size: 14px;
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+}
+
+.liked-card-content {
+    margin-top: 16px;
+    color: black;
+}
+
+.liked-card-title {
+    font-family: 'Soyuz-Grotesk-Bold', sans-serif;
+    font-size: 20px;
+    margin-left: 8px;
+}
+
+.liked-card-address {
+    font-family: 'Helvetica-regular', sans-serif;
+    font-size: 12px;
+    margin-bottom: 16px;
+    margin-left: 8px;
+}
+
+.liked-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 60px;
+}
+
+.navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #191919;
+    text-align: center;
+    z-index: 999;
+}
