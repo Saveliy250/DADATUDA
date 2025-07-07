@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'NauryzRedKeds';
+    src: url('../../../fonts/NauryzRedKeds.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Helvetica-regular";
+    src: url('../../../fonts/helvetica_regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Soyuz-Grotesk-Bold';
+    src: url('../../../fonts/Soyuz_Grotesk_Bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}

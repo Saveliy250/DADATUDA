@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import '../../index.css';
-import './favoritesPage.css';
+import styles from './FavoritePage.module.css';
 
 import { useAuth } from '../../hooks/useAuth.js';
 import { getShortlist, toggleFavorite } from '../../tools/api.js';
 
-import { Navigation } from '../MainPage/components/Navigation.jsx';
 import { LoadingScreen } from '../../shared/ui/LoadingScreen.jsx';
-import { CardList } from './components/CardList.jsx';
+import { FavoriteCardList } from './components/FavoriteCardList/FavoriteCardList.jsx';
+import { Header } from '../../shared/components/Header/Header.jsx';
 
 export const FavoritesPage = () => {
     const { isAuthenticated } = useAuth();
@@ -59,18 +58,22 @@ export const FavoritesPage = () => {
 
     return (
         <>
-            <p className="favorites-header">Ваши мероприятия</p>
+            <Header title="мои мероприятия" withIcon={false} />
 
-            <div className="favoritesPage">
-                <CardList cardList={favoriteItems} title="избранное" color="#FF6CF1" handleClick={onFavoriteClick} />
-                <CardList
+            <div className={styles.favoritesPage}>
+                <FavoriteCardList
+                    cardList={favoriteItems}
+                    title="избранное"
+                    color="#FF6CF1"
+                    handleClick={onFavoriteClick}
+                />
+                <FavoriteCardList
                     cardList={notFavoriteItems}
                     title="понравившиеся"
                     color="#8CF63B"
                     handleClick={onFavoriteClick}
                 />
             </div>
-            <Navigation />
         </>
     );
 };

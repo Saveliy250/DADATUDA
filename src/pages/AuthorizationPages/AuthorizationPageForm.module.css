@@ -1,0 +1,118 @@
+@import '../../shared/styles/variables.css';
+
+.form {
+    margin-top: 3vh;
+}
+
+.inputWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.inputWrapper::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--color-acid);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s;
+}
+
+.inputWrapper:focus-within::after {
+    transform: scaleX(1);
+}
+
+.field {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: var(--color-white);
+    padding: 14px 0 10px;
+    font-size: 18px;
+    outline: none;
+}
+
+.field:focus::after {
+    transform: scaleX(1);
+}
+
+.field::placeholder {
+    color: var(--color-white);
+}
+
+.row {
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.eyeButton {
+    display: flex;
+    align-items: center;
+    border: none;
+    background: transparent;
+}
+
+.forgotLink {
+    flex: 0 0 auto;
+    font-size: 14px;
+    color: var(--color-white);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.forgotLink:hover {
+    color: var(--color-acid);
+}
+
+.loginButton,
+.googleButton {
+    width: 100%;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    padding: 14px 0;
+    margin-top: 32px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.loginButton {
+    background: #fff;
+    color: var(--color-dark);
+}
+
+.loginButton:hover {
+    background: var(--color-light-grey);
+}
+
+.googleButton {
+    background: var(--color-magenta);
+    color: var(--color-white);
+}
+
+.googleButton:hover {
+    background: var(--color-dark-magenta);
+}
+
+.error {
+    color: var(--color-red);
+    font-size: 15px;
+    margin-bottom: 24px;
+}
+
+@media screen and (min-width: 768px) {
+    .field {
+        font-size: 20px;
+    }
+
+    .loginButton,
+    .googleButton {
+        font-size: 20px;
+    }
+}

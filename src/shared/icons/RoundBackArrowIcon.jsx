@@ -1,6 +1,6 @@
-export const RoundBackArrowIcon = () => {
+export const RoundBackArrowIcon = ({ size }) => {
     return (
-        <svg width="41" height="42" viewBox="0 0 41 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={size} height={size} viewBox="0 0 41 42" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M15.3586 27.4885L34.8728 27.4885" stroke="#8CF63B" strokeWidth="4.59157" />
             <path
                 d="M27.7941 14.739L38 27.5498L27.7941 40.1152"

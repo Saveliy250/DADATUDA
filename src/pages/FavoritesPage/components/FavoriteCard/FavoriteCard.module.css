@@ -1,0 +1,67 @@
+@import "../../../../shared/styles/variables.css";
+
+.card {
+    width: 100%;
+    border-radius: 12px;
+    background-color: var(--color-white);
+    padding: 4px;
+    position: relative;
+}
+
+.cardWrapper {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.cardImg {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.favoriteButton {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.trashButton {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.favoriteDates {
+    font-family: var(--font-Soyuz-Grotesk), sans-serif;
+    font-size: 14px;
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+}
+
+.cardContent {
+    margin-top: 16px;
+    color: black;
+}
+
+.cardTitle {
+    font-family: var(--font-Soyuz-Grotesk), sans-serif;
+    font-size: 20px;
+    margin-left: 8px;
+}
+
+.cardAddress {
+    font-family: var(--font-helvetica), sans-serif;
+    font-size: 12px;
+    margin-bottom: 16px;
+    margin-left: 8px;
+}
