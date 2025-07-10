@@ -6,6 +6,6 @@ export default defineConfig({
     plugins: [react()],
     server: {
         host: '0.0.0.0',
-        allowedHosts: ['ui.dada-tuda.ru', 'dada-tuda.ru', 'tg-miniapp-dada-b1.dada-tuda.ru'],
+        allowedHosts: ['ui.dada-tuda.ru', 'tg-miniapp-dada-b1.dada-tuda.ru'],
     },
 });
