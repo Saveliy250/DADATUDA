@@ -1,0 +1,131 @@
+@import '../../shared/styles/variables.css';
+
+.logo {
+    position: sticky;
+    padding: 15px;
+    background-color: var(--color-dark);
+    width: 100%;
+    height: 66px;
+    top: 0;
+    left: 30px;
+    z-index: 2;
+}
+
+.eventWrapper {
+    width: 100%;
+    height: calc(100vh - 75px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+}
+
+.event {
+    padding: 0 30px;
+    display: grid;
+    grid-template-columns:
+        minmax(320px, max(35vw, min(45vw, 1127px)))
+        1fr;
+    place-content: center;
+    column-gap: 16px;
+}
+
+.eventImgWrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow:
+        0 0 0 3px var(--color-bright-acid),
+        0 0 15px var(--color-bright-acid);
+}
+
+.eventImg {
+    width: 100%;
+    max-width: 1127px;
+    max-height: 738px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.eventContentWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.eventName {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 23px;
+    font:
+        32px/1.2 'Soyuz-Grotesk-Bold',
+        sans-serif;
+    color: var(--color-bright-acid);
+}
+
+.eventNameTitle {
+    font-size: 123%;
+}
+
+.eventDescription {
+    display: flex;
+    gap: 16px;
+    margin: 16px 0;
+    font-size: 18px;
+    line-height: 1.45;
+    overflow: auto;
+    scrollbar-width: thin;
+}
+
+.eventButton {
+    cursor: pointer;
+    border: none;
+    border-radius: 16px;
+    background: var(--color-bright-acid);
+    color: var(--color-dark);
+    font: 18px/1.2 calc(--font-helvetica), sans-serif;
+    padding: 12px 28px;
+    margin-bottom: 16px;
+    transition: background 0.2s;
+    text-decoration: none;
+    height: min-content;
+}
+
+.eventButton:hover {
+    background: var(--color-bright-acid);
+}
+
+.eventLink {
+    display: flex;
+    gap: 16px;
+}
+
+@media (max-width: 1260px) {
+    .eventWrapper {
+        height: calc(100% + 88px);
+    }
+
+    .event {
+        grid-template-columns: 1fr;
+        row-gap: 40px;
+        margin-top: 30px
+    }
+}
+
+
+@media (max-width: 600px) {
+    .eventName {
+        font-size: 24px;
+    }
+
+    .eventDescription {
+        font-size: 16px;
+    }
+
+    .eventButton {
+        font-size: 16px;
+        padding: 10px 22px;
+    }
+}

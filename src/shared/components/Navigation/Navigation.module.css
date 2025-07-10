@@ -1,0 +1,26 @@
+@import "../../styles/variables.css";
+
+.navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    background-color: var(--color-dark);
+    padding: 16px 0;
+    margin-top: 60px;
+    z-index: 100;
+}
+
+.fullNavContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 20vw;
+    margin-left: 20vw;
+}
+
+.smallNavContent {
+    display: flex;
+    justify-content: center;
+}

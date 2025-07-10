@@ -1,0 +1,16 @@
+.filters {
+    padding: 18px;
+    height: calc(100vh + 11vh);
+    overflow: auto;
+}
+
+.categoryBlock {
+    margin-bottom: 12px;
+}
+
+@media screen and (min-width: 487px) {
+    .filters {
+        height: 100%;
+    }
+}
+

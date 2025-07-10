@@ -1,16 +1,14 @@
 import { useState } from 'react';
 
-import './filtersPage.css';
+import styles from './FiltersPage.module.css';
 
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import { RangeSlider } from '@mantine/core';
 import 'dayjs/locale/ru';
 
-import { WhiteLogoIcon } from '../../shared/icons/WhiteLogoIcon.jsx';
-
-import { CategoryList } from './components/CategoryList.jsx';
-import { ArrowSubtitle } from '../../shared/components/ArrowSubtitle.jsx';
-import { FiltersPageHeader } from './components/FiltersPageHeader.jsx';
+import { CategoryList } from './components/CategoryList/CategoryList.jsx';
+import { ArrowSubtitle } from '../../shared/components/ArrowSubtitle/ArrowSubtitle.jsx';
+import { Header } from '../../shared/components/Header/Header.jsx';
 
 export const FiltersPage = () => {
     const [selectedCategories, setSelectedCategories] = useState([]);
@@ -34,12 +32,12 @@ export const FiltersPage = () => {
 
     return (
         <>
-            <FiltersPageHeader onApplyClick={handleApplyClick} />
-            <div className="filters">
-                <div className="category-block">
+            <Header onApplyClick={handleApplyClick} title="фильтры" withIcon={true} />
+
+            <div className={styles.filters}>
+                <div className={styles.categoryBlock}>
                     <ArrowSubtitle
                         color="#FF6CF1"
-                        className="category-gap"
                         subtitle={
                             <>
                                 категории
@@ -48,14 +46,15 @@ export const FiltersPage = () => {
                             </>
                         }
                     />
+
                     <CategoryList
                         selectedCategories={selectedCategories}
                         setSelectedCategories={setSelectedCategories}
                     />
                 </div>
-                <div className="price-block">
+
+                <div className={styles.categoryBlock}>
                     <ArrowSubtitle
-                        className="category-gap"
                         color="#FF601C"
                         subtitle={
                             <>
@@ -75,9 +74,9 @@ export const FiltersPage = () => {
                         onChange={setPrice}
                     />
                 </div>
-                <div className="calendar-block">
+
+                <div className={styles.categoryBlock}>
                     <ArrowSubtitle
-                        className="category-gap"
                         color="#8CF63B"
                         subtitle={
                             <>
@@ -87,6 +86,7 @@ export const FiltersPage = () => {
                             </>
                         }
                     />
+
                     <DatesProvider settings={{ locale: 'ru' }}>
                         <DatePickerInput
                             clearable
@@ -101,9 +101,6 @@ export const FiltersPage = () => {
                         />
                     </DatesProvider>
                 </div>
-                <footer>
-                    <WhiteLogoIcon />
-                </footer>
             </div>
         </>
     );

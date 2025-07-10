@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import './mainPage.css';
+import styles from './MainPage.module.css';
 
 import { AnimatePresence } from 'framer-motion';
 
@@ -8,9 +8,8 @@ import { eventForUser } from '../../tools/api.js';
 
 import { useAuth } from '../../hooks/useAuth.js';
 
-import { MainCard } from './components/MainCard.jsx';
+import { MainPageCard } from './components/MainPageCards/MainPageCard.jsx';
 import { LoadingScreen } from '../../shared/ui/LoadingScreen.jsx';
-import { Navigation } from './components/Navigation.jsx';
 
 export const MainPage = () => {
     const { isAuthenticated, logout } = useAuth();
@@ -53,12 +52,11 @@ export const MainPage = () => {
         <>
             <AnimatePresence>
                 {cards.map((ev, i) => (
-                    <div className={'card-holder'} key={ev.id}>
-                        <MainCard key={ev.id} event={ev} canDrag={i === 0} loadNext={handleCardFinish} />
+                    <div className={styles.cardWrapper} key={ev.id}>
+                        <MainPageCard key={ev.id} event={ev} canDrag={i === 0} loadNext={handleCardFinish} />
                     </div>
                 ))}
             </AnimatePresence>
-            <Navigation />
         </>
     );
 };

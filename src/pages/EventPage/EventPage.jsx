@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import './eventPage.css';
+import styles from './EventPage.module.css';
 
 import { Link, useParams } from 'react-router-dom';
 
 import { WhiteLogoIcon } from '../../shared/icons/WhiteLogoIcon.jsx';
-import { ArrowSubtitle } from '../../shared/components/ArrowSubtitle.jsx';
+import { ArrowSubtitle } from '../../shared/components/ArrowSubtitle/ArrowSubtitle.jsx';
 
 export const EventPage = () => {
     const { eventId } = useParams();
@@ -36,6 +36,7 @@ export const EventPage = () => {
                 setLoading(false);
             });
     }, [eventId]);
+
     if (noEvent)
         return (
             <div className={'eventPage-204'}>
@@ -49,31 +50,41 @@ export const EventPage = () => {
 
     return (
         <>
-            <div className="event-page-logo">
+            <div className={styles.logo}>
                 <WhiteLogoIcon />
             </div>
-            <div className="event-page-content">
-                <div className="event-page-img-wrapper">
-                    <img src={eventData.imageURL[0]} alt={eventData.name} className="event-page-img" />
-                </div>
-                <div className="event-page-content-wrapper">
-                    <div className="event-name">
-                        <ArrowSubtitle color="#ECFE54" subtitle={eventData.name} className="event-name-title" />
+
+            <div className={styles.eventWrapper}>
+                <div className={styles.event}>
+                    <div className={styles.eventImgWrapper}>
+                        <img src={eventData.imageURL[0]} alt={eventData.name} className={styles.eventImg} />
                     </div>
-                    <div className="event-description">
-                        О мероприятии: <br />
-                        {eventData.description}
-                    </div>
-                    <div className="event-description">
-                        <ArrowSubtitle withText={false} color="#ECFE54" />
-                        <a
-                            className="event-button"
-                            href={`${eventData.referralLink}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Перейти на сайт мероприятия
-                        </a>
+
+                    <div className={styles.eventContentWrapper}>
+                        <div className={styles.eventName}>
+                            <ArrowSubtitle
+                                color="#ECFE54"
+                                subtitle={eventData.name}
+                                className={styles.eventNameTitle}
+                            />
+                        </div>
+
+                        <div className={styles.eventDescription}>
+                            О мероприятии: <br />
+                            {eventData.description}
+                        </div>
+                        <div className={styles.eventLink}>
+                            <ArrowSubtitle withText={false} color="#ECFE54" />
+
+                            <a
+                                className={styles.eventButton}
+                                href={`${eventData.referralLink}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Перейти на сайт мероприятия
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

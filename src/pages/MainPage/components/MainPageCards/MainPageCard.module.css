@@ -1,0 +1,108 @@
+@import "../../../../shared/styles/variables.css";
+
+.card {
+    position: relative;
+    pointer-events: auto;
+    width: 90vw;
+    max-width: 560px;
+    height: 80vh;
+    max-height: calc(560px * 16 / 9);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 0 10px var(--color-acid);
+    aspect-ratio: 9/16;
+    z-index: 1;
+}
+
+.cardWrapper {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 9/16;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    margin: auto;
+    user-select: none;
+}
+
+.cardWrapper::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(
+            to top,
+            rgba(255, 96, 28, 0) 0%,
+            rgba(255, 96, 28, 0.3) 20%,
+            rgba(255, 96, 28, 0.7) 40%,
+            rgba(255, 96, 28, 0.9) 60%,
+            rgba(255, 96, 28, 0.5) 80%,
+            rgba(255, 96, 28, 0.2) 90%,
+            rgba(255, 96, 28, 0.1) 95%,
+            rgba(255, 96, 28, 0) 100%
+    );
+    z-index: 0;
+}
+
+.cardImg {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    object-position: center;
+    user-select: none;
+}
+
+.mainActionsWrapper {
+    position: absolute;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    bottom: 13px;
+    width: 100%;
+    height: fit-content;
+}
+
+.cardInfo {
+    position: absolute;
+    bottom: 100px;
+    padding: 15px;
+    z-index: 3;
+    transition:
+            opacity 0.35s ease,
+            max-height 0.35s ease;
+    max-height: 40%;
+}
+
+.moreButton {
+    z-index: 1;
+    display: block;
+    border: none;
+    border-radius: 15px;
+    background: var(--color-acid);
+    color: var(--color-dark);
+    font-size: clamp(14px, 3.6vw, 18px);
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.cardTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-acid);
+}
+
+.cardTitleName {
+    font-family: var(--font-Soyuz-Grotesk), sans-serif;
+    font-size: 2em;
+}
+
+.cardPrice {
+    font-family: var(--font-helvetica), sans-serif;
+    font-size: 16px;
+}
+
