@@ -21,7 +21,7 @@ pipeline {
                                 docker rmi ${image} || true
                                """
                     }
-                    deployToArgo('ssh://git@bitbucket.dada-tuda.ru:7999/dada/dada-argo.git', 'services/tg-miniapp/charts/app/values.yaml', result.getTag(), 'develop')
+                    deployToArgo('ssh://git@bitbucket.dada-tuda.ru:7999/dada/dada-argo.git', 'services/tg-miniapp/values-prod.yaml', result.getTag(), 'develop')
                 }
             }
         }
@@ -43,7 +43,7 @@ pipeline {
                                 docker rmi ${image} || true
                                """
                     }
-                    deployToArgo('ssh://git@bitbucket.dada-tuda.ru:7999/dada/dada-argo.git', 'services/tg-miniapp/charts/app/values.yaml', result.getTag(), 'develop')
+                    deployToArgo('ssh://git@bitbucket.dada-tuda.ru:7999/dada/dada-argo.git', 'services/tg-miniapp/values-dev.yaml', result.getTag(), 'develop')
                 }
             }
         }
