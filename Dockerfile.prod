@@ -1,0 +1,26 @@
+# Этап сборки
+FROM node AS build
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Этап продакшен-сервера
+FROM node AS production
+
+WORKDIR /app
+
+# Устанавливаем легкий сервер
+RUN npm install -g serve
+
+# Копируем только собранные файлы
+COPY --from=build /app/dist /app/dist
+
+# Указываем порт, на котором работает serve
+EXPOSE 3000
+
+# Запускаем сервер на 0.0.0.0 (иначе внутри контейнера он будет слушать только localhost)
+CMD ["serve", "-s", "dist", "-l", "5173"]

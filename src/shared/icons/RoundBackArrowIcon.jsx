@@ -1,0 +1,18 @@
+export const RoundBackArrowIcon = ({ size }) => {
+    return (
+        <svg width={size} height={size} viewBox="0 0 41 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.3586 27.4885L34.8728 27.4885" stroke="#8CF63B" strokeWidth="4.59157" />
+            <path
+                d="M27.7941 14.739L38 27.5498L27.7941 40.1152"
+                stroke="#8CF63B"
+                strokeWidth="4.59157"
+                strokeLinejoin="round"
+            />
+            <path
+                d="M37.9339 3H17.0053C-1.66846 3 -1.66842 27.4884 17.0053 27.4884H37.9339"
+                stroke="#8CF63B"
+                strokeWidth="4.59157"
+            />
+        </svg>
+    );
+};
