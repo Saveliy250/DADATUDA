@@ -1,0 +1,28 @@
+@import '../../../shared/styles/variables.css';
+
+.header {
+    display: flex;
+    justify-content: space-around;
+    position: sticky;
+    padding: 8px 16px;
+    top: 0;
+    background-color: var(--color-dark);
+    width: 100%;
+    z-index: 100;
+}
+
+.icon {
+    padding: 16px 16px;
+    justify-self: start;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.title {
+    justify-self: center;
+    font-family: var(--font-nauryzRedKeds), sans-serif;
+    color: var(--color-acid);
+    font-size: 1em;
+    font-weight: 500;
+}

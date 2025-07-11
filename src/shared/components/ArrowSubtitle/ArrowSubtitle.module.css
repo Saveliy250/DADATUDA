@@ -1,0 +1,13 @@
+@import '../../../shared/styles/variables.css';
+
+.subtitleWrapper {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.subtitle {
+    font-family: var(--font-Soyuz-Grotesk), sans-serif;
+    font-size: 1.5em;
+}

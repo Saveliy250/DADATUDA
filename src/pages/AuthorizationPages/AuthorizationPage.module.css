@@ -1,0 +1,49 @@
+@import "../../shared/styles/variables.css";
+
+.login {
+    margin: 0 auto;
+    width: 100vw;
+    max-width: 430px;
+    height: 100vh;
+    padding: 0 24px ;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: var(--font-Soyuz-Grotesk), sans-serif;
+    font-size: 2rem;
+    color: var(--color-acid);
+}
+
+.describe {
+    margin-top: 3vh;
+    text-align: center;
+    color: var(--color-grey);
+    font-size: 15px;
+}
+
+.describeLink {
+    color: var(--color-acid);
+    text-decoration: none;
+}
+
+.describeLink:hover {
+    text-decoration: underline;
+}
+
+.error {
+    color: var(--color-red);
+    font-size: 15px;
+    margin-bottom: 24px;
+}
+
+@media screen and (min-width: 768px) {
+    .login {
+        padding: 6vh 24px 8vh;
+    }
+}

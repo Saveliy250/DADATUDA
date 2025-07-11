@@ -13,10 +13,11 @@ import { MainPage } from './pages/MainPage/MainPage.jsx';
 import { FiltersPage } from './pages/FiltersPage/FiltersPage.jsx';
 import { FavoritesPage } from './pages/FavoritesPage/FavoritesPage.jsx';
 import { EventPage } from './pages/EventPage/EventPage.jsx';
-import { LoginPage } from './pages/LoginPage/LoginPage.jsx';
-import { RegistrationPage } from './pages/RegistrationPage/RegistrationPage.jsx';
 
 import { PrivateRoute } from './shared/components/PrivateRoute.jsx';
+import { Navigation } from './shared/components/Navigation/Navigation.jsx';
+import { LoginPage } from './pages/AuthorizationPages/LoginPage/LoginPage.jsx';
+import { RegistrationPage } from './pages/AuthorizationPages/RegistrationPage/RegistrationPage.jsx';
 
 export const App = () => {
     useEffect(() => {
@@ -52,6 +53,7 @@ export const App = () => {
                     element={
                         <PrivateRoute>
                             <MainPage />
+                            <Navigation size="full" />
                         </PrivateRoute>
                     }
                 />
@@ -60,6 +62,7 @@ export const App = () => {
                     element={
                         <PrivateRoute>
                             <FiltersPage />
+                            <Navigation size="small" />
                         </PrivateRoute>
                     }
                 />
@@ -68,6 +71,7 @@ export const App = () => {
                     element={
                         <PrivateRoute>
                             <FavoritesPage />
+                            <Navigation size="full" />
                         </PrivateRoute>
                     }
                 />
