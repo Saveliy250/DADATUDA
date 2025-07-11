@@ -12,6 +12,7 @@ RUN npm install
 
 # Копируем весь исходный код приложения
 COPY . .
+RUN npm run build
 
 # Открываем порт 5173
 EXPOSE 5173
