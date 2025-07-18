@@ -20,7 +20,7 @@ RUN npm install -g serve
 COPY --from=build /app/dist /app/dist
 
 # Указываем порт, на котором работает serve
-EXPOSE 3000
+EXPOSE 5173
 
 # Запускаем сервер на 0.0.0.0 (иначе внутри контейнера он будет слушать только localhost)
 CMD ["serve", "-s", "dist", "-l", "5173"]
