@@ -3,15 +3,12 @@
 .card {
     position: relative;
     pointer-events: auto;
-    width: 90vw;
+    width: 100vw;
     max-width: 560px;
-    height: 80vh;
-    max-height: calc(560px * 16 / 9);
-    border-radius: 16px;
+    height: 100vh;
     overflow: hidden;
-    box-shadow: 0 0 10px var(--color-acid);
-    aspect-ratio: 9/16;
     z-index: 1;
+    font-family: var(--font-Cyrge), sans-serif;
 }
 
 .cardWrapper {
@@ -20,61 +17,124 @@
     aspect-ratio: 9/16;
     position: relative;
     overflow: hidden;
-    border-radius: 12px;
     margin: auto;
     user-select: none;
 }
 
-.cardWrapper::after {
+.cardWrapper::before {
     content: '';
     position: absolute;
-    bottom: 20px;
+    top: 0;
+    width: 100%;
     left: 0;
-    right: 0;
-    height: 40%;
-    background: linear-gradient(
-            to top,
-            rgba(255, 96, 28, 0) 0%,
-            rgba(255, 96, 28, 0.3) 20%,
-            rgba(255, 96, 28, 0.7) 40%,
-            rgba(255, 96, 28, 0.9) 60%,
-            rgba(255, 96, 28, 0.5) 80%,
-            rgba(255, 96, 28, 0.2) 90%,
-            rgba(255, 96, 28, 0.1) 95%,
-            rgba(255, 96, 28, 0) 100%
-    );
-    z-index: 0;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 20%), rgba(0, 0, 0, 0.6), rgba(26, 26, 26, 0.9), rgba(28, 28, 28, 100%));
+}
+
+.cardWrapperBlacked::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 100%;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.61), rgba(0, 0, 0, 0.9), rgba(26, 26, 26, 0.9), rgba(28, 28, 28, 100%));
+}
+
+.slider {
+    position: absolute;
+    width: 100%;
+    top: 46px;
+    padding: 0 16px;
+    display: flex;
+    justify-content: center;
+}
+
+.slideContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    width: 100%;
+}
+
+.indicator {
+    flex-grow: 1;
+    height: 2px;
+    background-color: #ccc;
+    position: relative;
+    cursor: pointer;
+    border-radius: 50px;
+}
+
+.indicator.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background-color: var(--color-primary-yellow);
+    animation: fill 5s linear forwards;
+}
+
+@keyframes fill {
+    0% {
+        width: 0;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+.upperInfo {
+    display: flex;
+    width: 100%;
+    padding: 0 16px;
+    justify-content: space-between;
+    position: absolute;
+    top: 60px;
+    color: var(--color-white);
+
+    div {
+        display: flex;
+        gap: 16px;
+    }
 }
 
 .cardImg {
     width: 100%;
-    height: 100%;
-    border-radius: 12px;
+    height: 100vh;
     object-fit: cover;
     object-position: center;
     user-select: none;
 }
 
 .mainActionsWrapper {
-    position: absolute;
-    padding: 15px;
+    padding: 15px 0;
+    left: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    bottom: 13px;
+    bottom: -150px;
     width: 100%;
     height: fit-content;
 }
 
 .cardInfo {
     position: absolute;
-    bottom: 100px;
+    bottom: 10%;
+    left: 0;
+    right: 0;
     padding: 15px;
+    width: clamp(380px, 100%, 100vw);
     z-index: 3;
-    transition:
-            opacity 0.35s ease,
-            max-height 0.35s ease;
-    max-height: 40%;
+    transition: opacity 0.35s ease, max-height 0.35s ease;
+}
+
+.shortInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .moreButton {
@@ -82,27 +142,104 @@
     display: block;
     border: none;
     border-radius: 15px;
-    background: var(--color-acid);
+    background: var(--color-primary-yellow);
     color: var(--color-dark);
-    font-size: clamp(14px, 3.6vw, 18px);
-    padding: 8px 16px;
+    width: 108px;
+    height: 37px;
+    cursor: pointer;
+}
+
+.backButton {
+    transform: rotate(180deg);
+}
+
+.starButton, .backButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 56px;
+    height: 56px;
     cursor: pointer;
 }
 
 .cardTitle {
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: var(--color-acid);
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
 }
 
 .cardTitleName {
-    font-family: var(--font-Soyuz-Grotesk), sans-serif;
-    font-size: 2em;
+    color: var(--color-white);
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
 }
 
 .cardPrice {
-    font-family: var(--font-helvetica), sans-serif;
     font-size: 16px;
 }
+
+.eventInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    h3 {
+        font-family: var(--font-Cyrge), sans-serif;
+        font-size: 1.2rem;
+        font-weight: normal;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+}
+
+.eventDescription {
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: all 0.3s
+}
+
+.eventDescriptionOpenedWrapper {
+    max-height: 150px;
+    overflow: auto;
+}
+
+.eventDescriptionOpened {
+    font-size: 1rem;
+}
+
+.cardDetailsLink {
+    display: block;
+    text-align: center;
+    background: var(--color-primary-yellow);
+    color: var(--color-dark);
+    padding: 0.6em 1.4em;
+    border-radius: 1.3em;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+.eventDescriptionOpenedContent {
+    margin-top: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
 
