@@ -2,4 +2,5 @@
     background: none;
     border: none;
     z-index: 90;
+    cursor: pointer;
 }

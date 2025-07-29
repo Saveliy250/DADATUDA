@@ -2,22 +2,32 @@
 
 .navigation {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 22px;
+    right: 15px;
+    left: 15px;
     text-align: center;
-    background-color: var(--color-dark);
-    padding: 16px 0;
-    margin-top: 60px;
+    background-color: var(--color-white);
+    border-radius: 50px;
+    max-height: 72px;
+    height: 100%;
     z-index: 100;
+    max-width: 540px;
+    margin: 0  auto;
 }
 
 .fullNavContent {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
-    margin-right: 20vw;
-    margin-left: 20vw;
+    height: 100%;
+}
+
+.navButton {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .smallNavContent {

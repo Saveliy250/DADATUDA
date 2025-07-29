@@ -3,6 +3,7 @@
     --font-helvetica: 'Helvetica-regular', sans-serif;
     --font-nauryzRedKeds: 'NauryzRedKeds', sans-serif;
     --font-Soyuz-Grotesk: 'Soyuz-Grotesk-Bold', sans-serif;
+    --font-Cyrge: 'Cyrge', sans-serif;
 
     /* colors */
     --color-black: #000000;
@@ -10,6 +11,7 @@
     --color-red: #ff4444;
     --color-bright-acid: #ECFE54;
     --color-acid: #ecfe54;
+    --color-primary-yellow: #F2FF87;
     --color-magenta: #ff6cf1;
     --color-dark-magenta: #e44ae2;
     --color-white: #ffffff;
