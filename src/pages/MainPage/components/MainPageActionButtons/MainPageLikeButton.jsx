@@ -1,6 +1,5 @@
 import styles from './MainPageActionButton.module.css';
-
-import { MainFavoriteButtonIcon } from '../../../../shared/icons/MainFavoriteButtonIcon.jsx';
+import { HeartIcon } from '../../../../shared/icons/MainPage/HeartIcon.jsx';
 
 export const MainPageLikeButton = ({ controls, finishCard }) => {
     return (
@@ -13,7 +12,7 @@ export const MainPageLikeButton = ({ controls, finishCard }) => {
                     .then(() => finishCard(true));
             }}
         >
-            <MainFavoriteButtonIcon />
+            <HeartIcon />
         </button>
     );
 };
