@@ -1,6 +1,5 @@
 import styles from './MainPageActionButton.module.css';
-
-import { MainDislikeButtonIcon } from '../../../../shared/icons/MainDislikeButtonIcon.jsx';
+import { CrossIcon } from '../../../../shared/icons/MainPage/CrossIcon.jsx';
 
 export const MainPageDislikeButton = ({ controls, finishCard }) => {
     return (
@@ -13,7 +12,7 @@ export const MainPageDislikeButton = ({ controls, finishCard }) => {
                     .then(() => finishCard(false));
             }}
         >
-            <MainDislikeButtonIcon />
+            <CrossIcon />
         </button>
     );
 };
