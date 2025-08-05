@@ -1,0 +1,24 @@
+import React from 'react';
+
+interface FilterSubIconProps {
+    color?: string;
+}
+
+export const FilterSubIcon = ({ color = '#ffffff' }: FilterSubIconProps) => {
+    return (
+        <svg width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.6523 19.0156L24.1363 19.0156" stroke={color} strokeWidth="3.38021" />
+            <path
+                d="M19.2438 10.2056L26.2959 19.0577L19.2438 27.7402"
+                stroke={color}
+                strokeWidth="3.38021"
+                strokeLinejoin="round"
+            />
+            <path
+                d="M26.252 2.09473H11.7907C-1.11255 2.09473 -1.11252 19.0158 11.7907 19.0158H26.252"
+                stroke={color}
+                strokeWidth="3.38021"
+            />
+        </svg>
+    );
+};
