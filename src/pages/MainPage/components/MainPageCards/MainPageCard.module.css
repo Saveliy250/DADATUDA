@@ -108,6 +108,7 @@
     object-fit: cover;
     object-position: center;
     user-select: none;
+    transition: 0.2s opacity ease-in-out;
 }
 
 .mainActionsWrapper {
