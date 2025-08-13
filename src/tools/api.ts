@@ -1,3 +1,4 @@
+import { jwtDecode } from 'jwt-decode';
 import { Event } from '../shared/models/event';
 const BASE_URL: string = import.meta.env.VITE_BASE_URL;
 
@@ -167,13 +168,34 @@ export async function getShortlist(pageSize: number, pageNumber: number): Promis
     return authFetch(`${BASE_URL}/api/v3/shortlist?page_size=${pageSize}&page_number=${pageNumber}`, { method: 'GET' });
 }
 
-export async function sendFeedback(
+const getUserId = (): string | null => {
+    const token = getAccessToken();
+    if (!token) {
+        return null;
+    }
+    try {
+        const decoded: { sub: string } = jwtDecode(token);
+        return decoded.sub;
+    } catch (error) {
+        console.error('Failed to decode token', error);
+        return null;
+    }
+};
+
+export const sendFeedback = async (
     eventId: string,
     like: boolean,
     viewedSeconds: number,
     moreOpened: boolean,
     refClicked: boolean,
-): Promise<void> {
+    starred = false,
+): Promise<void> => {
+    const userId = getUserId();
+    if (!userId) {
+        console.error('Cannot send feedback without a user ID.');
+        return;
+    }
+
     const data: Feedback = {
         eventId: eventId,
         like: like,
@@ -181,15 +203,15 @@ export async function sendFeedback(
         moreOpened: moreOpened,
         referralLinkOpened: refClicked,
         reported: false,
-        starred: false,
-        userId: 'stringi',
+        starred: starred,
+        userId: userId,
     };
 
     return authFetch<void>(`${BASE_URL}/api/v3/feedback`, { method: 'POST', body: JSON.stringify(data) });
-}
+};
 
-export async function toggleFavorite(isFavorite: boolean, id: string): Promise<void> {
-    const newFavorite = !isFavorite;
+export async function toggleFavorite(starred: boolean, id: string): Promise<void> {
+    const newFavorite = !starred;
 
     return authFetch<void>(`${BASE_URL}/api/v3/feedback/${id}`, {
         method: 'PATCH',

@@ -3,9 +3,9 @@ export interface Event {
     name: string;
     date: string;
     dateEnd?: string;
+    starred?: boolean;
     address: string;
     imageURL: string[];
-    isFavorite: boolean;
     description?: string;
     referralLink?: string;
     price?: string;
