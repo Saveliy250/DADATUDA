@@ -173,6 +173,7 @@ export async function sendFeedback(
     viewedSeconds: number,
     moreOpened: boolean,
     refClicked: boolean,
+    starred?: boolean,  
 ): Promise<void> {
     const data: Feedback = {
         eventId: eventId,
@@ -181,7 +182,7 @@ export async function sendFeedback(
         moreOpened: moreOpened,
         referralLinkOpened: refClicked,
         reported: false,
-        starred: false,
+        starred: starred ?? false,
         userId: 'stringi',
     };
 
