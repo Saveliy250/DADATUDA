@@ -37,7 +37,7 @@ export const FavoriteCard = ({ event, handleClick }: FavoriteCardProps) => {
         <div onClick={handleNavigate} className={styles.card}>
             <div className={styles.cardWrapper}>
                 <img src={event.imageURL[event.imageURL.length - 1]} alt={event.name} className={styles.cardImg} />
-                {event.isFavorite ? (
+                {event.starred ? (
                     <FavoriteButtonFilled handleClick={() => handleClick(event)} className={styles.favoriteButton} />
                 ) : (
                     <FavoriteButtonBlank handleClick={() => handleClick(event)} className={styles.favoriteButton} />

@@ -153,6 +153,13 @@
 
 .backButton {
     transform: rotate(180deg);
+    border: none;
+    background: transparent;
+}
+
+.backButton.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
 .starButton, .backButton {
@@ -162,6 +169,13 @@
     width: 56px;
     height: 56px;
     cursor: pointer;
+}
+
+.starButton {
+    button {
+        background: transparent;
+        border: none;
+    }
 }
 
 .cardTitle {
@@ -254,5 +268,3 @@
     height: 30vh;
     color: var(--color-red);
 }
-
-
