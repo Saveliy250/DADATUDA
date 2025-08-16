@@ -1,114 +1,60 @@
-import React, { useState } from 'react';
+import React from 'react';
+
 import styles from './FavoriteCard.module.css';
+
+import { formatDate } from '../../../../tools/FormatDate';
+
 import { useNavigate } from 'react-router-dom';
-import type { FavoritePageEvent } from '../../types';
-import { writeCachedFeedback } from '../../../../tools/feedbackCache';
+
+import { FavoriteButtonFilled } from '../../../../shared/icons/FavoriteButtonFilled';
+import { FavoriteButtonBlank } from '../../../../shared/icons/FavoriteButtonBlank';
+import { TrashButton } from '../../../../shared/icons/TrashButton';
+
+import { Event } from '../../../../shared/models/event';
 
 interface FavoriteCardProps {
-  event: FavoritePageEvent;
-  onStarClick: (eventId: string | number) => void;
-  onDislike: (eventId: string | number) => void;
+    event: Event;
+    handleClick: (event: Event) => void;
 }
 
-// const formatLikesCount = (count: number): string => {
-//   if (count >= 1000) return (count / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
-//   return String(count);
-// };
+export const FavoriteCard = ({ event, handleClick }: FavoriteCardProps) => {
+    const navigate = useNavigate();
 
-export const FavoriteCard = ({ event, onStarClick, onDislike }: FavoriteCardProps) => {
-  const navigate = useNavigate();
-  const [confirmOpen, setConfirmOpen] = useState(false);
+    const formattedDate: string = formatDate(event.date);
+    const [datePart, timePart] = formattedDate.split(' ');
 
-  const goDetails = () => {
-    writeCachedFeedback('stringi', String(event.id), { starred: event.starred });
-    navigate(`/events/${event.id}`);
-  };
+    const handleNavigate = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
 
-  return (
-    <div className={styles.card} onClick={goDetails}>
-      <div className={styles.media}>
-        <div className={styles.imageFrame}>
-          <img src={event.imageURL[0]} alt={event.name} className={styles.cardImg} />
-        </div>
-      </div>
+        const target = e.target as HTMLElement;
 
+        if (!target.closest(`.${styles.favoriteButton}`) && !target.closest(`.${styles.trashButton}`)) {
+            void navigate(`/events/${event.id}`);
+        }
+    };
 
-      <button
-        type="button"
-        className={styles.starButton}
-        aria-label={event.starred ? 'Убрать из избранного' : 'В избранное'}
-        onClick={(e) => {
-          e.stopPropagation();
-          onStarClick(event.id);
-        }}
-      >
-        <img
-          src={event.starred ? '/img/star-en.svg' : '/img/star-dis.svg'}
-          alt=""
-          className={styles.starImg}
-        />
-      </button>
+    return (
+        <div onClick={handleNavigate} className={styles.card}>
+            <div className={styles.cardWrapper}>
+                <img src={event.imageURL[event.imageURL.length - 1]} alt={event.name} className={styles.cardImg} />
+                {event.isFavorite ? (
+                    <FavoriteButtonFilled handleClick={() => handleClick(event)} className={styles.favoriteButton} />
+                ) : (
+                    <FavoriteButtonBlank handleClick={() => handleClick(event)} className={styles.favoriteButton} />
+                )}
 
-      <div className={styles.cardContent}>
-        <p className={styles.cardTitle}>{event.name}</p>
-        <p className={styles.cardVenue}>{event.address}</p>
+                <TrashButton className={styles.trashButton} />
 
-        <div className={styles.bottomRow}>
-          <div className={styles.dateContainer}>
-            <span>{event.formattedDate}</span>
-            <span>{event.formattedTime}</span>
-          </div>
-
-          <div
-            className={styles.likesContainer}
-            onClick={(e) => {
-              e.stopPropagation();
-              setConfirmOpen(true);
-            }}
-            role="button"
-            aria-label="Убрать лайк"
-            tabIndex={0}
-            title="Убрать лайк"
-          >
-            <img src="/img/черный лайк.svg" className={styles.heartIcon} alt="Лайк" />
-            {/* <div className={styles.likesCounter}>{formatLikesCount(event.likesCount)}</div> */}
-          </div>
-        </div>
-      </div>
-
-      {confirmOpen && (
-        <div className={styles.modalOverlay} onClick={() => setConfirmOpen(false)}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              className={styles.modalClose}
-              onClick={() => setConfirmOpen(false)}
-              aria-label="Закрыть"
-              title="Закрыть"
-            >
-              <img src="/img/кнопка 1.svg" alt="" className={styles.modalCloseIcon} />
-            </button>
-
-            <div className={styles.modalText}>Вы уверены, что хотите удалить мероприятие?</div>
-
-            <div className={styles.modalButtons}>
-              <button
-                type="button"
-                className={styles.modalBtnYes}
-                onClick={() => {
-                  setConfirmOpen(false);
-                  onDislike(event.id);
-                }}
-              >
-                Да
-              </button>
-              <button type="button" className={styles.modalBtnNo} onClick={() => setConfirmOpen(false)}>
-                Нет
-              </button>
+                <p className={styles.favoriteDates}>
+                    {datePart}
+                    <br />
+                    {timePart}
+                </p>
             </div>
-          </div>
+            <div className={styles.cardContent}>
+                <p className={styles.cardTitle}>{event.name}</p>
+                <p className={styles.cardAddress}>{event.address}</p>
+            </div>
         </div>
-      )}
-    </div>
-  );
+    );
 };
