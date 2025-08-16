@@ -1,3 +1,4 @@
+import { jwtDecode } from 'jwt-decode';
 import { Event } from '../shared/models/event';
 const BASE_URL: string = import.meta.env.VITE_BASE_URL;
 
@@ -142,20 +143,55 @@ export async function authFetch<T>(path: string, options: RequestInit = {}): Pro
     return response.json() as Promise<T>;
 }
 
-export async function eventForUser(pageSize = 0, categories = ''): Promise<Event[]> {
+export async function eventForUser(
+    pageSize = 0,
+    categories = '',
+    search = '',
+    price_min: number | undefined = undefined,
+    price_max: number | undefined = undefined,
+    start_date_time = '',
+    end_date_time = '',
+    pageNumber = 1,
+): Promise<Event[]> {
     const params = new URLSearchParams();
 
     if (pageSize) {
         params.set('page_size', String(pageSize));
     }
 
-    if (categories) {
+    if (pageNumber) {
+        params.set('page_number', String(pageNumber));
+    }
+
+    if (categories.length) {
         params.set('categories', categories);
     }
 
-    const queryString = params.toString();
+    if (search) {
+        params.set('search', search);
+    }
 
-    return authFetch(`${BASE_URL}/api/v3/events/for?${queryString}`, { method: 'GET' });
+    if (price_min !== undefined) {
+        params.set('price_min', String(price_min));
+    }
+
+    if (price_max !== undefined) {
+        params.set('price_max', String(price_max));
+    }
+
+    if (start_date_time) {
+        params.set('start_date_time', start_date_time);
+    }
+
+    if (end_date_time) {
+        params.set('end_date_time', end_date_time);
+    }
+
+    const queryString = params.toString();
+    const fullUrl = `${BASE_URL}/api/v3/events/for?${queryString}`;
+    console.log('API Request URL:', fullUrl);
+
+    return authFetch(fullUrl, { method: 'GET' });
 }
 
 export async function fetchRandomEvent(categories = ''): Promise<Event> {
@@ -167,13 +203,34 @@ export async function getShortlist(pageSize: number, pageNumber: number): Promis
     return authFetch(`${BASE_URL}/api/v3/shortlist?page_size=${pageSize}&page_number=${pageNumber}`, { method: 'GET' });
 }
 
-export async function sendFeedback(
+const getUserId = (): string | null => {
+    const token = getAccessToken();
+    if (!token) {
+        return null;
+    }
+    try {
+        const decoded: { sub: string } = jwtDecode(token);
+        return decoded.sub;
+    } catch (error) {
+        console.error('Failed to decode token', error);
+        return null;
+    }
+};
+
+export const sendFeedback = async (
     eventId: string,
     like: boolean,
     viewedSeconds: number,
     moreOpened: boolean,
     refClicked: boolean,
-): Promise<void> {
+    starred = false,
+): Promise<void> => {
+    const userId = getUserId();
+    if (!userId) {
+        console.error('Cannot send feedback without a user ID.');
+        return;
+    }
+
     const data: Feedback = {
         eventId: eventId,
         like: like,
@@ -181,15 +238,15 @@ export async function sendFeedback(
         moreOpened: moreOpened,
         referralLinkOpened: refClicked,
         reported: false,
-        starred: false,
-        userId: 'stringi',
+        starred: starred,
+        userId: userId,
     };
 
     return authFetch<void>(`${BASE_URL}/api/v3/feedback`, { method: 'POST', body: JSON.stringify(data) });
-}
+};
 
-export async function toggleFavorite(isFavorite: boolean, id: string): Promise<void> {
-    const newFavorite = !isFavorite;
+export async function toggleFavorite(starred: boolean, id: string): Promise<void> {
+    const newFavorite = !starred;
 
     return authFetch<void>(`${BASE_URL}/api/v3/feedback/${id}`, {
         method: 'PATCH',

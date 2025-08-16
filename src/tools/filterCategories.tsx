@@ -1,13 +1,5 @@
 import { ReactNode } from 'react';
 
-import { ConcertIcon } from '../shared/icons/ConcertIcon.jsx';
-import { ExhibitionIcon } from '../shared/icons/ExhibitionIcon.jsx';
-import { StandupIcon } from '../shared/icons/StandupIcon.jsx';
-import { SportIcon } from '../shared/icons/SportIcon.jsx';
-import { BarIcon } from '../shared/icons/BarIcon.jsx';
-import { RestaurantIcon } from '../shared/icons/RestaurantIcon.jsx';
-import { CafeIcon } from '../shared/icons/CafeIcon.jsx';
-import { ExcursionIcon } from '../shared/icons/ExcursionIcon.jsx';
 import { TheaterIcon } from '../shared/icons/EventIcons/TheaterIcon';
 
 interface Category {
@@ -18,13 +10,12 @@ interface Category {
 }
 
 export const filterCategories: Category[] = [
-    { id: 1, dataValue: 'theater', value: 'Спектакли', icon: <TheaterIcon /> },
-    { id: 2, dataValue: 'concert', value: 'Концерты', icon: <ConcertIcon /> },
-    { id: 3, dataValue: 'exhibition', value: 'Выставки', icon: <ExhibitionIcon /> },
-    { id: 4, dataValue: 'standup', value: 'Стендапы', icon: <StandupIcon /> },
-    { id: 5, dataValue: 'excursion', value: 'Экскурсии', icon: <ExcursionIcon /> },
-    { id: 6, dataValue: 'sport', value: 'Спорт', icon: <SportIcon /> },
-    { id: 7, dataValue: 'bar', value: 'Бары', icon: <BarIcon /> },
-    { id: 8, dataValue: 'restaurant', value: 'Рестораны', icon: <RestaurantIcon /> },
-    { id: 9, dataValue: 'cafe', value: 'Кофейни', icon: <CafeIcon /> },
+    { id: 1, dataValue: 'Культура и творчество', value: 'культура и творчество', icon: <TheaterIcon color="gray" /> },
+    { id: 2, dataValue: 'Активный отдых', value: 'активный отдых', icon: <TheaterIcon color="gray" /> },
+    { id: 3, dataValue: 'Еда и гастрономия', value: 'еда и гастрономия', icon: <TheaterIcon color="gray" /> },
+    { id: 4, dataValue: 'Красота и здоровье', value: 'красота и здоровье', icon: <TheaterIcon color="gray" /> },
+    { id: 5, dataValue: 'Развлечения и досуг', value: 'развлечения и досуг', icon: <TheaterIcon color="gray" /> },
+    { id: 6, dataValue: 'Клубы и вечеринки', value: 'клубы и вечеринки', icon: <TheaterIcon color="gray" /> },
+    { id: 7, dataValue: 'Образование и развитие', value: 'образование и развитие', icon: <TheaterIcon color="gray" /> },
+    { id: 8, dataValue: 'Другое', value: 'другое', icon: <TheaterIcon color="gray" /> },
 ];

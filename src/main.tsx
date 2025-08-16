@@ -17,7 +17,7 @@ if (container) {
         <BrowserRouter>
             <StrictMode>
                 <GrowthbookProvider>
-                    <MantineProvider defaultColorScheme="dark">
+                    <MantineProvider defaultColorScheme="light">
                         <App />
                     </MantineProvider>
                 </GrowthbookProvider>

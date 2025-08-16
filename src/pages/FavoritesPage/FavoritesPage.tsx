@@ -26,14 +26,12 @@ export const FavoritesPage = () => {
 
     const onFavoriteClick = (event: Event) => {
         try {
-            const response = toggleFavorite(event.isFavorite, String(event.id));
+            const response = toggleFavorite(event.starred!, String(event.id));
             console.log(response);
         } catch (error) {
             console.log(error);
         }
-        setFavorites((prev) =>
-            prev.map((item) => (item.id === event.id ? { ...item, isFavorite: !item.isFavorite } : item)),
-        );
+        setFavorites((prev) => prev.map((item) => (item.id === event.id ? { ...item, starred: !item.starred } : item)));
     };
 
     async function loadShortlist() {
@@ -56,8 +54,8 @@ export const FavoritesPage = () => {
         return <div>{error.message}</div>;
     }
 
-    const favoriteItems = favorites.filter((event) => event.isFavorite);
-    const notFavoriteItems = favorites.filter((event) => !event.isFavorite);
+    const favoriteItems = favorites.filter((event) => event.starred);
+    const notFavoriteItems = favorites.filter((event) => !event.starred);
 
     return (
         <>

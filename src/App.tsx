@@ -18,6 +18,8 @@ import { Navigation } from './shared/components/Navigation/Navigation';
 import { LoginPage } from './pages/AuthorizationPages/LoginPage/LoginPage';
 import { RegistrationPage } from './pages/AuthorizationPages/RegistrationPage/RegistrationPage';
 
+import { FilterProvider } from './contexts/FilterContext';
+
 export const App = () => {
     useEffect(() => {
         try {
@@ -43,7 +45,7 @@ export const App = () => {
     }, []);
 
     return (
-        <>
+        <FilterProvider>
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/registration" element={<RegistrationPage />} />
@@ -61,7 +63,6 @@ export const App = () => {
                     element={
                         <PrivateRoute>
                             <FiltersPage />
-                            <Navigation />
                         </PrivateRoute>
                     }
                 />
@@ -76,6 +77,6 @@ export const App = () => {
                 />
                 <Route path="/events/:eventId" element={<EventPage />} />
             </Routes>
-        </>
+        </FilterProvider>
     );
 };

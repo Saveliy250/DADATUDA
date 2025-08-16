@@ -67,9 +67,10 @@ export const useAuth = (): UseAuth => {
                     resolve();
                 })
                 .catch((error: unknown) => {
-                    setError(error as Error);
+                    const err = error instanceof Error ? error : new Error('An unknown error occurred');
+                    setError(err);
                     setIsAuthenticated(false);
-                    reject(error);
+                    reject(err);
                 })
                 .finally(() => {
                     setLoading(false);
