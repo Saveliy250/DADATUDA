@@ -1,82 +1,193 @@
-import React, { useEffect, useState } from 'react';
-
+import React, { useEffect, useState, useMemo } from 'react';
+import { toggleFavorite, sendFeedback, getShortlist } from '../../tools/api';
+import { readCachedFeedback, clearCachedFeedback, writeCachedFeedback } from '../../tools/feedbackCache';
+import { useNavigate } from 'react-router-dom';
 import styles from './FavoritePage.module.css';
-
 import { useAuth } from '../../hooks/useAuth';
-
-import { getShortlist, toggleFavorite } from '../../tools/api';
-
 import { LoadingScreen } from '../../shared/ui/LoadingScreen';
 import { FavoriteCardList } from './components/FavoriteCardList/FavoriteCardList';
-import { Header } from '../../shared/components/Header/Header';
+import type { FavoritePageEvent } from './types';
 
-import { Event } from '../../shared/models/event';
+const formatEventDateTime = (dateString: string): { date: string; time: string } => {
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return { date: '??.??', time: '??:??' };
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return { date: `${day}.${month}`, time: `${hours}:${minutes}` };
+  } catch {
+    return { date: '??.??', time: '??:??' };
+  }
+};
+
+const normalize = (s: string) =>
+  s
+    .toLocaleLowerCase('ru-RU')
+    .replace(/ё/g, 'е')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 export const FavoritesPage = () => {
-    const { isAuthenticated } = useAuth();
-    const [favorites, setFavorites] = useState<Event[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<Error | null>(null);
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const [events, setEvents] = useState<FavoritePageEvent[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showStarredOnly, setShowStarredOnly] = useState(false);
 
-    useEffect(() => {
-        if (isAuthenticated) {
-            void loadShortlist();
-        }
-    }, [isAuthenticated]);
+  useEffect(() => {
+    if (isAuthenticated) void loadShortlist();
+  }, [isAuthenticated]);
 
-    const onFavoriteClick = (event: Event) => {
-        try {
-            const response = toggleFavorite(event.isFavorite, String(event.id));
-            console.log(response);
-        } catch (error) {
-            console.log(error);
-        }
-        setFavorites((prev) =>
-            prev.map((item) => (item.id === event.id ? { ...item, isFavorite: !item.isFavorite } : item)),
-        );
-    };
+  const filteredEvents = useMemo(() => {
+    let filtered = events;
 
-    async function loadShortlist() {
-        setLoading(true);
-        try {
-            const shortlist = await getShortlist(10, 0);
-            setFavorites(shortlist);
-        } catch (error) {
-            setError(error as Error);
-        } finally {
-            setLoading(false);
-        }
+    if (showStarredOnly) filtered = filtered.filter((e) => e.starred);
+
+    const raw = searchTerm.trim();
+    if (raw) {
+      const q = normalize(raw);
+
+      filtered = filtered.filter((e) => {
+        const haystack = [
+          e.name || '',
+          e.description || '',
+          e.address || '',
+          `${e.formattedDate || ''} ${e.formattedTime || ''}`,
+        ];
+        return haystack.some((field) => normalize(field).includes(q));
+      });
     }
 
-    if (loading) {
-        return <LoadingScreen />;
+    return filtered;
+  }, [events, searchTerm, showStarredOnly]);
+
+  async function loadShortlist() {
+    setLoading(true);
+    try {
+      const apiData = (await getShortlist(10, 0)) as any[];
+      const adapted: FavoritePageEvent[] = apiData.map((a) => {
+        const { date, time } = formatEventDateTime(a.date);
+        return {
+          id: a.id,
+          name: a.name,
+          date: a.date,
+          address: a.address,
+          imageURL: a.imageURL,
+          description: a.description,
+          isFavorite: true,
+          starred: a.starred,
+          // likesCount: Math.floor(Math.random() * 5000) + 100, // счётчик выключен
+          formattedDate: date,
+          formattedTime: time,
+        };
+      });
+      setEvents(adapted);
+    } catch (e) {
+      setError(e as Error);
+    } finally {
+      setLoading(false);
     }
+  }
 
-    if (error) {
-        return <div>{error.message}</div>;
+  const handleCardStarClick = async (eventId: string | number) => {
+    const id = String(eventId);
+    const prevEvent = events.find((e) => e.id === eventId);
+    const prevStarred = !!prevEvent?.starred;
+    const nextStarred = !prevStarred;
+
+    setEvents((prev) => prev.map((e) => (e.id === eventId ? { ...e, starred: nextStarred } : e)));
+
+    writeCachedFeedback('stringi', id, { starred: nextStarred });
+
+    try {
+      await toggleFavorite(prevStarred, id);
+    } catch (e) {
+      console.warn(e);
+      setEvents((prev) => prev.map((e) => (e.id === eventId ? { ...e, starred: prevStarred } : e)));
+      writeCachedFeedback('stringi', id, { starred: prevStarred });
     }
+  };
 
-    const favoriteItems = favorites.filter((event) => event.isFavorite);
-    const notFavoriteItems = favorites.filter((event) => !event.isFavorite);
+  const handleCardDislike = async (eventId: string | number) => {
+    const id = String(eventId);
+    const removed = events.find((e) => e.id === eventId);
+    const prev = events;
 
-    return (
-        <>
-            <Header title="мои мероприятия" withIcon={false} />
+    setEvents((prev) => prev.filter((e) => e.id !== eventId));
 
-            <div className={styles.favoritesPage}>
-                <FavoriteCardList
-                    cardList={favoriteItems}
-                    title="избранное"
-                    color="#FF6CF1"
-                    handleClick={onFavoriteClick}
-                />
-                <FavoriteCardList
-                    cardList={notFavoriteItems}
-                    title="понравившиеся"
-                    color="#8CF63B"
-                    handleClick={onFavoriteClick}
-                />
-            </div>
-        </>
-    );
+    try {
+      const cached = readCachedFeedback('stringi', id);
+      const starredFromUI = !!removed?.starred;
+
+      await sendFeedback(
+        id,
+        false,
+        cached.viewedSeconds ?? 0,
+        cached.moreOpened ?? false,
+        cached.referralLinkOpened ?? false,
+        starredFromUI,
+      );
+
+      clearCachedFeedback('stringi', id);
+    } catch (e) {
+      console.warn(e);
+      setEvents(prev);
+    }
+  };
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
+  if (loading) return <LoadingScreen />;
+  if (error) return <div>{error.message}</div>;
+
+  return (
+    <div className={styles.pageWrapper}>
+      <header className={styles.header}>
+        <div className={styles.headerTopRow}>
+          <img
+            src="/img/черная изогнутая стрелка.svg"
+            alt="Назад"
+            className={styles.headerIcon}
+            onClick={handleGoBack}
+          />
+          <h1 className={styles.headerTitle}>Ваши мероприятия</h1>
+
+          <div className={styles.headerActions}>
+            <img
+              src={showStarredOnly ? '/img/star-en.svg' : '/img/star-dis.svg'}
+              alt="Показать только избранные"
+              className={styles.headerStar}
+              onClick={() => setShowStarredOnly(!showStarredOnly)}
+            />
+            <img src="/img/фильтры иконка.svg" alt="Фильтры" className={`${styles.headerIcon} ${styles.filterIcon}`} />
+          </div>
+        </div>
+
+        <div className={styles.searchContainer}>
+          <img src="/img/поиск.svg" alt="Поиск" className={styles.searchIcon} />
+          <input
+            type="text"
+            placeholder="Поиск"
+            className={styles.searchInput}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </header>
+
+      <main className={styles.mainContent}>
+        <FavoriteCardList
+          cardList={filteredEvents}
+          onStarClick={handleCardStarClick}
+          onDislike={handleCardDislike}
+        />
+      </main>
+    </div>
+  );
 };
