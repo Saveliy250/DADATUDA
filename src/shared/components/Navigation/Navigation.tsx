@@ -1,27 +1,35 @@
 import React from 'react';
-
+import { Link, useLocation } from 'react-router-dom';
 import styles from './Navigation.module.css';
 
-import { Link } from 'react-router-dom';
-
-import { FavoriteIcon } from '../../icons/Navigation/FavoriteIcon';
-import { MainIcon } from '../../icons/Navigation/MainIcon';
-
 export const Navigation = () => {
-    return (
-        <nav className={styles.navigation}>
-            <div className={styles.fullNavContent}>
-                <div className={styles.navButton}>
-                    <Link to={'/favorites'}>
-                        <FavoriteIcon />
-                    </Link>
-                </div>
-                <div className={styles.navButton}>
-                    <Link to={'/'}>
-                        <MainIcon />
-                    </Link>
-                </div>
-            </div>
-        </nav>
-    );
+  const { pathname } = useLocation();
+  const isMain = pathname === '/' || pathname === '';
+  const isFavorites = pathname.startsWith('/favorites');
+
+  return (
+    <nav className={styles.navigation}>
+      <div className={styles.fullNavContent}>
+        <div className={styles.navButton}>
+          <Link to="/">
+            <img
+              src={isMain ? '/img/eye-yellow.svg' : '/img/eye-gray.svg'}
+              alt="Главная"
+              className={styles.navImg}
+            />
+          </Link>
+        </div>
+
+        <div className={styles.navButton}>
+          <Link to="/favorites">
+            <img
+              src={isFavorites ? '/img/heart-yellow.svg' : '/img/heart-gray.svg'}
+              alt="Избранное"
+              className={styles.navImg}
+            />
+          </Link>
+        </div>
+      </div>
+    </nav>
+  );
 };
