@@ -80,7 +80,6 @@ export const FavoritesPage = () => {
           description: a.description,
           isFavorite: true,
           starred: a.starred,
-          // likesCount: Math.floor(Math.random() * 5000) + 100, // 
           formattedDate: date,
           formattedTime: time,
         };
@@ -100,14 +99,14 @@ export const FavoritesPage = () => {
     const nextStarred = !prevStarred;
 
     setEvents((prev) => prev.map((e) => (e.id === eventId ? { ...e, starred: nextStarred } : e)));
-    writeCachedFeedback('stringi', id, { starred: nextStarred });
+    writeCachedFeedback(id, { starred: nextStarred });
 
     try {
       await toggleFavorite(prevStarred, id);
     } catch (e) {
-      console.warn(e);
       setEvents((prev) => prev.map((e) => (e.id === eventId ? { ...e, starred: prevStarred } : e)));
-      writeCachedFeedback('stringi', id, { starred: prevStarred });
+      writeCachedFeedback(id, { starred: prevStarred });
+      console.warn(e);
     }
   };
 
@@ -119,7 +118,7 @@ export const FavoritesPage = () => {
     setEvents((prev) => prev.filter((e) => e.id !== eventId));
 
     try {
-      const cached = readCachedFeedback('stringi', id);
+      const cached = readCachedFeedback(id);
       const starredFromUI = !!removed?.starred;
 
       await sendFeedback(
@@ -131,7 +130,7 @@ export const FavoritesPage = () => {
         starredFromUI,
       );
 
-      clearCachedFeedback('stringi', id);
+      clearCachedFeedback(id);
     } catch (e) {
       console.warn(e);
       setEvents(prev);

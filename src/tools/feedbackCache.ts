@@ -7,23 +7,19 @@ export type CachedFeedback = {
   updatedAt?: number;
 };
 
-const key = (userId: string, eventId: string) => `feedback:${userId}:${eventId}`;
+const key = (eventId: string) => `feedback:${eventId}`;
 
-export function readCachedFeedback(userId: string, eventId: string): CachedFeedback {
+export function readCachedFeedback(eventId: string): CachedFeedback {
   try {
-    const raw = localStorage.getItem(key(userId, eventId));
+    const raw = localStorage.getItem(key(eventId));
     return raw ? (JSON.parse(raw) as CachedFeedback) : {};
   } catch {
     return {};
   }
 }
 
-export function writeCachedFeedback(
-  userId: string,
-  eventId: string,
-  patch: CachedFeedback,
-): CachedFeedback {
-  const prev = readCachedFeedback(userId, eventId);
+export function writeCachedFeedback(eventId: string, patch: CachedFeedback): CachedFeedback {
+  const prev = readCachedFeedback(eventId);
 
   const next: CachedFeedback = {
     like: patch.like ?? prev.like,
@@ -34,14 +30,14 @@ export function writeCachedFeedback(
     updatedAt: Date.now(),
   };
 
-  localStorage.setItem(key(userId, eventId), JSON.stringify(next));
+  localStorage.setItem(key(eventId), JSON.stringify(next));
   return next;
 }
 
-export function replaceCachedFeedback(userId: string, eventId: string, data: CachedFeedback): void {
-  localStorage.setItem(key(userId, eventId), JSON.stringify({ ...data, updatedAt: Date.now() }));
+export function replaceCachedFeedback(eventId: string, data: CachedFeedback): void {
+  localStorage.setItem(key(eventId), JSON.stringify({ ...data, updatedAt: Date.now() }));
 }
 
-export function clearCachedFeedback(userId: string, eventId: string): void {
-  localStorage.removeItem(key(userId, eventId));
+export function clearCachedFeedback(eventId: string): void {
+  localStorage.removeItem(key(eventId));
 }

@@ -9,7 +9,7 @@ interface Tokens {
   refreshToken: string;
 }
 
-interface Feedback {
+interface FeedbackPayload {
   eventId: string;
   like: boolean;
   viewedSeconds: number;
@@ -17,7 +17,7 @@ interface Feedback {
   referralLinkOpened: boolean;
   reported: boolean;
   starred: boolean;
-  userId: string;
+  userId?: string;
 }
 
 export async function registerUser(data: string): Promise<void> {
@@ -226,12 +226,8 @@ export const sendFeedback = async (
   starred: boolean = false,
 ): Promise<void> => {
   const userId = getUserId();
-  if (!userId) {
-    console.error('Cannot send feedback without a user ID.');
-    return;
-  }
 
-  const data: Feedback = {
+  const data: FeedbackPayload = {
     eventId,
     like,
     viewedSeconds,
@@ -239,7 +235,7 @@ export const sendFeedback = async (
     referralLinkOpened: refClicked,
     reported: false,
     starred,
-    userId,
+    userId: userId ?? undefined, 
   };
 
   return authFetch<void>(`${BASE_URL}/api/v3/feedback`, {

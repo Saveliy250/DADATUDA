@@ -29,7 +29,7 @@ export const FavoriteCard = ({ event, onStarClick, onDislike }: FavoriteCardProp
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const goDetails = () => {
-    writeCachedFeedback('stringi', String(event.id), { starred: event.starred });
+    writeCachedFeedback(String(event.id), { starred: event.starred });
     navigate(`/events/${event.id}`);
   };
 
@@ -66,7 +66,6 @@ export const FavoriteCard = ({ event, onStarClick, onDislike }: FavoriteCardProp
         />
       </button>
 
-
       <div className={styles.cardContent}>
         <p className={styles.cardTitle}>{event.name}</p>
         <p className={styles.cardVenue}>{event.address}</p>
@@ -89,9 +88,7 @@ export const FavoriteCard = ({ event, onStarClick, onDislike }: FavoriteCardProp
             title="Убрать лайк"
           >
             <img src="/img/черный лайк.svg" className={styles.heartIcon} alt="Лайк" />
-
             {/* <div className={styles.likesCounter}>{formatLikesCount(event.likesCount)}</div> */}
-
           </div>
         </div>
       </div>
