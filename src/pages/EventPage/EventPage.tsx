@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './EventPage.module.css';
 import { Link, useParams } from 'react-router-dom';
 import { WhiteLogoIcon } from '../../shared/icons/WhiteLogoIcon';
 import { ArrowSubtitle } from '../../shared/components/ArrowSubtitle/ArrowSubtitle';
 import { Event } from '../../shared/models/event';
+import { sendFeedback } from '../../tools/api';
+import { readCachedFeedback, writeCachedFeedback } from '../../tools/feedbackCache';
 
 export const EventPage = () => {
     const { eventId } = useParams<{ eventId: string }>();
@@ -11,6 +13,39 @@ export const EventPage = () => {
     const [noEvent, setNoEvent] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
+
+    const start = useRef<number>(Date.now());
+    const [refClicked, setRefClicked] = useState<boolean>(false);
+    const USER_ID = 'stringi';
+
+    useEffect(() => {
+  return () => {
+    if (!eventId) return;
+
+    const sessionSeconds = Math.round((Date.now() - start.current) / 1000);
+    const cached = readCachedFeedback(USER_ID, String(eventId));
+
+    const nothingToReport = sessionSeconds === 0 && !refClicked;
+    if (nothingToReport) return;
+
+    const like = cached.like === false ? false : true;
+    const totalSeconds = (cached.viewedSeconds ?? 0) + sessionSeconds;
+    const referral = (cached.referralLinkOpened ?? false) || refClicked;
+    const starred = cached.starred ?? false;
+
+    sendFeedback(String(eventId), like, totalSeconds, true, referral, starred)
+      .then(() => {
+        writeCachedFeedback(USER_ID, String(eventId), {
+          viewedSeconds: sessionSeconds,
+          moreOpened: true,
+          referralLinkOpened: refClicked,
+          like,
+          starred,
+        });
+      })
+      .catch(console.warn);
+  };
+}, [eventId, refClicked]);
 
     useEffect(() => {
         fetch(`https://api.dada-tuda.ru/api/v1/events/${eventId}`)
@@ -87,6 +122,7 @@ export const EventPage = () => {
                                         href={`${eventData.referralLink}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
+                                        onClick={() => setRefClicked(true)}
                                     >
                                         Перейти на сайт мероприятия
                                     </a>
