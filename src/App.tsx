@@ -7,7 +7,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import { logTelegramVersion } from './tools/logTelegramVersion';
 
-import { init, retrieveLaunchParams, retrieveRawInitData, swipeBehavior } from '@telegram-apps/sdk';
+import { init, retrieveRawInitData, swipeBehavior } from '@telegram-apps/sdk';
 
 import { MainPage } from './pages/MainPage/MainPage';
 import { FiltersPage } from './pages/FiltersPage/FiltersPage';
@@ -23,11 +23,11 @@ export const App = () => {
         try {
             init();
             logTelegramVersion();
-            const launchParams = retrieveLaunchParams();
-            console.log(launchParams);
 
             const rawInitData = retrieveRawInitData();
-            console.log(rawInitData);
+            if (rawInitData) {
+                localStorage.setItem('initData',rawInitData);
+            }
 
             if (swipeBehavior.mount.isAvailable()) {
                 swipeBehavior.mount();

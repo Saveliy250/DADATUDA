@@ -4,7 +4,7 @@ import styles from './MainPage.module.css';
 
 import { AnimatePresence } from 'framer-motion';
 
-import { eventForUser } from '../../tools/api';
+import { eventForUser } from '../../tools/api/api';
 
 import { useAuth } from '../../hooks/useAuth';
 

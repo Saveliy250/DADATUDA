@@ -1,4 +1,5 @@
-import { Event } from '../shared/models/event';
+import { Event } from '../../shared/models/event';
+import { getAccessToken, getRefreshToken, saveTokens } from '../storageHelpers';
 const BASE_URL: string = import.meta.env.VITE_BASE_URL;
 
 let onLogoutCallback: (() => void) | null = null;
@@ -19,20 +20,14 @@ interface Feedback {
     userId: string;
 }
 
-export async function registerUser(data: string): Promise<void> {
-    const response = await fetch(`${BASE_URL}/api/v2/users/register`, {
+export async function registerUser(payload: string, initData?: string): Promise<void> {
+    const qs = initData ? `?initData=${encodeURIComponent(initData)}` : '';
+    const resp = await fetch(`${BASE_URL}/api/v2/users/register${qs}`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: '*/*',
-        },
-        body: data,
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: payload,
     });
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Ошибка при регистрации: ${errorText}`);
-    }
+    await ensureOk(resp, 'Ошибка при регистрации');
 }
 
 export async function loginUser(username?: string, password?: string): Promise<Tokens> {
@@ -66,22 +61,30 @@ export async function loginUser(username?: string, password?: string): Promise<T
     return { accessToken: access_token, refreshToken: refresh_token };
 }
 
-export function getAccessToken(): string | null {
-    return localStorage.getItem('access-token');
+export async function loginWithInitData(initData: string): Promise<Tokens> {
+    const url = `${BASE_URL}/api/v1/users/auth/initData?initData=${encodeURIComponent(initData)}`
+
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+    })
+    await ensureOk(response, 'Ошибка входа по initData');
+
+    const resp = await response.json();
+    const { access_token, refresh_token } = resp as { access_token: string; refresh_token: string };
+
+    return { accessToken: access_token, refreshToken: refresh_token };
 }
 
-export function getRefreshToken(): string | null {
-    return localStorage.getItem('refresh-token');
-}
 
-export function saveTokens(accessToken: string, refreshToken: string): void {
-    localStorage.setItem('access-token', accessToken);
-    localStorage.setItem('refresh-token', refreshToken);
-}
 
-export function clearTokens(): void {
-    localStorage.removeItem('access-token');
-    localStorage.removeItem('refresh-token');
+
+
+async function ensureOk(response: Response, what: string): Promise<void> {
+    if (!response.ok) {
+        const text = await response.text().catch(() => '');
+        throw new Error(`${what}: ${text || response.statusText} (HTTP ${response.status})`);
+    }
 }
 
 async function get<T>(path: string): Promise<T> {

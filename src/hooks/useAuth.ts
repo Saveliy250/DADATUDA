@@ -8,7 +8,7 @@ import {
     registerUser,
     saveTokens,
     setOnLogoutCallback,
-} from '../tools/api';
+} from '../tools/api/api';
 
 interface UseAuth {
     registration: (data: string) => Promise<void>;

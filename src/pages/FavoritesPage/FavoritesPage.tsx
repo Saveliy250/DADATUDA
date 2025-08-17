@@ -4,7 +4,7 @@ import styles from './FavoritePage.module.css';
 
 import { useAuth } from '../../hooks/useAuth';
 
-import { getShortlist, toggleFavorite } from '../../tools/api';
+import { getShortlist, toggleFavorite } from '../../tools/api/api';
 
 import { LoadingScreen } from '../../shared/ui/LoadingScreen';
 import { FavoriteCardList } from './components/FavoriteCardList/FavoriteCardList';
