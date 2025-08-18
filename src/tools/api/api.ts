@@ -1,5 +1,5 @@
 import { Event } from '../../shared/models/event';
-import { getAccessToken, getRefreshToken, saveTokens } from '../storageHelpers';
+import { getAccessToken, getInitData, getRefreshToken, saveTokens } from '../storageHelpers';
 const BASE_URL: string = import.meta.env.VITE_BASE_URL;
 
 let onLogoutCallback: (() => void) | null = null;
@@ -22,7 +22,7 @@ interface Feedback {
 
 export async function registerUser(payload: string, initData?: string): Promise<void> {
     const qs = initData ? `?initData=${encodeURIComponent(initData)}` : '';
-    const resp = await fetch(`${BASE_URL}/api/v2/users/register${qs}`, {
+    const resp = await fetch(`${BASE_URL}/api/v1/users/register${qs}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: payload,
@@ -61,22 +61,41 @@ export async function loginUser(username?: string, password?: string): Promise<T
     return { accessToken: access_token, refreshToken: refresh_token };
 }
 
-export async function loginWithInitData(initData: string): Promise<Tokens> {
-    const url = `${BASE_URL}/api/v1/users/auth/initData?initData=${encodeURIComponent(initData)}`
-
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: { Accept: 'application/json' },
-    })
-    await ensureOk(response, 'Ошибка входа по initData');
-
-    const resp = await response.json();
-    const { access_token, refresh_token } = resp as { access_token: string; refresh_token: string };
-
-    return { accessToken: access_token, refreshToken: refresh_token };
+export async function loginUserV2(username?: string, password?: string) {
+    if (username && password) return loginWithCredentials(username, password);
+    const raw = getInitData();
+    if (!raw) throw new Error('Нет данных для входа (ни логина/пароля, ни Telegram InitData).');
+    return loginWithInitData(raw);
 }
 
+export async function loginWithInitData(initData: string): Promise<{
+    access_token?: string | null;
+    refresh_token?: string | null;
+    expires_in?: number | null;
+    refresh_expires_in?: number | null;
+}> {
+    const url = `${BASE_URL}/api/v1/users/auth/initData?initData=${encodeURIComponent(initData)}`;
+    const resp = await fetch(url, { method: 'POST', headers: { Accept: 'application/json' } });
+    if (!resp.ok) {
+        console.log("loginWithInitData success")
+        const text = await resp.text().catch(() => '');
+        throw new Error(text || resp.statusText);
+    }
+    return resp.json();
+}
 
+export async function loginWithCredentials(username: string, password: string) {
+    const resp = await fetch(`${BASE_URL}/api/v1/users/auth`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ username, password }),
+    });
+    if (!resp.ok) {
+        const text = await resp.text().catch(() => '');
+        throw new Error(text || resp.statusText);
+    }
+    return resp.json();
+}
 
 
 
@@ -87,16 +106,6 @@ async function ensureOk(response: Response, what: string): Promise<void> {
     }
 }
 
-async function get<T>(path: string): Promise<T> {
-    const response = await fetch(`${BASE_URL}${path}`);
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Ошибка GET ${path}: ${errorText} - ${response.status}`);
-    }
-
-    return response.json() as Promise<T>;
-}
 
 export function setOnLogoutCallback(callback: () => void): void {
     onLogoutCallback = callback;
@@ -161,10 +170,6 @@ export async function eventForUser(pageSize = 0, categories = ''): Promise<Event
     return authFetch(`${BASE_URL}/api/v3/events/for?${queryString}`, { method: 'GET' });
 }
 
-export async function fetchRandomEvent(categories = ''): Promise<Event> {
-    const query = categories ? `?categories=${categories}` : '';
-    return get(`/api/v1/events/random${query}`);
-}
 
 export async function getShortlist(pageSize: number, pageNumber: number): Promise<Event[]> {
     return authFetch(`${BASE_URL}/api/v3/shortlist?page_size=${pageSize}&page_number=${pageNumber}`, { method: 'GET' });

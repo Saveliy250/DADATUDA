@@ -1,14 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    clearTokens,
-    getAccessToken,
-    getRefreshToken,
-    loginUser,
+    loginUser, loginUserV2,
     registerUser,
-    saveTokens,
     setOnLogoutCallback,
 } from '../tools/api/api';
+import { clearTokens, getAccessToken, getRefreshToken, saveTokens } from '../tools/storageHelpers';
 
 interface UseAuth {
     registration: (data: string) => Promise<void>;
@@ -60,7 +57,7 @@ export const useAuth = (): UseAuth => {
         setError(null);
 
         return new Promise((resolve, reject) => {
-            loginUser(username, password)
+            loginUserV2(username, password)
                 .then(({ accessToken, refreshToken }) => {
                     saveTokens(accessToken, refreshToken);
                     setIsAuthenticated(true);
