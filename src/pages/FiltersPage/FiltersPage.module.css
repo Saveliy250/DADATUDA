@@ -1,16 +1,15 @@
-.filters {
-    padding: 18px;
-    height: calc(100vh + 11vh);
-    overflow: auto;
+.pageWrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.categoryBlock {
-    margin-bottom: 12px;
+.contentWrapper {
+    flex-grow: 1;
 }
 
-@media screen and (min-width: 487px) {
-    .filters {
-        height: 100%;
-    }
+.buttonContainer {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem;
 }
-

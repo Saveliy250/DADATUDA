@@ -20,6 +20,8 @@ import { RegistrationPage } from './pages/AuthorizationPages/RegistrationPage/Re
 import { getAccessToken, saveInitData, saveTokens } from './tools/storageHelpers';
 import { loginWithInitData } from './tools/api/api';
 
+import { FilterProvider } from './contexts/FilterContext';
+
 export const App = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -68,7 +70,7 @@ export const App = () => {
     }, []);
 
     return (
-        <>
+        <FilterProvider>
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/registration" element={<RegistrationPage />} />
@@ -86,7 +88,6 @@ export const App = () => {
                     element={
                         <PrivateRoute>
                             <FiltersPage />
-                            <Navigation />
                         </PrivateRoute>
                     }
                 />
@@ -101,6 +102,6 @@ export const App = () => {
                 />
                 <Route path="/events/:eventId" element={<EventPage />} />
             </Routes>
-        </>
+        </FilterProvider>
     );
 };

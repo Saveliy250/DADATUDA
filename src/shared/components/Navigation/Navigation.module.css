@@ -34,3 +34,9 @@
     display: flex;
     justify-content: center;
 }
+
+.navImg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}

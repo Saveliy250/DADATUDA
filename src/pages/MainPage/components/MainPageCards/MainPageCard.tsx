@@ -17,14 +17,25 @@ import { StarIcon } from '../../../../shared/icons/MainPage/StarIcon.jsx';
 import { FilterIcon } from '../../../../shared/icons/MainPage/FilterIcon.jsx';
 import { TheaterIcon } from '../../../../shared/icons/EventIcons/TheaterIcon.jsx';
 
-import { Event } from '../../../../shared/models/event';
+import { Event as CustomEvent } from '../../../../shared/models/event';
 
 interface MainPageCardProps {
-    event: Event;
-    loadNext: (id: number) => void;
+    event: CustomEvent;
+    loadNext: (liked: boolean) => void;
+    onGoBack: () => void;
+    returnedCardId: number | null;
+    onReturnAnimationComplete: () => void;
+    isBackAvailable: boolean;
 }
 
-export const MainPageCard = ({ event, loadNext }: MainPageCardProps) => {
+export const MainPageCard = ({
+    event,
+    loadNext,
+    onGoBack,
+    returnedCardId,
+    onReturnAnimationComplete,
+    isBackAvailable,
+}: MainPageCardProps) => {
     const [slide, setSlide] = useState<number>(0);
     const totalImages: number = event.imageURL.length;
     const price: string = event.price !== '0' ? `${event.price} рублей` : 'Бесплатно';
@@ -38,7 +49,6 @@ export const MainPageCard = ({ event, loadNext }: MainPageCardProps) => {
 
     const x = useMotionValue(0);
     const rotate = useTransform(x, [-250, 250], [-15, 15]);
-    const opacity = useTransform(x, [-250, -160, 0, 160, 250], [0, 1, 1, 1, 0]);
     const controls = useAnimation();
 
     const currentDate: string = event.date;
@@ -71,16 +81,46 @@ export const MainPageCard = ({ event, loadNext }: MainPageCardProps) => {
         start.current = Date.now();
     }, [event.id]);
 
+    useEffect(() => {
+        const runReturnAnimation = async () => {
+            await controls.start({ x: [-window.innerWidth, 0], opacity: 1, transition: { duration: 0.25 } });
+            onReturnAnimationComplete();
+        };
+
+        if (event.id === returnedCardId) {
+            void runReturnAnimation();
+        }
+    }, [returnedCardId, event.id, controls, x, onReturnAnimationComplete]);
+
     async function finishCard(like: boolean): Promise<void> {
         console.log(event.imageURL[0], event.referralLink);
         const viewedSeconds: number = Math.round((Date.now() - start.current) / 1000);
+
         try {
             await sendFeedback(String(event.id), like, viewedSeconds, moreOpened, refClicked);
         } catch (err) {
-            console.warn(err);
+            console.warn('Произошла ошибка добавление в понравившиеся, попробуйте позже...', err);
         }
-        loadNext(event.id);
+        loadNext(like);
     }
+
+    const addToFavorites = async () => {
+        const viewedSeconds: number = Math.round((Date.now() - start.current) / 1000);
+
+        try {
+            await sendFeedback(String(event.id), true, viewedSeconds, moreOpened, refClicked, true);
+
+            await controls.start({
+                x: window.innerWidth,
+                opacity: 0,
+                transition: { duration: 0.25 },
+            });
+
+            loadNext(true);
+        } catch (err) {
+            console.warn('Произошла ошибка добавление в избранное, попробуйте позже...', err);
+        }
+    };
 
     const [isDragging, setIsDragging] = useState<boolean>(false);
 
@@ -116,7 +156,7 @@ export const MainPageCard = ({ event, loadNext }: MainPageCardProps) => {
     return (
         <motion.div
             className={styles.card}
-            style={{ x, rotate, opacity }}
+            style={{ x, rotate }}
             drag="x"
             dragConstraints={{ left: -1000, right: 1000 }}
             onDragEnd={(_, info) => {
@@ -127,17 +167,34 @@ export const MainPageCard = ({ event, loadNext }: MainPageCardProps) => {
             animate={controls}
         >
             <div onClick={handleSlide} className={expanded ? styles.cardWrapperBlacked : styles.cardWrapper}>
-                {isLoading && <Skeleton width="100%" height="100vh" />}
-                {imageError && <div className={styles.errorMessage}>Изображение не загрузилось...</div>}
-                <img
+                <motion.img
+                    key={slide}
                     draggable={false}
                     src={event.imageURL[slide]}
                     onLoad={loadHandler}
                     onError={errorHandler}
                     alt={event.name}
                     className={styles.cardImg}
-                    style={{ opacity: isLoading || imageError ? '0' : '1' }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: isLoading ? 0 : 1 }}
+                    transition={{ opacity: { duration: 0.4 } }}
                 />
+
+                <AnimatePresence>
+                    {isLoading && (
+                        <motion.div
+                            key="loader"
+                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                            initial={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.4 }}
+                        >
+                            <Skeleton width="100%" height="100vh" />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {imageError && <div className={styles.errorMessage}>Изображение не загрузилось...</div>}
 
                 {totalImages > 1 && !isLoading && !imageError && (
                     <div className={styles.slider}>
@@ -155,17 +212,19 @@ export const MainPageCard = ({ event, loadNext }: MainPageCardProps) => {
                     </div>
                 )}
 
-                <div className={styles.upperInfo}>
-                    <div>
-                        <TheaterIcon />
-                        {event.categories![0]}
+                {!moreOpened && (
+                    <div className={styles.upperInfo}>
+                        <div>
+                            <TheaterIcon />
+                            {event.categories![0]}
+                        </div>
+                        <div onClick={(e) => e.stopPropagation()}>
+                            <Link to="/filters">
+                                <FilterIcon />
+                            </Link>
+                        </div>
                     </div>
-                    <div onClick={(e) => e.stopPropagation()}>
-                        <Link to="/filters">
-                            <FilterIcon />
-                        </Link>
-                    </div>
-                </div>
+                )}
 
                 <div className={styles.cardInfo}>
                     <div className={styles.cardTitle}>
@@ -227,9 +286,18 @@ export const MainPageCard = ({ event, loadNext }: MainPageCardProps) => {
                     <div className={styles.mainActionsWrapper}>
                         <MainPageDislikeButton controls={controls} finishCard={(liked) => void finishCard(liked)} />
 
-                        <div className={styles.backButton}>
+                        <button
+                            className={`${styles.backButton} ${!isBackAvailable ? styles.disabled : ''}`}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (isBackAvailable) {
+                                    onGoBack();
+                                }
+                            }}
+                            disabled={!isBackAvailable}
+                        >
                             <CurvedArrowIcon />
-                        </div>
+                        </button>
 
                         <button
                             className={styles.moreButton}
@@ -243,7 +311,9 @@ export const MainPageCard = ({ event, loadNext }: MainPageCardProps) => {
                         </button>
 
                         <div className={styles.starButton}>
-                            <StarIcon />
+                            <button onClick={() => void addToFavorites()}>
+                                <StarIcon />
+                            </button>
                         </div>
 
                         <MainPageLikeButton controls={controls} finishCard={(liked) => void finishCard(liked)} />

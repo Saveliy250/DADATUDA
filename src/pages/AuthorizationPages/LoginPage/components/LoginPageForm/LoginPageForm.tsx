@@ -20,7 +20,7 @@ export const LoginPageForm = () => {
         e.preventDefault();
         try {
             await login(username, password);
-            navigate('/');
+            await navigate('/');
         } catch (error) {
             console.error(error);
         }

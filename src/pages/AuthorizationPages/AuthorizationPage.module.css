@@ -1,8 +1,9 @@
 @import "../../shared/styles/variables.css";
 
 .login {
+    background-color: #191919;
     margin: 0 auto;
-    width: 100vw;
+    width: 100%;
     max-width: 430px;
     height: 100vh;
     padding: 0 24px ;
