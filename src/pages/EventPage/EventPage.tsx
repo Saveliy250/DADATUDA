@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { WhiteLogoIcon } from '../../shared/icons/WhiteLogoIcon';
 import { ArrowSubtitle } from '../../shared/components/ArrowSubtitle/ArrowSubtitle';
 import { Event } from '../../shared/models/event';
-import { sendFeedback } from '../../tools/api';
+import { sendFeedback } from '../../tools/api/api';
 import { readCachedFeedback, writeCachedFeedback } from '../../tools/feedbackCache';
 
 export const EventPage = () => {
