@@ -33,7 +33,7 @@ export async function registerUser(payload: string): Promise<void> {
     const saved = getInitData();
     const b64 = saved && !isProbablyBase64(saved) ? toBase64Safe(saved) : saved;
     const qs = b64 ? `?initData=${encodeURIComponent(b64)}` : '';
-    const resp = await fetch(`${BASE_URL}/api/v1/users/register${qs}`, {
+    const resp = await fetch(`${BASE_URL}/api/v2/users/register${qs}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: payload,
