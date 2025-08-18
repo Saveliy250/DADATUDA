@@ -20,8 +20,18 @@ interface Feedback {
     userId: string;
 }
 
-export async function registerUser(payload: string, initData?: string): Promise<void> {
-    const qs = initData ? `?initData=${encodeURIComponent(initData)}` : '';
+function toBase64Safe(str: string): string {
+    try { return btoa(unescape(encodeURIComponent(str))); } catch { return btoa(str); }
+}
+function isProbablyBase64(v: string): boolean {
+    if (!v || /[^A-Za-z0-9+/=]/.test(v)) return false;
+    try { atob(v); return true; } catch { return false; }
+}
+
+export async function registerUser(payload: string): Promise<void> {
+    const saved = getInitData();
+    const b64 = saved && !isProbablyBase64(saved) ? toBase64Safe(saved) : saved;
+    const qs = b64 ? `?initData=${encodeURIComponent(b64)}` : '';
     const resp = await fetch(`${BASE_URL}/api/v1/users/register${qs}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -74,7 +84,8 @@ export async function loginWithInitData(initData: string): Promise<{
     expires_in?: number | null;
     refresh_expires_in?: number | null;
 }> {
-    const url = `${BASE_URL}/api/v1/users/auth/initData?initData=${encodeURIComponent(initData)}`;
+    const b64 = isProbablyBase64(initData) ? initData : toBase64Safe(initData);
+    const url = `${BASE_URL}/api/v1/users/auth/initData?initData=${encodeURIComponent(b64)}`;
     const resp = await fetch(url, { method: 'POST', headers: { Accept: 'application/json' } });
     if (!resp.ok) {
         console.log("loginWithInitData success")
