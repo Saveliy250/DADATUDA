@@ -8,7 +8,7 @@ import { AnimatePresence, motion, PanInfo, useAnimation, useMotionValue, useTran
 import { Skeleton } from '@mantine/core';
 import moment from 'moment';
 
-import { sendFeedback } from '../../../../tools/api.js';
+import { sendFeedback } from '../../../../tools/api/api';
 
 import { CurvedArrowIcon } from '../../../../shared/icons/MainPage/CurvedArrowIcon.jsx';
 import { MainPageDislikeButton } from '../MainPageActionButtons/MainPageDislikeButton';
