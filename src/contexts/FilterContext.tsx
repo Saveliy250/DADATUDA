@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 
-import { eventForUser } from '../tools/api';
+import { eventForUser } from '../tools/api/api';
 
 import { Event as CustomEvent } from '../shared/models/event';
 
