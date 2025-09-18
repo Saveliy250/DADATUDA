@@ -6,7 +6,7 @@ import styles from './MainPage.module.css';
 import { AnimatePresence } from 'framer-motion';
 
 import { useFilter } from '../../hooks/useFilter';
-import { sendFeedback } from '../../tools/api/api';
+import { sendFeedback } from '../../tools/api';
 
 import { LoadingScreen } from '../../shared/ui/LoadingScreen';
 

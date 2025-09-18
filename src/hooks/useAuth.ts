@@ -59,7 +59,6 @@ export const useAuth = (): UseAuth => {
         return new Promise((resolve, reject) => {
             authenticate({ username, password })
                 .then(({ accessToken, refreshToken }) => {
-                    console.log(accessToken, refreshToken)
                     saveTokens(accessToken, refreshToken);
                     setIsAuthenticated(true);
                     resolve();

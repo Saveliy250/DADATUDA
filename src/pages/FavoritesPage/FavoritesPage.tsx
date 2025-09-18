@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { toggleFavorite, sendFeedback, getShortlist } from '../../tools/api/api';
+import { toggleFavorite, sendFeedback, getShortlist } from '../../tools/api';
 import { readCachedFeedback, clearCachedFeedback, writeCachedFeedback } from '../../tools/feedbackCache';
 import { useNavigate } from 'react-router-dom';
 import styles from './FavoritePage.module.css';
