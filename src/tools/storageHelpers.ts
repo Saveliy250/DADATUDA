@@ -1,3 +1,6 @@
+
+const INIT_DATA = 'init-data';
+
 export function getAccessToken(): string | null {
     return localStorage.getItem('access-token');
 }
@@ -16,11 +19,42 @@ export function clearTokens(): void {
     localStorage.removeItem('refresh-token');
 }
 
+function toBase64Safe(str: string): string {
+    try {
+        return btoa(unescape(encodeURIComponent(str)));
+    } catch {
+        return btoa(str);
+    }
+}
+function fromBase64Safe(b64: string): string {
+    try {
+        return decodeURIComponent(escape(atob(b64)));
+    } catch {
+        return atob(b64);
+    }
+}
+function isProbablyBase64(v: string): boolean {
+    if (!v || /[^A-Za-z0-9+/=]/.test(v)) return false;
+    try {
+        atob(v);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+export function saveInitData(raw: string): void {
+    if (!raw) return;
+    localStorage.setItem(INIT_DATA, raw);
+}
+
 export function getInitData(): string | null {
     return localStorage.getItem('initData');
 }
-export function saveInitData(value: string): void {
-    localStorage.setItem('initData', value);
+
+export function getInitDataDecoded(): string | null {
+    const v = localStorage.getItem(INIT_DATA);
+    return v ?? null;
 }
 export function clearInitData(): void {
     localStorage.removeItem('initData');

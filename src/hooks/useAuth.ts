@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    loginUser, loginUserV2,
+    authenticate,
     registerUser,
     setOnLogoutCallback,
 } from '../tools/api/api';
@@ -57,7 +57,7 @@ export const useAuth = (): UseAuth => {
         setError(null);
 
         return new Promise((resolve, reject) => {
-            loginUserV2(username, password)
+            authenticate({ username, password })
                 .then(({ accessToken, refreshToken }) => {
                     saveTokens(accessToken, refreshToken);
                     setIsAuthenticated(true);
