@@ -1,7 +1,7 @@
 import { Event } from '../../shared/models/event';
 import { getAccessToken, getInitData, getRefreshToken, saveTokens, clearTokens, clearInitData } from '../storageHelpers';
 import { jwtDecode } from 'jwt-decode';
-import { logger } from '../../lib/logger';
+import { logger } from '../logger';
 
 const BASE_URL: string = import.meta.env.VITE_BASE_URL;
 
