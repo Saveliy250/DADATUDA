@@ -9,4 +9,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/__tests__/setup.ts'],
   },
+  server: {
+    host: '0.0.0.0',
+    allowedHosts: ['ui.dada-tuda.ru', 'tg-miniapp-dada-b1.dada-tuda.ru'],
+}
 })
