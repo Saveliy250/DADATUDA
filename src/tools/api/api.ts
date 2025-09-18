@@ -1,6 +1,8 @@
 import { Event } from '../../shared/models/event';
-import { getAccessToken, getInitData, getRefreshToken, saveTokens } from '../storageHelpers';
+import { getAccessToken, getInitData, getRefreshToken, saveTokens, clearTokens, clearInitData } from '../storageHelpers';
 import { jwtDecode } from 'jwt-decode';
+import { logger } from '../../lib/logger';
+
 const BASE_URL: string = import.meta.env.VITE_BASE_URL;
 
 let onLogoutCallback: (() => void) | null = null;
@@ -21,18 +23,13 @@ interface FeedbackPayload {
   userId?: string;
 }
 
-function toBase64Safe(str: string): string {
-    try { return btoa(unescape(encodeURIComponent(str))); } catch { return btoa(str); }
-}
-function isProbablyBase64(v: string): boolean {
-    if (!v || /[^A-Za-z0-9+/=]/.test(v)) return false;
-    try { atob(v); return true; } catch { return false; }
-}
+// Helper to prefix relative paths with BASE_URL
+const withBase = (path: string) => /^https?:\/\//i.test(path) ? path : `${BASE_URL}${path}`;
 
-export async function registerUser(payload: string): Promise<void> {
+export async function registerUser(payload: string, initData?: string): Promise<void> {
     const saved = getInitData();
-    const b64 = saved && !isProbablyBase64(saved) ? toBase64Safe(saved) : saved;
-    const qs = b64 ? `?initData=${encodeURIComponent(b64)}` : '';
+    const initDataToUse = initData ?? saved ?? '';
+    const qs = `?initData=${encodeURIComponent(initDataToUse)}`;
     const resp = await fetch(`${BASE_URL}/api/v2/users/register${qs}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -41,72 +38,67 @@ export async function registerUser(payload: string): Promise<void> {
     await ensureOk(resp, 'Ошибка при регистрации');
 }
 
-export async function loginUser(username?: string, password?: string): Promise<Tokens> {
-  const data = {
-    client_id: 'service-client',
-    client_secret: 'qYz5m2pnIQAW1dWjqzPsRirfD3rdYGh3',
-    grant_type: 'password',
-    username: username || '',
-    password: password || '',
-  };
-
-  const formBody = new URLSearchParams(data).toString();
-
-  const response = await fetch('https://auth.dada-tuda.ru/realms/master/protocol/openid-connect/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Accept: 'application/json',
-    },
-    body: formBody,
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Ошибка при аутентификации: ${errorText}`);
-  }
-
-  const resp = await response.json();
-  const { access_token, refresh_token } = resp as { access_token: string; refresh_token: string };
-
-  return { accessToken: access_token, refreshToken: refresh_token };
-}
-
-export async function loginUserV2(username?: string, password?: string) {
-    if (username && password) return loginWithCredentials(username, password);
-    const raw = getInitData();
-    if (!raw) throw new Error('Нет данных для входа (ни логина/пароля, ни Telegram InitData).');
-    return loginWithInitData(raw);
-}
-
-export async function loginWithInitData(initData: string): Promise<{
-    access_token?: string | null;
-    refresh_token?: string | null;
-    expires_in?: number | null;
-    refresh_expires_in?: number | null;
-}> {
-    const b64 = isProbablyBase64(initData) ? initData : toBase64Safe(initData);
-    const url = `${BASE_URL}/api/v1/users/auth/initData?initData=${encodeURIComponent(b64)}`;
-    const resp = await fetch(url, { method: 'POST', headers: { Accept: 'application/json' } });
+export async function loginWithInitData(initData: string): Promise<Tokens> {
+    const url = `${BASE_URL}/api/v1/users/auth/initData?initData=${encodeURIComponent(initData)}`;
+    const resp = await fetch(url, { 
+        method: 'GET', 
+        headers: { Accept: 'application/json' } 
+    });
+    
     if (!resp.ok) {
-        console.log("loginWithInitData success")
         const text = await resp.text().catch(() => '');
         throw new Error(text || resp.statusText);
     }
-    return resp.json();
+    
+    const data = await resp.json();
+    const { access_token, refresh_token } = data as { access_token: string; refresh_token: string };
+    
+    if (!access_token || !refresh_token) {
+        throw new Error('Invalid response: missing tokens');
+    }
+    
+    return { accessToken: access_token, refreshToken: refresh_token };
 }
 
-export async function loginWithCredentials(username: string, password: string) {
+export async function loginWithCredentials(username: string, password: string): Promise<Tokens> {
     const resp = await fetch(`${BASE_URL}/api/v1/users/auth`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({ username, password }),
     });
+    
     if (!resp.ok) {
         const text = await resp.text().catch(() => '');
         throw new Error(text || resp.statusText);
     }
-    return resp.json();
+    
+    const data = await resp.json();
+    const { access_token, refresh_token } = data as { access_token: string; refresh_token: string };
+    
+    if (!access_token || !refresh_token) {
+        throw new Error('Invalid response: missing tokens');
+    }
+    
+    return { accessToken: access_token, refreshToken: refresh_token };
+}
+
+export async function authenticate(params?: { username?: string; password?: string }): Promise<Tokens> {
+    const initData = getInitData();
+    
+    if (initData && initData.trim()) {
+        try {
+            return await loginWithInitData(initData);
+        } catch (error) {
+            logger.error(error, 'initData login failed, clearing init-data');
+            clearInitData();
+        }
+    }
+    
+    if (params?.username && params?.password) {
+        return await loginWithCredentials(params.username, params.password);
+    }
+    
+    throw new Error('No valid authentication method available');
 }
 
 
@@ -124,47 +116,106 @@ export function setOnLogoutCallback(callback: () => void): void {
   onLogoutCallback = callback;
 }
 
-export async function authFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function authFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const accessToken = getAccessToken();
-  const refreshToken = getRefreshToken();
-
-  const headers = new Headers(options.headers);
-  headers.set('Content-Type', 'application/json');
-
+  
+  const headers = new Headers(init.headers);
+  
+  // Set Content-Type only if body is a string and header not already set
+  if (init.body && typeof init.body === 'string' && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+  
   if (accessToken) {
-    headers.set('Authorization', 'Bearer ' + accessToken);
+    headers.set('Authorization', `Bearer ${accessToken}`);
   }
-
-  if (refreshToken) {
-    headers.set('X-Refresh-Token', refreshToken);
-  }
-
-  const response = await fetch(path, {
-    ...options,
+  
+  const fullUrl = withBase(path);
+  const response = await fetch(fullUrl, {
+    ...init,
     headers,
   });
-
-  const newAccessToken = response.headers.get('Access-Token');
-  const newRefreshToken = response.headers.get('Refresh-Token');
-
-  if (newRefreshToken && newAccessToken) {
-    saveTokens(newAccessToken, newRefreshToken);
-  }
-
-  if (!response.ok) {
-    if (response.status === 401 && onLogoutCallback) {
-      onLogoutCallback();
+  
+  // Handle 401 with retry logic
+  if (response.status === 401) {
+    const initData = getInitData();
+    
+    if (initData && initData.trim()) {
+      try {
+        logger.info('401 received, attempting initData re-login');
+        const tokens = await loginWithInitData(initData);
+        saveTokens(tokens.accessToken, tokens.refreshToken);
+        
+        // Retry the original request with new token
+        const retryHeaders = new Headers(init.headers);
+        if (init.body && typeof init.body === 'string' && !retryHeaders.has('Content-Type')) {
+          retryHeaders.set('Content-Type', 'application/json');
+        }
+        retryHeaders.set('Authorization', `Bearer ${tokens.accessToken}`);
+        
+        const retryResponse = await fetch(fullUrl, {
+          ...init,
+          headers: retryHeaders,
+        });
+        
+        if (retryResponse.status === 401) {
+          logger.error('Retry also returned 401, logging out');
+          if (onLogoutCallback) {
+            onLogoutCallback();
+          }
+          clearTokens();
+          const errorText = await retryResponse.text().catch(() => '');
+          throw new Error(`Authentication failed: ${errorText}`);
+        }
+        
+        // Process successful retry response
+        if (retryResponse.status === 204 || retryResponse.headers.get('Content-Length') === '0') {
+          return null as T;
+        }
+        
+        const contentType = retryResponse.headers.get('Content-Type');
+        if (contentType && contentType.includes('application/json')) {
+          return retryResponse.json() as Promise<T>;
+        } else {
+          await retryResponse.text();
+          return null as T;
+        }
+      } catch (error) {
+        logger.error(error, 'initData re-login failed');
+        clearInitData();
+        if (onLogoutCallback) {
+          onLogoutCallback();
+        }
+        clearTokens();
+        throw error;
+      }
+    } else {
+      logger.error('401 received but no initData available for retry');
+      if (onLogoutCallback) {
+        onLogoutCallback();
+      }
+      clearTokens();
+      const errorText = await response.text().catch(() => '');
+      throw new Error(`Authentication failed: ${errorText}`);
     }
-
-    const errorText = await response.text();
-    throw new Error(`Ошибка в авторизованном запросе: ${errorText}`);
   }
-
+  
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => '');
+    throw new Error(`Request failed: ${errorText}`);
+  }
+  
   if (response.status === 204 || response.headers.get('Content-Length') === '0') {
     return null as T;
   }
-
-  return response.json() as Promise<T>;
+  
+  const contentType = response.headers.get('Content-Type');
+  if (contentType && contentType.includes('application/json')) {
+    return response.json() as Promise<T>;
+  } else {
+    await response.text();
+    return null as T;
+  }
 }
 
 export async function eventForUser(
@@ -212,15 +263,15 @@ export async function eventForUser(
   }
 
   const queryString = params.toString();
-  const fullUrl = `${BASE_URL}/api/v3/events/for?${queryString}`;
-  console.log('API Request URL:', fullUrl);
+  const path = `/api/v3/events/for?${queryString}`;
+  logger.info('API Request URL:', withBase(path));
 
-  return authFetch(fullUrl, { method: 'GET' });
+  return authFetch(path, { method: 'GET' });
 }
 
 
 export async function getShortlist(pageSize: number, pageNumber: number): Promise<Event[]> {
-  return authFetch(`${BASE_URL}/api/v3/shortlist?page_size=${pageSize}&page_number=${pageNumber}`, { method: 'GET' });
+  return authFetch(`/api/v3/shortlist?page_size=${pageSize}&page_number=${pageNumber}`, { method: 'GET' });
 }
 
 const getUserId = (): string | null => {
@@ -258,7 +309,7 @@ export const sendFeedback = async (
     userId: userId ?? undefined,
   };
 
-  return authFetch<void>(`${BASE_URL}/api/v3/feedback`, {
+  return authFetch<void>(`/api/v3/feedback`, {
     method: 'POST',
     body: JSON.stringify(data),
   });
@@ -267,10 +318,17 @@ export const sendFeedback = async (
 export async function toggleFavorite(starred: boolean, id: string): Promise<void> {
   const newFavorite = !starred;
 
-  return authFetch<void>(`${BASE_URL}/api/v3/feedback/${id}`, {
+  return authFetch<void>(`/api/v3/feedback/${id}`, {
     method: 'PATCH',
     body: JSON.stringify({
       starred: newFavorite,
     }),
   });
 }
+
+export async function fetchEvent(eventId: string): Promise<Event | null> {
+  return authFetch<Event>(`/api/v1/events/${eventId}`, { method: 'GET' });
+}
+
+// Re-export storage helpers for convenience
+export { clearInitData } from '../storageHelpers';

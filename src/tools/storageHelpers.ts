@@ -1,5 +1,5 @@
 
-const INIT_DATA = 'initData';
+const INIT_DATA = 'init-data';
 
 export function getAccessToken(): string | null {
     return localStorage.getItem('access-token');
@@ -45,8 +45,7 @@ function isProbablyBase64(v: string): boolean {
 
 export function saveInitData(raw: string): void {
     if (!raw) return;
-    const b64 = isProbablyBase64(raw) ? raw : toBase64Safe(raw);
-    localStorage.setItem(INIT_DATA, b64);
+    localStorage.setItem(INIT_DATA, raw);
 }
 
 export function getInitData(): string | null {
@@ -55,7 +54,7 @@ export function getInitData(): string | null {
 
 export function getInitDataDecoded(): string | null {
     const v = localStorage.getItem(INIT_DATA);
-    return v ? (isProbablyBase64(v) ? fromBase64Safe(v) : v) : null;
+    return v ?? null;
 }
 export function clearInitData(): void {
     localStorage.removeItem(INIT_DATA);

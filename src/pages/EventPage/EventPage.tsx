@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { WhiteLogoIcon } from '../../shared/icons/WhiteLogoIcon';
 import { ArrowSubtitle } from '../../shared/components/ArrowSubtitle/ArrowSubtitle';
 import { Event } from '../../shared/models/event';
-import { sendFeedback } from '../../tools/api/api';
+import { sendFeedback, fetchEvent } from '../../tools/api/api';
 import { readCachedFeedback, writeCachedFeedback } from '../../tools/feedbackCache';
 
 export const EventPage = () => {
@@ -47,21 +47,14 @@ export const EventPage = () => {
   }, [eventId, refClicked]);
 
   useEffect(() => {
-    fetch(`https://api.dada-tuda.ru/api/v1/events/${eventId}`)
-      .then((response) => {
-        if (response.status === 204) {
-          setNoEvent(true);
-          setLoading(false);
-          return;
-        }
-        if (!response.ok) {
-          throw new Error('Error fetching event data.');
-        }
-        return response.json() as Promise<Event>;
-      })
+    if (!eventId) return;
+    
+    fetchEvent(eventId)
       .then((data) => {
         if (data) {
           setEventData(data);
+        } else {
+          setNoEvent(true);
         }
         setLoading(false);
       })
