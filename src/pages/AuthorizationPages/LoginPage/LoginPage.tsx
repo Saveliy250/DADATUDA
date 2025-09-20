@@ -11,6 +11,7 @@ import { saveTokens } from '../../../tools/storageHelpers';
 
 import { ArrowSubtitle } from '../../../shared/components/ArrowSubtitle/ArrowSubtitle';
 import { LoginPageForm } from './components/LoginPageForm/LoginPageForm';
+import { logger } from '../../../tools/logger';
 
 export const LoginPage = () => {
     const { error, isAuthenticated } = useAuth();
@@ -20,21 +21,25 @@ export const LoginPage = () => {
 
     useEffect(() => {
         const initData = getInitData();
+        logger.info('[LoginPage] mount, hasInitData', Boolean(initData));
         if (initData && initData.trim() && !isAuthenticated) {
             setAutoLoginLoading(true);
             setShowForm(false);
             
             loginWithInitData(initData)
                 .then(({ accessToken, refreshToken }) => {
+                    logger.info('[LoginPage] loginWithInitData success');
                     saveTokens(accessToken, refreshToken);
                     navigate('/', { replace: true });
                 })
                 .catch((error) => {
-                    console.warn('Auto-login by initData failed:', error);
+                    logger.warn('[LoginPage] Auto-login by initData failed');
+                    logger.error(error);
                     clearInitData();
                     setShowForm(true);
                 })
                 .finally(() => {
+                    logger.info('[LoginPage] autologin finished');
                     setAutoLoginLoading(false);
                 });
         }

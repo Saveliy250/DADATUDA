@@ -6,6 +6,7 @@ import {
     setOnLogoutCallback,
 } from '../tools/api/api';
 import { clearTokens, getAccessToken, getRefreshToken, saveTokens } from '../tools/storageHelpers';
+import { logger } from '../tools/logger';
 
 interface UseAuth {
     registration: (data: string) => Promise<void>;
@@ -24,6 +25,7 @@ export const useAuth = (): UseAuth => {
     const navigate = useNavigate();
 
     const logout = useCallback((): void => {
+        logger.info('[useAuth.logout] called');
         clearTokens();
         setIsAuthenticated(false);
         void navigate('/login');
@@ -31,10 +33,12 @@ export const useAuth = (): UseAuth => {
 
     useEffect(() => {
         const hasToken = !!getAccessToken() || !!getRefreshToken();
+        logger.info('[useAuth.init] hasToken', hasToken);
         setIsAuthenticated(hasToken);
         setLoading(false);
 
         setOnLogoutCallback(() => {
+            logger.info('[useAuth.onLogoutCallback]');
             logout();
         });
     }, [logout]);
@@ -43,9 +47,12 @@ export const useAuth = (): UseAuth => {
         setLoading(true);
         setError(null);
         try {
+            logger.info('[useAuth.registration] start');
             await registerUser(data);
+            logger.info('[useAuth.registration] success');
             void navigate('/login');
         } catch (error: unknown) {
+            logger.error(error, '[useAuth.registration] failed');
             setError(error as Error);
         } finally {
             setLoading(false);
@@ -57,19 +64,23 @@ export const useAuth = (): UseAuth => {
         setError(null);
 
         return new Promise((resolve, reject) => {
+            logger.info('[useAuth.login] start', { hasUsername: !!username });
             authenticate({ username, password })
                 .then(({ accessToken, refreshToken }) => {
+                    logger.info('[useAuth.login] success, saving tokens');
                     saveTokens(accessToken, refreshToken);
                     setIsAuthenticated(true);
                     resolve();
                 })
                 .catch((error: unknown) => {
                     const err = error instanceof Error ? error : new Error('An unknown error occurred');
+                    logger.error(err, '[useAuth.login] failed');
                     setError(err);
                     setIsAuthenticated(false);
                     reject(err);
                 })
                 .finally(() => {
+                    logger.info('[useAuth.login] finally');
                     setLoading(false);
                 });
         });

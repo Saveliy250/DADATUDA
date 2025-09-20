@@ -19,6 +19,7 @@ import { LoginPage } from './pages/AuthorizationPages/LoginPage/LoginPage';
 import { RegistrationPage } from './pages/AuthorizationPages/RegistrationPage/RegistrationPage';
 import { getAccessToken, saveInitData, clearTokens } from './tools/storageHelpers';
 import { setOnLogoutCallback } from './tools/api/api';
+import { logger } from './tools/logger';
 
 import { FilterProvider } from './contexts/FilterContext';
 
@@ -28,30 +29,33 @@ export const App = () => {
 
     useEffect(() => {
         try {
+            logger.info('[App] init start');
             init();
             logTelegramVersion();
 
             // Set up logout callback
             setOnLogoutCallback(() => {
+                logger.info('[App] onLogoutCallback');
                 clearTokens();
                 navigate('/login', { replace: true });
             });
 
             const rawInitData = retrieveRawInitData();
+            logger.info('[App] retrieveRawInitData', Boolean(rawInitData));
             if (rawInitData) {
                 saveInitData(rawInitData);
             }
 
             if (swipeBehavior.mount.isAvailable()) {
                 swipeBehavior.mount();
-                console.log(swipeBehavior.isMounted()); // true
+                logger.info('[App] swipeBehavior mounted', swipeBehavior.isMounted());
             }
             if (swipeBehavior.disableVertical.isAvailable()) {
                 swipeBehavior.disableVertical();
-                console.log(swipeBehavior.isVerticalEnabled()); // false
+                logger.info('[App] swipe vertical enabled', swipeBehavior.isVerticalEnabled());
             }
         } catch (e) {
-            console.warn('TWA init error:', e);
+            logger.error(e, 'TWA init error');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
