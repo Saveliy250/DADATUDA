@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { eventForUser } from '../tools/api/api';
 
@@ -7,6 +7,8 @@ import { Event as CustomEvent } from '../shared/models/event';
 import { formatDate } from '../tools/FormatDate';
 
 import { FilterContext } from './FilterContextValue';
+import { getAccessToken } from '../tools/storageHelpers';
+import { logger } from '../tools/logger';
 
 const INITIAL_PRICE: [number, number] = [0, 5000];
 const INITIAL_DATE: [Date | null, Date | null] = [null, null];
@@ -123,9 +125,19 @@ export const FilterProvider = ({ children }: FilterProviderProps) => {
         await fetchEvents(nextPage, true);
     }, [loading, hasMore, page, fetchEvents]);
 
+    const hasAuth = useMemo(() => {
+        const token = getAccessToken();
+        return Boolean(token);
+    }, []);
+
     useEffect(() => {
+        if (!hasAuth) {
+            logger.info('[FilterProvider] skip initial fetch: no auth');
+            return;
+        }
+        logger.info('[FilterProvider] initial fetch');
         void handleApplyFilters();
-    }, [handleApplyFilters]);
+    }, [hasAuth, handleApplyFilters]);
 
     const removeEventFromDisplay = useCallback(
         (eventId: number) => {
