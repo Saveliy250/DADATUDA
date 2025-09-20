@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './index.css';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
@@ -26,6 +26,7 @@ import { FilterProvider } from './contexts/FilterContext';
 export const App = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [twaReady, setTwaReady] = useState<boolean>(false);
 
     useEffect(() => {
         try {
@@ -57,8 +58,14 @@ export const App = () => {
         } catch (e) {
             logger.error(e, 'TWA init error');
         }
+        setTwaReady(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    if (!twaReady) {
+        logger.info('[App] waiting for TWA init…');
+        return null;
+    }
 
     return (
         <FilterProvider>
