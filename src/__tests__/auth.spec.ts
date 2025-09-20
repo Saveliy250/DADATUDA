@@ -42,7 +42,7 @@ describe('Auth Functions', () => {
       const result = await loginWithInitData('test-init-data');
 
       expect(global.fetch).toHaveBeenCalledWith(
-        'https://api.dada-tuda.ru/api/v1/users/auth/initData?initData=test-init-data',
+        'https://api.dada-tuda.ru/api/v1/users/auth/initData?initData=dGVzdC1pbml0LWRhdGE%3D',
         {
           method: 'GET',
           headers: { Accept: 'application/json' },

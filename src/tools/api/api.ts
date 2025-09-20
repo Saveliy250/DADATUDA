@@ -26,20 +26,41 @@ interface FeedbackPayload {
 // Helper to prefix relative paths with BASE_URL
 const withBase = (path: string) => /^https?:\/\//i.test(path) ? path : `${BASE_URL}${path}`;
 
+// Encode initData to base64 (unicode-safe)
+function encodeInitDataBase64(raw: string): string {
+  try {
+    return btoa(unescape(encodeURIComponent(raw)));
+  } catch {
+    return btoa(raw);
+  }
+}
+
 export async function registerUser(payload: string, initData?: string): Promise<void> {
     const saved = getInitData();
     const initDataToUse = initData ?? saved ?? '';
-    const qs = `?initData=${encodeURIComponent(initDataToUse)}`;
+    const encoded = encodeInitDataBase64(initDataToUse);
+    const qs = `?initData=${encodeURIComponent(encoded)}`;
+    logger.info('[registerUser] start', {
+      hasInitData: Boolean(initDataToUse),
+      initDataLen: initDataToUse?.length ?? 0,
+    });
     const resp = await fetch(`${BASE_URL}/api/v2/users/register${qs}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: payload,
     });
+    logger.info('[registerUser] response', { status: resp.status });
     await ensureOk(resp, 'Ошибка при регистрации');
+    logger.info('[registerUser] success');
 }
 
 export async function loginWithInitData(initData: string): Promise<Tokens> {
-    const url = `${BASE_URL}/api/v1/users/auth/initData?initData=${encodeURIComponent(initData)}`;
+    const encoded = encodeInitDataBase64(initData);
+    const url = `${BASE_URL}/api/v1/users/auth/initData?initData=${encodeURIComponent(encoded)}`;
+    logger.info('[loginWithInitData] start', {
+      rawLen: initData?.length ?? 0,
+      encodedPreview: encoded.slice(0, 10),
+    });
     const resp = await fetch(url, { 
         method: 'GET', 
         headers: { Accept: 'application/json' } 
@@ -47,20 +68,25 @@ export async function loginWithInitData(initData: string): Promise<Tokens> {
     
     if (!resp.ok) {
         const text = await resp.text().catch(() => '');
+        logger.warn('[loginWithInitData] failed', { status: resp.status, text });
         throw new Error(text || resp.statusText);
     }
     
+    logger.info('[loginWithInitData] response ok');
     const data = await resp.json();
     const { access_token, refresh_token } = data as { access_token: string; refresh_token: string };
     
     if (!access_token || !refresh_token) {
+        logger.warn('[loginWithInitData] invalid token payload');
         throw new Error('Invalid response: missing tokens');
     }
     
+    logger.info('[loginWithInitData] success');
     return { accessToken: access_token, refreshToken: refresh_token };
 }
 
 export async function loginWithCredentials(username: string, password: string): Promise<Tokens> {
+    logger.info('[loginWithCredentials] start', { usernameMasked: Boolean(username) ? '***' : '' });
     const resp = await fetch(`${BASE_URL}/api/v1/users/auth`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -69,24 +95,30 @@ export async function loginWithCredentials(username: string, password: string): 
     
     if (!resp.ok) {
         const text = await resp.text().catch(() => '');
+        logger.warn('[loginWithCredentials] failed', { status: resp.status, text });
         throw new Error(text || resp.statusText);
     }
     
+    logger.info('[loginWithCredentials] response ok');
     const data = await resp.json();
     const { access_token, refresh_token } = data as { access_token: string; refresh_token: string };
     
     if (!access_token || !refresh_token) {
+        logger.warn('[loginWithCredentials] invalid token payload');
         throw new Error('Invalid response: missing tokens');
     }
     
+    logger.info('[loginWithCredentials] success');
     return { accessToken: access_token, refreshToken: refresh_token };
 }
 
 export async function authenticate(params?: { username?: string; password?: string }): Promise<Tokens> {
+    logger.info('[authenticate] start', { hasCreds: Boolean(params?.username && params?.password) });
     const initData = getInitData();
     
     if (initData && initData.trim()) {
         try {
+            logger.info('[authenticate] trying initData flow');
             return await loginWithInitData(initData);
         } catch (error) {
             logger.error(error, 'initData login failed, clearing init-data');
@@ -95,6 +127,7 @@ export async function authenticate(params?: { username?: string; password?: stri
     }
     
     if (params?.username && params?.password) {
+        logger.info('[authenticate] falling back to credentials');
         return await loginWithCredentials(params.username, params.password);
     }
     
@@ -118,6 +151,7 @@ export function setOnLogoutCallback(callback: () => void): void {
 
 export async function authFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const accessToken = getAccessToken();
+  logger.info('[authFetch] start', { path, method: init.method || 'GET' });
   
   const headers = new Headers(init.headers);
   
@@ -135,6 +169,7 @@ export async function authFetch<T>(path: string, init: RequestInit = {}): Promis
     ...init,
     headers,
   });
+  logger.info('[authFetch] response', { status: response.status, path });
   
   // Handle 401 with retry logic
   if (response.status === 401) {
@@ -157,6 +192,7 @@ export async function authFetch<T>(path: string, init: RequestInit = {}): Promis
           ...init,
           headers: retryHeaders,
         });
+        logger.info('[authFetch] retry response', { status: retryResponse.status, path });
         
         if (retryResponse.status === 401) {
           logger.error('Retry also returned 401, logging out');
@@ -170,14 +206,17 @@ export async function authFetch<T>(path: string, init: RequestInit = {}): Promis
         
         // Process successful retry response
         if (retryResponse.status === 204 || retryResponse.headers.get('Content-Length') === '0') {
+          logger.info('[authFetch] retry returned 204/empty');
           return null as T;
         }
         
         const contentType = retryResponse.headers.get('Content-Type');
         if (contentType && contentType.includes('application/json')) {
+          logger.info('[authFetch] retry returned JSON');
           return retryResponse.json() as Promise<T>;
         } else {
           await retryResponse.text();
+          logger.info('[authFetch] retry returned non-JSON');
           return null as T;
         }
       } catch (error) {
@@ -202,18 +241,22 @@ export async function authFetch<T>(path: string, init: RequestInit = {}): Promis
   
   if (!response.ok) {
     const errorText = await response.text().catch(() => '');
+    logger.warn('[authFetch] non-401 error', { status: response.status, errorText });
     throw new Error(`Request failed: ${errorText}`);
   }
   
   if (response.status === 204 || response.headers.get('Content-Length') === '0') {
+    logger.info('[authFetch] 204/empty');
     return null as T;
   }
   
   const contentType = response.headers.get('Content-Type');
   if (contentType && contentType.includes('application/json')) {
+    logger.info('[authFetch] JSON');
     return response.json() as Promise<T>;
   } else {
     await response.text();
+    logger.info('[authFetch] non-JSON');
     return null as T;
   }
 }

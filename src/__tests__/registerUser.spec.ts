@@ -26,7 +26,7 @@ describe('registerUser', () => {
     await registerUser(JSON.stringify({ username: 'testuser', password: 'testpass' }));
 
     expect(global.fetch).toHaveBeenCalledWith(
-      'https://api.dada-tuda.ru/api/v2/users/register?initData=stored-init-data',
+      'https://api.dada-tuda.ru/api/v2/users/register?initData=c3RvcmVkLWluaXQtZGF0YQ%3D%3D',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -48,7 +48,7 @@ describe('registerUser', () => {
     );
 
     expect(global.fetch).toHaveBeenCalledWith(
-      'https://api.dada-tuda.ru/api/v2/users/register?initData=provided-init-data',
+      'https://api.dada-tuda.ru/api/v2/users/register?initData=cHJvdmlkZWQtaW5pdC1kYXRh',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
