@@ -68,38 +68,42 @@ export const App = () => {
     }
 
     return (
-        <FilterProvider>
-            <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/registration" element={<RegistrationPage />} />
-                <Route
-                    path="/"
-                    element={
-                        <PrivateRoute>
+        <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/registration" element={<RegistrationPage />} />
+            <Route
+                path="/"
+                element={
+                    <PrivateRoute>
+                        <FilterProvider>
                             <MainPage />
                             <Navigation />
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path="/filters"
-                    element={
-                        <PrivateRoute>
+                        </FilterProvider>
+                    </PrivateRoute>
+                }
+            />
+            <Route
+                path="/filters"
+                element={
+                    <PrivateRoute>
+                        <FilterProvider>
                             <FiltersPage />
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path="/favorites"
-                    element={
-                        <PrivateRoute>
+                        </FilterProvider>
+                    </PrivateRoute>
+                }
+            />
+            <Route
+                path="/favorites"
+                element={
+                    <PrivateRoute>
+                        <FilterProvider>
                             <FavoritesPage />
                             <Navigation />
-                        </PrivateRoute>
-                    }
-                />
-                <Route path="/events/:eventId" element={<EventPage />} />
-            </Routes>
-        </FilterProvider>
+                        </FilterProvider>
+                    </PrivateRoute>
+                }
+            />
+            <Route path="/events/:eventId" element={<EventPage />} />
+        </Routes>
     );
 };
