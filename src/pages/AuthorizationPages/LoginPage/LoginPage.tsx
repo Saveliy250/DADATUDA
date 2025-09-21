@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import styles from '../AuthorizationPage.module.css';
 
@@ -18,11 +18,17 @@ export const LoginPage = () => {
     const navigate = useNavigate();
     const [autoLoginLoading, setAutoLoginLoading] = useState(false);
     const [showForm, setShowForm] = useState(true);
+    const startedRef = useRef(false);
 
     useEffect(() => {
-        const initData = getInitData();
-        logger.info('[LoginPage] mount, hasInitData', Boolean(initData));
-        if (initData && initData.trim() && !isAuthenticated) {
+        if (isAuthenticated || startedRef.current) return;
+
+        const tryAutoLogin = () => {
+            const initData = getInitData();
+            logger.info('[LoginPage] check initData', Boolean(initData));
+            if (!initData || !initData.trim()) return false;
+
+            startedRef.current = true;
             setAutoLoginLoading(true);
             setShowForm(false);
             
@@ -42,7 +48,29 @@ export const LoginPage = () => {
                     logger.info('[LoginPage] autologin finished');
                     setAutoLoginLoading(false);
                 });
-        }
+            return true;
+        };
+
+        // 1) мгновенная попытка
+        if (tryAutoLogin()) return;
+
+        // 2) слушаем запись init-data из App
+        const onStorage = (e: StorageEvent) => {
+            if (e.key === 'init-data' && e.newValue && !isAuthenticated && !startedRef.current) {
+                tryAutoLogin();
+            }
+        };
+        window.addEventListener('storage', onStorage);
+
+        // 3) на всякий случай таймаут повторной проверки
+        const t = setTimeout(() => {
+            if (!isAuthenticated && !startedRef.current) tryAutoLogin();
+        }, 250);
+
+        return () => {
+            window.removeEventListener('storage', onStorage);
+            clearTimeout(t);
+        };
     }, [isAuthenticated, navigate]);
 
     if (isAuthenticated) {
