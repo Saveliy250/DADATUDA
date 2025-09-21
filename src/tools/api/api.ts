@@ -62,7 +62,7 @@ export async function loginWithInitData(initData: string): Promise<Tokens> {
       encodedPreview: encoded.slice(0, 10),
     });
     const resp = await fetch(url, { 
-        method: 'GET', 
+        method: 'POST', 
         headers: { Accept: 'application/json' } 
     });
     
