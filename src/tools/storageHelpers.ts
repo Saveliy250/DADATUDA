@@ -49,7 +49,7 @@ export function saveInitData(raw: string): void {
 }
 
 export function getInitData(): string | null {
-    return localStorage.getItem('initData');
+    return localStorage.getItem(INIT_DATA);
 }
 
 export function getInitDataDecoded(): string | null {
@@ -57,5 +57,5 @@ export function getInitDataDecoded(): string | null {
     return v ?? null;
 }
 export function clearInitData(): void {
-    localStorage.removeItem('initData');
+    localStorage.removeItem(INIT_DATA);
 }
