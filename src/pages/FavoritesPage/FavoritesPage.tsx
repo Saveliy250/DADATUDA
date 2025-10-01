@@ -23,34 +23,32 @@ const formatEventDateTime = (dateString: string): { date: string; time: string }
 };
 
 const normalize = (s: string) =>
-  s
-    .toLocaleLowerCase('ru-RU')
-    .replace(/ё/g, 'е')
-    .replace(/\s+/g, ' ')
-    .trim();
+  s.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е').replace(/\s+/g, ' ').trim();
 
 export const FavoritesPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+
   const [events, setEvents] = useState<FavoritePageEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showStarredOnly, setShowStarredOnly] = useState(false);
 
-  useEffect(() => {
-    if (isAuthenticated) void loadShortlist();
-  }, [isAuthenticated]);
+  const PAGE_SIZE = 10;
+  const [page, setPage] = useState(0);
+  const [isFetching, setIsFetching] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const mainRef = React.useRef<HTMLDivElement | null>(null);
+  const sentinelRef = React.useRef<HTMLDivElement | null>(null);
 
   const filteredEvents = useMemo(() => {
     let filtered = events;
-
     if (showStarredOnly) filtered = filtered.filter((e) => e.starred);
-
     const raw = searchTerm.trim();
     if (raw) {
       const q = normalize(raw);
-
       filtered = filtered.filter((e) => {
         const haystack = [
           e.name || '',
@@ -61,15 +59,17 @@ export const FavoritesPage = () => {
         return haystack.some((field) => normalize(field).includes(q));
       });
     }
-
     return filtered;
   }, [events, searchTerm, showStarredOnly]);
 
-  async function loadShortlist() {
-    setLoading(true);
+  async function loadShortlistPage(targetPage = 0, { append = false, force = false } = {}) {
+    if (isFetching && !force) return;
+    setIsFetching(true);
+    setError(null);
     try {
-      const apiData = (await getShortlist(10, 0)) as any[];
-      const adapted: FavoritePageEvent[] = apiData.map((a) => {
+      const apiData: any = await getShortlist(PAGE_SIZE, targetPage);
+      const rows: any[] = Array.isArray(apiData) ? apiData : apiData?.items ?? [];
+      const adapted: FavoritePageEvent[] = rows.map((a) => {
         const { date, time } = formatEventDateTime(a.date);
         return {
           id: a.id,
@@ -84,29 +84,76 @@ export const FavoritesPage = () => {
           formattedTime: time,
         };
       });
-      setEvents(adapted);
+
+      let addedCount = adapted.length;
+      if (append) {
+        const prevIds = new Set(events.map((e) => e.id));
+        const unique = adapted.filter((e) => !prevIds.has(e.id));
+        addedCount = unique.length;
+        setEvents((prev) => [...prev, ...unique]);
+      } else {
+        setEvents(adapted);
+      }
+
+      let apiHasMore: boolean;
+      if (typeof apiData?.hasNextPage === 'boolean') {
+        apiHasMore = apiData.hasNextPage;
+      } else if (typeof apiData?.totalPages === 'number') {
+        apiHasMore = targetPage + 1 < apiData.totalPages;
+      } else if (typeof apiData?.totalCount === 'number') {
+        apiHasMore = (targetPage + 1) * PAGE_SIZE < apiData.totalCount;
+      } else {
+        apiHasMore = addedCount > 0;
+      }
+
+      setHasMore(apiHasMore);
+      setPage((p) => Math.max(p, targetPage));
     } catch (e) {
       setError(e as Error);
     } finally {
+      setIsFetching(false);
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    setLoading(true);
+    setEvents([]);
+    setPage(0);
+    setHasMore(true);
+    void loadShortlistPage(0, { append: false });
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    const root = mainRef.current;
+    const target = sentinelRef.current;
+    if (!root || !target) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && hasMore && !isFetching) {
+          void loadShortlistPage(page + 1, { append: true });
+        }
+      },
+      { root, rootMargin: '0px 0px 1000px 0px', threshold: 0.01 }
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [hasMore, isFetching, page]);
 
   const handleCardStarClick = async (eventId: string | number) => {
     const id = String(eventId);
     const prevEvent = events.find((e) => e.id === eventId);
     const prevStarred = !!prevEvent?.starred;
     const nextStarred = !prevStarred;
-
     setEvents((prev) => prev.map((e) => (e.id === eventId ? { ...e, starred: nextStarred } : e)));
     writeCachedFeedback(id, { starred: nextStarred });
-
     try {
       await toggleFavorite(prevStarred, id);
     } catch (e) {
       setEvents((prev) => prev.map((e) => (e.id === eventId ? { ...e, starred: prevStarred } : e)));
       writeCachedFeedback(id, { starred: prevStarred });
-      console.warn(e);
     }
   };
 
@@ -114,32 +161,30 @@ export const FavoritesPage = () => {
     const id = String(eventId);
     const removed = events.find((e) => e.id === eventId);
     const prev = events;
-
-    setEvents((prev) => prev.filter((e) => e.id !== eventId));
-
+    const nextEvents = events.filter((e) => e.id !== eventId);
+    setEvents(nextEvents);
+    const expectedMin = PAGE_SIZE * (page + 1);
+    if (nextEvents.length < expectedMin && hasMore && !isFetching) {
+      void loadShortlistPage(page + 1, { append: true });
+    }
     try {
       const cached = readCachedFeedback(id);
       const starredFromUI = !!removed?.starred;
-
       await sendFeedback(
         id,
         false,
         cached.viewedSeconds ?? 0,
         cached.moreOpened ?? false,
         cached.referralLinkOpened ?? false,
-        starredFromUI,
+        starredFromUI
       );
-
       clearCachedFeedback(id);
-    } catch (e) {
-      console.warn(e);
+    } catch {
       setEvents(prev);
     }
   };
 
-  const handleGoBack = () => {
-    navigate(-1);
-  };
+  const handleGoBack = () => navigate(-1);
 
   if (loading) return <LoadingScreen />;
   if (error) return <div>{error.message}</div>;
@@ -155,7 +200,6 @@ export const FavoritesPage = () => {
             onClick={handleGoBack}
           />
           <h1 className={styles.headerTitle}>Ваши мероприятия</h1>
-
           <div className={styles.headerActions}>
             <img
               src={showStarredOnly ? '/img/star-en.svg' : '/img/star-dis.svg'}
@@ -170,7 +214,6 @@ export const FavoritesPage = () => {
             />
           </div>
         </div>
-
         <div className={styles.searchContainer}>
           <img src="/img/поиск.svg" alt="Поиск" className={styles.searchIcon} />
           <input
@@ -183,12 +226,14 @@ export const FavoritesPage = () => {
         </div>
       </header>
 
-      <main className={styles.mainContent}>
+      <main className={styles.mainContent} ref={mainRef}>
         <FavoriteCardList
           cardList={filteredEvents}
           onStarClick={handleCardStarClick}
           onDislike={handleCardDislike}
         />
+        <div ref={sentinelRef} aria-hidden style={{ height: 1 }} />
+        {isFetching && <div className={styles.loaderRow}>Загружаем ещё…</div>}
       </main>
     </div>
   );
