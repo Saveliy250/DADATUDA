@@ -44,6 +44,7 @@
 
 .mainContent {
   padding: 16px;
+  padding-top: calc(16px + 2vh);
   flex-grow: 1;
   overflow-y: auto;
   padding-bottom: calc(16px + var(--bottom-plate-h) + env(safe-area-inset-bottom, 0px));
