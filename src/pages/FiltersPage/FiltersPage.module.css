@@ -6,10 +6,18 @@
 
 .contentWrapper {
     flex-grow: 1;
+    overflow: auto;
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
 }
 
 .buttonContainer {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
     gap: 1rem;
-    margin: 1rem;
+    padding: 1rem;
+    background: var(--color-white);
+    z-index: 10;
 }
