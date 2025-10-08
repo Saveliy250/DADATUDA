@@ -171,7 +171,7 @@ export const MainPageCard = ({
                 <motion.img
                     key={slide}
                     draggable={false}
-                    src={event.imageURL[slide]}
+                    src={"/Users/savelijpoplavskij/WebstormProjects/DADATUDA/public/img/colorful-rectangle-banners-4136919.webp"}
                     onLoad={loadHandler}
                     onError={errorHandler}
                     alt={event.name}
