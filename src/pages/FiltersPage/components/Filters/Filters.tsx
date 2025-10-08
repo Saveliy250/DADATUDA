@@ -8,11 +8,11 @@ import 'dayjs/locale/ru';
 
 import { CategoryList } from '../CategoryList/CategoryList';
 
-import { useFilter } from '../../../../hooks/useFilter';
+import { useFilterStore } from '../../../../store/filterStore';
 
 export const Filters = () => {
     const { selectedCategories, setSelectedCategories, price, setPrice, date, setDate, searchQuery, setSearchQuery } =
-        useFilter();
+        useFilterStore();
 
     return (
         <div className={styles.filters}>

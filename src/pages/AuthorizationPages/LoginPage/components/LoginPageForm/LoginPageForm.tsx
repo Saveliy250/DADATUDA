@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import styles from '../../../AuthorizationPageForm.module.css';
 
-import { useAuth } from '../../../../../hooks/useAuth';
+import { useAuthStore } from '../../../../../store/authStore';
 
 import { EyeIconOpen } from '../../../../../shared/icons/EyeIconOpen';
 import { EyeIconClosed } from '../../../../../shared/icons/EyeIconClosed';
@@ -13,7 +13,7 @@ export const LoginPageForm = () => {
     const [password, setPassword] = useState<string>('');
     const [showPwd, setShowPwd] = useState<boolean>(false);
 
-    const { login, loading } = useAuth();
+    const { login, loading } = useAuthStore();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

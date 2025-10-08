@@ -1,195 +1,80 @@
-import { useEffect, useState, useMemo } from 'react';
-import { toggleFavorite, sendFeedback, getShortlist } from '../../tools/api/api';
-import { readCachedFeedback, clearCachedFeedback, writeCachedFeedback } from '../../tools/feedbackCache';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './FavoritePage.module.css';
-import { useAuth } from '../../hooks/useAuth';
 import { LoadingScreen } from '../../shared/ui/LoadingScreen';
 import { FavoriteCardList } from './components/FavoriteCardList/FavoriteCardList';
-import type { FavoritePageEvent } from './types';
-
-const formatEventDateTime = (dateString: string): { date: string; time: string } => {
-  try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return { date: '??.??', time: '??:??' };
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return { date: `${day}.${month}`, time: `${hours}:${minutes}` };
-  } catch {
-    return { date: '??.??', time: '??:??' };
-  }
-};
-
-const normalize = (s: string) =>
-  s
-    .toLocaleLowerCase('ru-RU')
-    .replace(/ё/g, 'е')
-    .replace(/\s+/g, ' ')
-    .trim();
+import { useFavoritesStore } from '../../store/favoritesStore';
+import { useAuthStore } from '../../store/authStore';
 
 export const FavoritesPage = () => {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const [events, setEvents] = useState<FavoritePageEvent[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showStarredOnly, setShowStarredOnly] = useState(false);
+    const navigate = useNavigate();
+    const { isAuthenticated } = useAuthStore();
+    const {
+        loading,
+        error,
+        searchTerm,
+        showStarredOnly,
+        setSearchTerm,
+        setShowStarredOnly,
+        loadShortlist,
+        toggleStar,
+        removeFavorite,
+        getFilteredEvents,
+    } = useFavoritesStore();
 
-  useEffect(() => {
-    if (isAuthenticated) void loadShortlist();
-  }, [isAuthenticated]);
+    useEffect(() => {
+        if (isAuthenticated) void loadShortlist();
+    }, [isAuthenticated, loadShortlist]);
 
-  const filteredEvents = useMemo(() => {
-    let filtered = events;
+    const handleGoBack = () => {
+        navigate(-1);
+    };
 
-    if (showStarredOnly) filtered = filtered.filter((e) => e.starred);
+    if (loading) return <LoadingScreen />;
+    if (error) return <div>Ошибка: {error.message}</div>;
 
-    const raw = searchTerm.trim();
-    if (raw) {
-      const q = normalize(raw);
+    return (
+        <div className={styles.pageWrapper}>
+            <header className={styles.header}>
+                <div className={styles.headerTopRow}>
+                    <img
+                        src="/img/черная изогнутая стрелка.svg"
+                        alt="Назад"
+                        className={styles.headerIcon}
+                        onClick={handleGoBack}
+                    />
+                    <h1 className={styles.headerTitle}>Ваши мероприятия</h1>
 
-      filtered = filtered.filter((e) => {
-        const haystack = [
-          e.name || '',
-          e.description || '',
-          e.address || '',
-          `${e.formattedDate || ''} ${e.formattedTime || ''}`,
-        ];
-        return haystack.some((field) => normalize(field).includes(q));
-      });
-    }
+                    <div className={styles.headerActions}>
+                        <img
+                            src={showStarredOnly ? '/img/star-en.svg' : '/img/star-dis.svg'}
+                            alt="Показать только избранные"
+                            className={styles.headerStar}
+                            onClick={() => setShowStarredOnly(!showStarredOnly)}
+                        />
+                        <img
+                            src="/img/фильтры иконка.svg"
+                            alt="Фильтры"
+                            className={`${styles.headerIcon} ${styles.filterIcon}`}
+                        />
+                    </div>
+                </div>
 
-    return filtered;
-  }, [events, searchTerm, showStarredOnly]);
+                <div className={styles.searchContainer}>
+                    <img src="/img/поиск.svg" alt="Поиск" className={styles.searchIcon} />
+                    <input
+                        type="text"
+                        placeholder="Поиск"
+                        className={styles.searchInput}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+            </header>
 
-  async function loadShortlist() {
-    setLoading(true);
-    try {
-      const apiData = (await getShortlist(10, 0)) as any[];
-      const adapted: FavoritePageEvent[] = apiData.map((a) => {
-        const { date, time } = formatEventDateTime(a.date);
-        return {
-          id: a.id,
-          name: a.name,
-          date: a.date,
-          address: a.address,
-          imageURL: a.imageURL,
-          description: a.description,
-          isFavorite: true,
-          starred: a.starred,
-          formattedDate: date,
-          formattedTime: time,
-        };
-      });
-      setEvents(adapted);
-    } catch (e) {
-      setError(e as Error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const handleCardStarClick = async (eventId: string | number) => {
-    const id = String(eventId);
-    const prevEvent = events.find((e) => e.id === eventId);
-    const prevStarred = !!prevEvent?.starred;
-    const nextStarred = !prevStarred;
-
-    setEvents((prev) => prev.map((e) => (e.id === eventId ? { ...e, starred: nextStarred } : e)));
-    writeCachedFeedback(id, { starred: nextStarred });
-
-    try {
-      await toggleFavorite(prevStarred, id);
-    } catch (e) {
-      setEvents((prev) => prev.map((e) => (e.id === eventId ? { ...e, starred: prevStarred } : e)));
-      writeCachedFeedback(id, { starred: prevStarred });
-      console.warn(e);
-    }
-  };
-
-  const handleCardDislike = async (eventId: string | number) => {
-    const id = String(eventId);
-    const removed = events.find((e) => e.id === eventId);
-    const prev = events;
-
-    setEvents((prev) => prev.filter((e) => e.id !== eventId));
-
-    try {
-      const cached = readCachedFeedback(id);
-      const starredFromUI = !!removed?.starred;
-
-      await sendFeedback(
-        id,
-        false,
-        cached.viewedSeconds ?? 0,
-        cached.moreOpened ?? false,
-        cached.referralLinkOpened ?? false,
-        starredFromUI,
-      );
-
-      clearCachedFeedback(id);
-    } catch (e) {
-      console.warn(e);
-      setEvents(prev);
-    }
-  };
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-
-  if (loading) return <LoadingScreen />;
-  if (error) return <div>{error.message}</div>;
-
-  return (
-    <div className={styles.pageWrapper}>
-      <header className={styles.header}>
-        <div className={styles.headerTopRow}>
-          <img
-            src="/img/черная изогнутая стрелка.svg"
-            alt="Назад"
-            className={styles.headerIcon}
-            onClick={handleGoBack}
-          />
-          <h1 className={styles.headerTitle}>Ваши мероприятия</h1>
-
-          <div className={styles.headerActions}>
-            <img
-              src={showStarredOnly ? '/img/star-en.svg' : '/img/star-dis.svg'}
-              alt="Показать только избранные"
-              className={styles.headerStar}
-              onClick={() => setShowStarredOnly(!showStarredOnly)}
-            />
-            <img
-              src="/img/фильтры иконка.svg"
-              alt="Фильтры"
-              className={`${styles.headerIcon} ${styles.filterIcon}`}
-            />
-          </div>
+            <main className={styles.mainContent}>
+                <FavoriteCardList cardList={getFilteredEvents()} onStarClick={toggleStar} onDislike={removeFavorite} />
+            </main>
         </div>
-
-        <div className={styles.searchContainer}>
-          <img src="/img/поиск.svg" alt="Поиск" className={styles.searchIcon} />
-          <input
-            type="text"
-            placeholder="Поиск"
-            className={styles.searchInput}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </header>
-
-      <main className={styles.mainContent}>
-        <FavoriteCardList
-          cardList={filteredEvents}
-          onStarClick={handleCardStarClick}
-          onDislike={handleCardDislike}
-        />
-      </main>
-    </div>
-  );
+    );
 };
