@@ -4,7 +4,7 @@ import styles from '../AuthorizationPage.module.css';
 
 import { Link, useNavigate } from 'react-router-dom';
 
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuthStore } from '../../../store/authStore';
 import { getInitData } from '../../../tools/storageHelpers';
 import { loginWithInitData, clearInitData } from '../../../tools/api/api';
 import { saveTokens } from '../../../tools/storageHelpers';
@@ -14,7 +14,7 @@ import { LoginPageForm } from './components/LoginPageForm/LoginPageForm';
 import { logger } from '../../../tools/logger';
 
 export const LoginPage = () => {
-    const { error, isAuthenticated } = useAuth();
+    const { error, isAuthenticated } = useAuthStore();
     const navigate = useNavigate();
     const [autoLoginLoading, setAutoLoginLoading] = useState(false);
     const [showForm, setShowForm] = useState(true);
@@ -31,7 +31,7 @@ export const LoginPage = () => {
             startedRef.current = true;
             setAutoLoginLoading(true);
             setShowForm(false);
-            
+
             loginWithInitData(initData)
                 .then(({ accessToken, refreshToken }) => {
                     logger.info('[LoginPage] loginWithInitData success');

@@ -18,6 +18,7 @@ import { FilterIcon } from '../../../../shared/icons/MainPage/FilterIcon.jsx';
 import { TheaterIcon } from '../../../../shared/icons/EventIcons/TheaterIcon.jsx';
 
 import { Event as CustomEvent } from '../../../../shared/models/event';
+import { useFavoritesStore } from '../../../../store/favoritesStore';
 
 interface MainPageCardProps {
     event: CustomEvent;
@@ -36,6 +37,8 @@ export const MainPageCard = ({
     onReturnAnimationComplete,
     isBackAvailable,
 }: MainPageCardProps) => {
+    const { toggleStar } = useFavoritesStore();
+
     const [slide, setSlide] = useState<number>(0);
     const totalImages: number = event.imageURL.length;
     const price: string = event.price !== '0' ? `${event.price} рублей` : 'Бесплатно';
@@ -105,10 +108,8 @@ export const MainPageCard = ({
     }
 
     const addToFavorites = async () => {
-        const viewedSeconds: number = Math.round((Date.now() - start.current) / 1000);
-
         try {
-            await sendFeedback(String(event.id), true, viewedSeconds, moreOpened, refClicked, true);
+            await toggleStar(event.id);
 
             await controls.start({
                 x: window.innerWidth,

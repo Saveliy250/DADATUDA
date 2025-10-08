@@ -3,7 +3,7 @@ import './index.css';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import { logTelegramVersion } from './tools/logTelegramVersion';
 
@@ -17,15 +17,10 @@ import { PrivateRoute } from './shared/components/PrivateRoute';
 import { Navigation } from './shared/components/Navigation/Navigation';
 import { LoginPage } from './pages/AuthorizationPages/LoginPage/LoginPage';
 import { RegistrationPage } from './pages/AuthorizationPages/RegistrationPage/RegistrationPage';
-import { getAccessToken, saveInitData, clearTokens } from './tools/storageHelpers';
-import { setOnLogoutCallback } from './tools/api/api';
+import { saveInitData } from './tools/storageHelpers';
 import { logger } from './tools/logger';
 
-import { FilterProvider } from './contexts/FilterContext';
-
 export const App = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
     const [twaReady, setTwaReady] = useState<boolean>(false);
 
     useEffect(() => {
@@ -33,13 +28,6 @@ export const App = () => {
             logger.info('[App] init start');
             init();
             logTelegramVersion();
-
-            // Set up logout callback
-            setOnLogoutCallback(() => {
-                logger.info('[App] onLogoutCallback');
-                clearTokens();
-                navigate('/login', { replace: true });
-            });
 
             const rawInitData = retrieveRawInitData();
             logger.info('[App] retrieveRawInitData', Boolean(rawInitData));
@@ -59,7 +47,6 @@ export const App = () => {
             logger.error(e, 'TWA init error');
         }
         setTwaReady(true);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (!twaReady) {
@@ -75,10 +62,8 @@ export const App = () => {
                 path="/"
                 element={
                     <PrivateRoute>
-                        <FilterProvider>
-                            <MainPage />
-                            <Navigation />
-                        </FilterProvider>
+                        <MainPage />
+                        <Navigation />
                     </PrivateRoute>
                 }
             />
@@ -86,9 +71,7 @@ export const App = () => {
                 path="/filters"
                 element={
                     <PrivateRoute>
-                        <FilterProvider>
-                            <FiltersPage />
-                        </FilterProvider>
+                        <FiltersPage />
                     </PrivateRoute>
                 }
             />
@@ -96,10 +79,8 @@ export const App = () => {
                 path="/favorites"
                 element={
                     <PrivateRoute>
-                        <FilterProvider>
-                            <FavoritesPage />
-                            <Navigation />
-                        </FilterProvider>
+                        <FavoritesPage />
+                        <Navigation />
                     </PrivateRoute>
                 }
             />
