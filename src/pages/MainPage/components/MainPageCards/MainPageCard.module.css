@@ -45,7 +45,7 @@
 .slider {
     position: absolute;
     width: 100%;
-    top: calc(46px + env(safe-area-inset-top, 0px));
+    top: 46px;
     padding: 0 16px;
     display: flex;
     justify-content: center;
@@ -93,7 +93,7 @@
     padding: 0 16px;
     justify-content: space-between;
     position: absolute;
-    top: calc(60px + env(safe-area-inset-top, 0px));
+    top: calc(60px + 4vh);
     color: var(--color-white);
 
     div {
