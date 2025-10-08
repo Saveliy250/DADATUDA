@@ -13,4 +13,5 @@ body {
     margin: 0 auto;
     touch-action: none;
     overscroll-behavior: none;
+    padding-top: var(--safe-top);
 }
