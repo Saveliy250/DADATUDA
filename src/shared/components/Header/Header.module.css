@@ -6,7 +6,9 @@
     align-items: center;
     padding: 8px 16px;
     color: white;
-    margin-top: 32px;
+    /* Avoid overlap with Telegram bubbles on Android; on iOS body safe-area already applied */
+    padding-top: max(3vh, 36px);
+    margin-top: 0;
 }
 
 .headerLeft {
