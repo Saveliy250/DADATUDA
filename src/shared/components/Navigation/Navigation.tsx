@@ -8,28 +8,31 @@ export const Navigation = () => {
   const isFavorites = pathname.startsWith('/favorites');
 
   return (
-    <nav className={styles.navigation}>
-      <div className={styles.fullNavContent}>
-        <div className={styles.navButton}>
-          <Link to="/">
-            <img
-              src={isMain ? '/img/eye-yellow.svg' : '/img/eye-gray.svg'}
-              alt="Главная"
-              className={styles.navImg}
-            />
-          </Link>
-        </div>
+    <>
+      <div className={styles.bottomPlate} />
+      <nav className={styles.navigation}>
+        <div className={styles.fullNavContent}>
+          <div className={styles.navButton}>
+            <Link to="/">
+              <img
+                src={isMain ? '/img/card-with-arrows-active.svg' : '/img/card-with-arrows.svg'}
+                alt="Главная"
+                className={styles.navImg}
+              />
+            </Link>
+          </div>
 
-        <div className={styles.navButton}>
-          <Link to="/favorites">
-            <img
-              src={isFavorites ? '/img/heart-yellow.svg' : '/img/heart-gray.svg'}
-              alt="Избранное"
-              className={styles.navImg}
-            />
-          </Link>
+          <div className={styles.navButton}>
+            <Link to="/favorites">
+              <img
+                src={isFavorites ? '/img/heart-yellow.svg' : '/img/heart-gray.svg'}
+                alt="Избранное"
+                className={styles.navImg}
+              />
+            </Link>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 };

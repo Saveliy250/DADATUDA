@@ -2,7 +2,7 @@
 
 .navigation {
     position: fixed;
-    bottom: 22px;
+    bottom: calc(22px + env(safe-area-inset-bottom, 0px));
     right: 15px;
     left: 15px;
     text-align: center;
@@ -13,6 +13,20 @@
     z-index: 100;
     max-width: 540px;
     margin: 0  auto;
+}
+
+.bottomPlate {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(94px + env(safe-area-inset-bottom, 0px));
+    background: var(--color-white);
+    border-top-left-radius: 36px;
+    border-top-right-radius: 36px;
+    z-index: 90;
+    box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.12);
 }
 
 .fullNavContent {
