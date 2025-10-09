@@ -23,24 +23,6 @@
 }
 
 
-.pageWrapper::after {
-  content: "";
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: calc(var(--bottom-plate-h) + env(safe-area-inset-bottom, 0px));
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  background: #FFFFFF;
-  border-top-left-radius: var(--bottom-plate-radius);
-  border-top-right-radius: var(--bottom-plate-radius);
-  z-index: 10;
-  pointer-events: none;
-  
-  
-  box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.12);
-}
-
 
 .mainContent {
   padding: 16px;
