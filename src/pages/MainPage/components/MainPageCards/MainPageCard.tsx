@@ -19,6 +19,7 @@ import { TheaterIcon } from '../../../../shared/icons/EventIcons/TheaterIcon.jsx
 
 import { Event as CustomEvent } from '../../../../shared/models/event';
 import { useFavoritesStore } from '../../../../store/favoritesStore';
+import { logger } from '../../../../tools/logger';
 
 interface MainPageCardProps {
     event: CustomEvent;
@@ -49,6 +50,43 @@ export const MainPageCard = ({
     const [refClicked, setRefClicked] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [imageError, setImageError] = useState<boolean>(false);
+
+    // Refs for touch handling and exclusions
+    const touchSurfaceRef = useRef<HTMLDivElement | null>(null);
+    const actionsBarRef = useRef<HTMLDivElement | null>(null);
+    const verticalGestureRef = useRef<boolean>(false);
+    const descriptionWrapperRef = useRef<HTMLDivElement | null>(null);
+
+    // Persist expanded state per event
+    const storageKey = `mpc-expanded-${event.id}`;
+    useEffect(() => {
+        const persisted = localStorage.getItem(storageKey);
+        if (persisted === '1') {
+            setExpanded(true);
+            setMoreOpened(true);
+        } else {
+            setExpanded(false);
+            setMoreOpened(false);
+        }
+        // reset start time on new card
+        start.current = Date.now();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [event.id]);
+
+    const setMoreOpenedPersisted = (open: boolean, reason: 'button' | 'swipe'): void => {
+        setExpanded(open);
+        setMoreOpened(open);
+        try {
+            localStorage.setItem(storageKey, open ? '1' : '0');
+        } catch {}
+        if (reason === 'swipe') {
+            if (open) {
+                logger.info('details_opened_swipe_up', { eventId: event.id });
+            } else {
+                logger.info('details_closed_swipe_down', { eventId: event.id });
+            }
+        }
+    };
 
     const x = useMotionValue(0);
     const rotate = useTransform(x, [-250, 250], [-15, 15]);
@@ -125,7 +163,118 @@ export const MainPageCard = ({
 
     const [isDragging, setIsDragging] = useState<boolean>(false);
 
+    // Native touch gesture handling for vertical open/close (mobile only)
+    useEffect(() => {
+        const el = touchSurfaceRef.current;
+        if (!el) return;
+
+        const isMobile = typeof window !== 'undefined' && (('ontouchstart' in window) || window.matchMedia('(pointer: coarse)').matches);
+        if (!isMobile) return;
+
+        let startX = 0;
+        let startY = 0;
+        let lastX = 0;
+        let lastY = 0;
+        let startTs = 0;
+        let verticalActive = false;
+        let cancelledByHorizontal = false;
+        let inScrollableArea = false;
+        let startScrollTop = 0;
+        const HORIZONTAL_CANCEL_THRESHOLD = 10; // px
+        const VERTICAL_ACTIVATE_THRESHOLD = 10; // px
+        const OPEN_DISTANCE = 70; // px, swipe up to open
+        const CLOSE_DISTANCE = 90; // px, swipe down to close
+        const VELOCITY_THRESHOLD = 0.5; // px/ms
+
+        const isInActions = (target: EventTarget | null): boolean => {
+            if (!(target instanceof Node)) return false;
+            return !!actionsBarRef.current && actionsBarRef.current.contains(target);
+        };
+
+        const onTouchStart = (e: TouchEvent) => {
+            if (!e.touches || e.touches.length === 0) return;
+            if (isInActions(e.target)) return; // exclude actions bar zone
+            const t = e.touches[0];
+            startX = lastX = t.clientX;
+            startY = lastY = t.clientY;
+            startTs = e.timeStamp;
+            verticalActive = false;
+            cancelledByHorizontal = false;
+            inScrollableArea = !!(moreOpened && descriptionWrapperRef.current && descriptionWrapperRef.current.contains(e.target as Node));
+            startScrollTop = descriptionWrapperRef.current ? descriptionWrapperRef.current.scrollTop : 0;
+        };
+
+        const onTouchMove = (e: TouchEvent) => {
+            if (!e.touches || e.touches.length === 0) return;
+            if (isInActions(e.target)) return;
+            const t = e.touches[0];
+            const dx = t.clientX - startX;
+            const dy = t.clientY - startY;
+            lastX = t.clientX;
+            lastY = t.clientY;
+
+            if (!verticalActive) {
+                if (Math.abs(dx) > HORIZONTAL_CANCEL_THRESHOLD) {
+                    cancelledByHorizontal = true;
+                    return;
+                }
+                if (Math.abs(dy) > VERTICAL_ACTIVATE_THRESHOLD) {
+                    if (inScrollableArea) {
+                        if (dy > 0 && startScrollTop <= 0) {
+                            verticalActive = true;
+                        } else {
+                            verticalActive = false;
+                            return;
+                        }
+                    } else {
+                        verticalActive = true;
+                    }
+                }
+            }
+
+            if (verticalActive && !cancelledByHorizontal) {
+                try { e.preventDefault(); } catch {}
+            }
+        };
+
+        const onTouchEnd = (e: TouchEvent) => {
+            if (cancelledByHorizontal) return;
+            const dt = Math.max(1, e.timeStamp - startTs);
+            const dx = lastX - startX;
+            const dy = lastY - startY;
+            const vy = Math.abs(dy) / dt;
+
+            if (!verticalActive) return;
+            if (dy < 0) {
+                const distance = Math.abs(dy);
+                if (!moreOpened && (distance > OPEN_DISTANCE || (distance > OPEN_DISTANCE / 2 && vy > VELOCITY_THRESHOLD))) {
+                    setMoreOpenedPersisted(true, 'swipe');
+                }
+            } else if (dy > 0) {
+                if (moreOpened && (dy > CLOSE_DISTANCE || (dy > CLOSE_DISTANCE / 2 && vy > VELOCITY_THRESHOLD))) {
+                    setMoreOpenedPersisted(false, 'swipe');
+                }
+            }
+            verticalGestureRef.current = true;
+        };
+
+        el.addEventListener('touchstart', onTouchStart, { passive: true });
+        // touchmove needs passive: false to be able to preventDefault when verticalActive
+        el.addEventListener('touchmove', onTouchMove, { passive: false });
+        el.addEventListener('touchend', onTouchEnd, { passive: true });
+
+        return () => {
+            el.removeEventListener('touchstart', onTouchStart as EventListener);
+            el.removeEventListener('touchmove', onTouchMove as EventListener);
+            el.removeEventListener('touchend', onTouchEnd as EventListener);
+        };
+    }, [moreOpened]);
+
     function handleSlide(): void {
+        if (verticalGestureRef.current) {
+            verticalGestureRef.current = false;
+            return;
+        }
         if (!isDragging) {
             setSlide((n: number) => (n + 1) % totalImages);
         }
@@ -167,7 +316,11 @@ export const MainPageCard = ({
             onDragTransitionEnd={() => setIsDragging(false)}
             animate={controls}
         >
-            <div onClick={handleSlide} className={expanded ? styles.cardWrapperBlacked : styles.cardWrapper}>
+            <div
+                ref={touchSurfaceRef}
+                onClick={handleSlide}
+                className={expanded ? styles.cardWrapperBlacked : styles.cardWrapper}
+            >
                 <motion.img
                     key={slide}
                     draggable={false}
@@ -256,7 +409,7 @@ export const MainPageCard = ({
                                     exit={{ y: '20%', opacity: 0 }}
                                     transition={{ duration: 0.2, ease: 'linear' }}
                                 >
-                                    <motion.div className={styles.eventDescriptionOpenedWrapper}>
+                                    <motion.div className={styles.eventDescriptionOpenedWrapper} ref={descriptionWrapperRef}>
                                         <motion.p className={styles.eventDescriptionOpened}>
                                             {event.description}
                                         </motion.p>
@@ -284,7 +437,7 @@ export const MainPageCard = ({
                         </AnimatePresence>
                     </div>
 
-                    <div className={styles.mainActionsWrapper}>
+                    <div className={styles.mainActionsWrapper} ref={actionsBarRef}>
                         <MainPageDislikeButton controls={controls} finishCard={(liked) => void finishCard(liked)} />
 
                         <button
@@ -304,8 +457,7 @@ export const MainPageCard = ({
                             className={styles.moreButton}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                setExpanded(!expanded);
-                                setMoreOpened(!moreOpened);
+                                setMoreOpenedPersisted(!moreOpened, 'button');
                             }}
                         >
                             {moreOpened ? 'Скрыть' : 'Подробнее'}
