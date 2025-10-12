@@ -121,8 +121,7 @@ export async function authenticate(params?: { username?: string; password?: stri
             logger.info('[authenticate] trying initData flow');
             return await loginWithInitData(initData);
         } catch (error) {
-            logger.error(error, 'initData login failed, clearing init-data');
-            clearInitData();
+            logger.error(error, 'initData login failed');
         }
     }
     
