@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import styles from './MainPageCard.module.css';
 
-import { AnimatePresence, motion, PanInfo, useAnimation, useMotionValue, useTransform } from 'framer-motion';
+import { AnimatePresence, motion, PanInfo, useAnimation, useDragControls, useMotionValue, useTransform } from 'framer-motion';
 import { Skeleton } from '@mantine/core';
 import moment from 'moment';
 
@@ -55,6 +55,8 @@ export const MainPageCard = ({
     const leftOpacity = useTransform(rotate, [-15, 0], [1, 0], { clamp: true });
     const rightOpacity = useTransform(rotate, [0, 15], [0, 1], { clamp: true });
     const controls = useAnimation();
+    const dragControls = useDragControls();
+    const dragIntentRef = useRef<{ x: number; y: number; armed: boolean }>({ x: 0, y: 0, armed: false });
 
     const currentDate: string = event.date;
     const endDate: string | undefined = event.dateEnd;
@@ -167,6 +169,8 @@ export const MainPageCard = ({
             className={styles.card}
             style={{ x, rotate }}
             drag="x"
+            dragControls={dragControls}
+            dragListener={false}
             dragConstraints={{ left: -1000, right: 1000 }}
             onDragEnd={(_, info) => {
                 void handleDragEnd(_, info);
@@ -175,7 +179,30 @@ export const MainPageCard = ({
             onDragTransitionEnd={() => setIsDragging(false)}
             animate={controls}
         >
-            <div onClick={handleSlide} className={expanded ? styles.cardWrapperBlacked : styles.cardWrapper}>
+            <div
+                onClick={handleSlide}
+                className={expanded ? styles.cardWrapperBlacked : styles.cardWrapper}
+                onPointerDown={(e) => {
+                    dragIntentRef.current = { x: e.clientX, y: e.clientY, armed: true };
+                }}
+                onPointerMove={(e) => {
+                    if (!dragIntentRef.current.armed) return;
+                    const dx = Math.abs(e.clientX - dragIntentRef.current.x);
+                    const dy = Math.abs(e.clientY - dragIntentRef.current.y);
+                    if (dx > 10 && dx > dy) {
+                        dragControls.start(e);
+                        dragIntentRef.current.armed = false;
+                    } else if (dy > 10 && dy > dx) {
+                        dragIntentRef.current.armed = false;
+                    }
+                }}
+                onPointerUp={() => {
+                    dragIntentRef.current.armed = false;
+                }}
+                onPointerCancel={() => {
+                    dragIntentRef.current.armed = false;
+                }}
+            >
                 <motion.img
                     key={slide}
                     draggable={false}
@@ -267,6 +294,26 @@ export const MainPageCard = ({
                             <motion.div
                             key="text-open"
                             className={styles.textScrollAreaOpened}
+                            onPointerDown={(e) => {
+                                dragIntentRef.current = { x: e.clientX, y: e.clientY, armed: true };
+                            }}
+                            onPointerMove={(e) => {
+                                if (!dragIntentRef.current.armed) return;
+                                const dx = Math.abs(e.clientX - dragIntentRef.current.x);
+                                const dy = Math.abs(e.clientY - dragIntentRef.current.y);
+                                if (dx > 12 && dx > dy) {
+                                    dragControls.start(e);
+                                    dragIntentRef.current.armed = false;
+                                } else if (dy > 8 && dy > dx) {
+                                    dragIntentRef.current.armed = false;
+                                }
+                            }}
+                            onPointerUp={() => {
+                                dragIntentRef.current.armed = false;
+                            }}
+                            onPointerCancel={() => {
+                                dragIntentRef.current.armed = false;
+                            }}
                             initial={{ y: 16, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: -16, opacity: 0 }}
