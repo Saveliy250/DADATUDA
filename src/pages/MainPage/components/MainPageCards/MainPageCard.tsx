@@ -141,7 +141,7 @@ export const MainPageCard = ({
         if (totalImages <= 1) return;
         const interval = setInterval(() => {
             setSlide((prev: number) => (prev + 1) % totalImages);
-        }, 5000);
+        }, 9000);
         return () => clearInterval(interval);
     }, [totalImages]);
 
