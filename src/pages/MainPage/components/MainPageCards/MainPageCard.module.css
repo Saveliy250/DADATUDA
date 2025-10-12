@@ -22,6 +22,24 @@
     user-select: none;
 }
 
+.swipeOverlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.swipeOverlayImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .cardWrapper::before {
     content: '';
     position: absolute;
@@ -120,6 +138,8 @@
     bottom: -150px;
     width: 100%;
     height: fit-content;
+    position: absolute;
+    z-index: 4;
 }
 
 .cardInfo {
@@ -129,7 +149,7 @@
     right: 0;
     padding: 15px;
     width: clamp(380px, 100%, 100vw);
-    z-index: 3;
+    z-index: 1;
     transition: opacity 0.35s ease, max-height 0.35s ease;
 }
 
@@ -144,7 +164,6 @@
     color: var(--color-white);
 }
 
-/* tighten default paragraph spacing inside short info */
 .shortInfo p {
     margin: 0;
 }
