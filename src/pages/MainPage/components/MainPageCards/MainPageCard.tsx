@@ -52,6 +52,8 @@ export const MainPageCard = ({
 
     const x = useMotionValue(0);
     const rotate = useTransform(x, [-250, 250], [-15, 15]);
+    const leftOpacity = useTransform(rotate, [-15, 0], [1, 0], { clamp: true });
+    const rightOpacity = useTransform(rotate, [0, 15], [0, 1], { clamp: true });
     const controls = useAnimation();
 
     const currentDate: string = event.date;
@@ -219,6 +221,23 @@ export const MainPageCard = ({
                     </div>
                 )}
 
+                <div className={styles.swipeOverlay} aria-hidden>
+                    <motion.img
+                        className={styles.swipeOverlayImage}
+                        src={"/img/left-swipe-img.svg"}
+                        alt="left swipe"
+                        style={{ opacity: leftOpacity }}
+                        draggable={false}
+                    />
+                    <motion.img
+                        className={styles.swipeOverlayImage}
+                        src={"/img/right-swipe-img.svg"}
+                        alt="right swipe"
+                        style={{ opacity: rightOpacity }}
+                        draggable={false}
+                    />
+                </div>
+
                 <AnimatePresence initial={false} mode="wait">
                     {!moreOpened && (
                         <motion.div
@@ -336,38 +355,38 @@ export const MainPageCard = ({
                             </motion.div>
                         )}
                     </AnimatePresence>
+                </div>
 
-                    <div className={styles.mainActionsWrapper}>
-                        <MainPageDislikeButton controls={controls} finishCard={(liked) => void finishCard(liked)} />
+                <div className={styles.mainActionsWrapper} onClick={(e) => e.stopPropagation()}>
+                    <MainPageDislikeButton controls={controls} finishCard={(liked) => void finishCard(liked)} />
 
-                        <button
-                            className={`${styles.backButton} ${!isBackAvailable ? styles.disabled : ''}`}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                if (isBackAvailable) {
-                                    onGoBack();
-                                }
-                            }}
-                            disabled={!isBackAvailable}
-                        >
-                            <CurvedArrowIcon />
+                    <button
+                        className={`${styles.backButton} ${!isBackAvailable ? styles.disabled : ''}`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (isBackAvailable) {
+                                onGoBack();
+                            }
+                        }}
+                        disabled={!isBackAvailable}
+                    >
+                        <CurvedArrowIcon />
+                    </button>
+
+                    <button
+                        className={styles.moreButton}
+                        onClick={(e) => toggleMore(e)}
+                    >
+                        {moreOpened ? 'Скрыть' : 'Подробнее'}
+                    </button>
+
+                    <div className={styles.starButton}>
+                        <button onClick={() => void addToFavorites()}>
+                            <StarIcon />
                         </button>
-
-                        <button
-                            className={styles.moreButton}
-                            onClick={(e) => toggleMore(e)}
-                        >
-                            {moreOpened ? 'Скрыть' : 'Подробнее'}
-                        </button>
-
-                        <div className={styles.starButton}>
-                            <button onClick={() => void addToFavorites()}>
-                                <StarIcon />
-                            </button>
-                        </div>
-
-                        <MainPageLikeButton controls={controls} finishCard={(liked) => void finishCard(liked)} />
                     </div>
+
+                    <MainPageLikeButton controls={controls} finishCard={(liked) => void finishCard(liked)} />
                 </div>
             </div>
         </motion.div>
