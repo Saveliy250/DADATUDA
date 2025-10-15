@@ -4,6 +4,7 @@
     --font-nauryzRedKeds: 'NauryzRedKeds', sans-serif;
     --font-Soyuz-Grotesk: 'Soyuz-Grotesk-Bold', sans-serif;
     --font-Cyrge: 'Cyrge', sans-serif;
+    --font-Cyrge-Medium: 'Cyrge-Medium', sans-serif;
 
     /* colors */
     --color-black: #000000;
@@ -18,6 +19,8 @@
     --color-grey: #bfbfbf;
     --color-light-grey: #e5e5e5;
     --color-field-line: #666666;
+    --color-alt-grey: #EFEFEF;
+    --color-dark-grey: #8F8E94;
 
     /* safe areas */
     --safe-top: env(safe-area-inset-top, 0px);

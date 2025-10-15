@@ -4,6 +4,8 @@ import { jwtDecode } from 'jwt-decode';
 import { logger } from '../logger';
 
 const BASE_URL: string = import.meta.env.VITE_BASE_URL;
+export const METRICA_ID: number = Number(import.meta.env.VITE_METRICA_ID);
+
 
 let onLogoutCallback: (() => void) | null = null;
 

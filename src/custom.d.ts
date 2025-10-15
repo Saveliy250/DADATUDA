@@ -6,6 +6,7 @@ declare module '*.module.css' {
 interface ImportMetaEnv {
     readonly VITE_BASE_URL: string;
     readonly VITE_GB_CLIENT_KEY: string;
+    readonly VITE_METRICA_ID: string;
 }
 
 interface ImportMeta {
