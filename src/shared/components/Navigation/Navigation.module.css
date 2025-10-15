@@ -8,11 +8,25 @@
     text-align: center;
     background-color: var(--color-white);
     border-radius: 50px;
-    max-height: 72px;
+    max-height: 48px;
     height: 100%;
     z-index: 100;
     max-width: 540px;
     margin: 0  auto;
+}
+
+.bottomPlate {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 70px;
+    background: var(--color-white);
+    border-top-left-radius: 36px;
+    border-top-right-radius: 36px;
+    z-index: 90;
+    box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.12);
 }
 
 .fullNavContent {

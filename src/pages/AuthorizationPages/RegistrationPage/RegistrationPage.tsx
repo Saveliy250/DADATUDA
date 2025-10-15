@@ -1,12 +1,12 @@
 import React from 'react';
 import styles from '../AuthorizationPage.module.css';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuthStore } from '../../../store/authStore';
 import { Link } from 'react-router-dom';
 import { ArrowSubtitle } from '../../../shared/components/ArrowSubtitle/ArrowSubtitle';
 import { RegistrationPageForm } from './components/RegistrationPageForm';
 
 export const RegistrationPage = () => {
-    const { error: serverError, isAuthenticated } = useAuth();
+    const { error: serverError, isAuthenticated } = useAuthStore();
 
     if (isAuthenticated) {
         return <div className="login">Вы уже вошли в систему</div>;

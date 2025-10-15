@@ -6,7 +6,7 @@ import { Button, Transition } from '@mantine/core';
 
 import { useNavigate } from 'react-router-dom';
 
-import { useFilter } from '../../hooks/useFilter';
+import { useFilterStore } from '../../store/filterStore';
 
 import { Header } from '../../shared/components/Header/Header';
 import { Filters } from './components/Filters/Filters';
@@ -20,11 +20,11 @@ const resetButtonTransition = {
 export const FiltersPage = () => {
     const navigate = useNavigate();
 
-    const { isDirty, handleApplyFilters, handleResetFilters } = useFilter();
+    const { isDirty, applyFilters, resetFilters } = useFilterStore();
 
     const handleApplyFiltersAndNavigate = async () => {
         if (isDirty) {
-            await handleApplyFilters();
+            await applyFilters();
             await navigate('/');
         }
     };
@@ -40,7 +40,7 @@ export const FiltersPage = () => {
                 <Transition mounted={isDirty} transition={resetButtonTransition} duration={300} timingFunction="ease">
                     {(styles) => (
                         <Button
-                            onClick={handleResetFilters}
+                            onClick={resetFilters}
                             radius="lg"
                             style={{
                                 ...styles,

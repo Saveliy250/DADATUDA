@@ -8,18 +8,15 @@ import { CategoryButton } from '../CategoryButtons/CategoryButtons';
 
 interface CategoryListProps {
     selectedCategories: string[];
-    setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>>;
+    setSelectedCategories: (categories: string[]) => void;
 }
 
 export const CategoryList = ({ selectedCategories, setSelectedCategories }: CategoryListProps) => {
     const handleCategoryClick = (category: string) => {
-        setSelectedCategories((prev) => {
-            if (prev.includes(category)) {
-                return prev.filter((item) => item !== category);
-            } else {
-                return [...prev, category];
-            }
-        });
+        const newCategories = selectedCategories.includes(category)
+            ? selectedCategories.filter((item) => item !== category)
+            : [...selectedCategories, category];
+        setSelectedCategories(newCategories);
     };
 
     return (

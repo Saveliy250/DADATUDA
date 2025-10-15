@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 
 import styles from '../../AuthorizationPageForm.module.css';
 
-import { useAuth } from '../../../../hooks/useAuth.js';
+import { useAuthStore } from '../../../../store/authStore';
 import { EyeIconOpen } from '../../../../shared/icons/EyeIconOpen.jsx';
 import { EyeIconClosed } from '../../../../shared/icons/EyeIconClosed.jsx';
 
@@ -14,7 +14,7 @@ interface FormErrorsProps {
 }
 
 export const RegistrationPageForm = () => {
-    const { registration, loading } = useAuth();
+    const { registration, loading } = useAuthStore();
 
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');

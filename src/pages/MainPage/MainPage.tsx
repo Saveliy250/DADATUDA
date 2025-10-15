@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
+
+import { useFilterStore } from '../../store/filterStore';
+import { useFavoritesStore } from '../../store/favoritesStore';
+
 import { useNavigate } from 'react-router-dom';
 
 import styles from './MainPage.module.css';
 
 import { AnimatePresence } from 'framer-motion';
 
-import { useFilter } from '../../hooks/useFilter';
-import { sendFeedback } from '../../tools/api';
+import { sendFeedback } from '../../tools/api/api';
 
 import { LoadingScreen } from '../../shared/ui/LoadingScreen';
 
@@ -20,20 +23,21 @@ export const MainPage = () => {
         events,
         loading,
         error,
-        handleApplyFilters,
+        applyFilters,
         removeEventFromDisplay,
         loadMoreEvents,
-        handleResetFilters,
+        resetFilters,
         addEventToDisplay,
-    } = useFilter();
+    } = useFilterStore();
+    const { addFavorite } = useFavoritesStore();
     const navigate = useNavigate();
 
     const [lastAction, setLastAction] = useState<{ card: CustomEvent; liked: boolean } | null>(null);
     const [returnedCardId, setReturnedCardId] = useState<number | null>(null);
 
     useEffect(() => {
-        void handleApplyFilters();
-    }, [handleApplyFilters]);
+        void applyFilters();
+    }, [applyFilters]);
 
     useEffect(() => {
         if (!loading && events.length > 0 && events.length <= CARD_THRESHOLD) {
@@ -41,14 +45,12 @@ export const MainPage = () => {
         }
     }, [events, loading, loadMoreEvents]);
 
-    const handleGoBack = async () => {
+    const handleGoBack = () => {
         if (lastAction) {
             if (lastAction.liked) {
-                try {
-                    await sendFeedback(String(lastAction.card.id), false, 0, false, false);
-                } catch (err) {
+                sendFeedback(String(lastAction.card.id), false, 0, false, false).catch((err) => {
                     console.warn('Failed to undo like', err);
-                }
+                });
             }
             addEventToDisplay(lastAction.card);
             setReturnedCardId(lastAction.card.id);
@@ -57,6 +59,11 @@ export const MainPage = () => {
     };
 
     const handleCardFinish = (card: CustomEvent, liked: boolean) => {
+        if (liked) {
+            addFavorite(card).catch((err) => {
+                console.warn('Failed to add favorite', err);
+            });
+        }
         setLastAction({ card, liked });
         removeEventFromDisplay(card.id);
     };
@@ -73,8 +80,8 @@ export const MainPage = () => {
                 <p>Нет карточек с необходимыми параметрами</p>
                 <button
                     onClick={() => {
-                        handleResetFilters();
-                        void handleApplyFilters();
+                        resetFilters();
+                        void applyFilters();
                     }}
                 >
                     Загрузить все карточки
@@ -92,7 +99,7 @@ export const MainPage = () => {
                         <MainPageCard
                             event={ev}
                             loadNext={(liked) => handleCardFinish(ev, liked)}
-                            onGoBack={() => void handleGoBack()}
+                            onGoBack={handleGoBack}
                             returnedCardId={returnedCardId}
                             onReturnAnimationComplete={onReturnAnimationComplete}
                             isBackAvailable={lastAction !== null}

@@ -10,19 +10,7 @@ interface FavoriteCardProps {
   onDislike: (eventId: string | number) => void;
 }
 
-function fallbackFormat(dateString?: string) {
-  try {
-    const d = dateString ? new Date(dateString) : null;
-    if (!d || isNaN(d.getTime())) return { date: '??.??', time: '??:??' };
-    const dd = String(d.getDate()).padStart(2, '0');
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const hh = String(d.getHours()).padStart(2, '0');
-    const min = String(d.getMinutes()).padStart(2, '0');
-    return { date: `${dd}.${mm}`, time: `${hh}:${min}` };
-  } catch {
-    return { date: '??.??', time: '??:??' };
-  }
-}
+import { formatEventDateTime } from '../../../../tools/FormatDate';
 
 export const FavoriteCard = ({ event, onStarClick, onDislike }: FavoriteCardProps) => {
   const navigate = useNavigate();
@@ -34,8 +22,8 @@ export const FavoriteCard = ({ event, onStarClick, onDislike }: FavoriteCardProp
   };
 
   const { date: ddmm, time: hhmm } = {
-    date: event.formattedDate ?? fallbackFormat(event.date).date,
-    time: event.formattedTime ?? fallbackFormat(event.date).time,
+    date: event.formattedDate ?? formatEventDateTime(event.date).date,
+    time: event.formattedTime ?? formatEventDateTime(event.date).time,
   };
 
   return (
