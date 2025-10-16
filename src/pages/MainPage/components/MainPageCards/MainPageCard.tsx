@@ -8,7 +8,8 @@ import { AnimatePresence, motion, PanInfo, useAnimation, useDragControls, useMot
 import { Skeleton } from '@mantine/core';
 import moment from 'moment';
 
-import { sendFeedback, METRICA_ID } from '../../../../tools/api/api';
+import { sendFeedback } from '../../../../tools/api/api';
+import { addSwipe } from '../../../../tools/analytics/ym';
 
 import { CurvedArrowIcon } from '../../../../shared/icons/MainPage/CurvedArrowIcon.jsx';
 import { MainPageDislikeButton } from '../MainPageActionButtons/MainPageDislikeButton';
@@ -102,7 +103,7 @@ export const MainPageCard = ({
     async function finishCard(like: boolean): Promise<void> {
         console.log(event.imageURL[0], event.referralLink);
         const viewedSeconds: number = Math.round((Date.now() - start.current) / 1000);
-        ym(METRICA_ID,'reachGoal','mainPageSwipe')
+        addSwipe();
         try {
             await sendFeedback(String(event.id), like, viewedSeconds, moreOpened, refClicked);
         } catch (err) {

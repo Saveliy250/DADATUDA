@@ -3,7 +3,7 @@ import './index.css';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
 import { logTelegramVersion } from './tools/logTelegramVersion';
 
@@ -19,9 +19,11 @@ import { LoginPage } from './pages/AuthorizationPages/LoginPage/LoginPage';
 import { RegistrationPage } from './pages/AuthorizationPages/RegistrationPage/RegistrationPage';
 import { saveInitData } from './tools/storageHelpers';
 import { logger } from './tools/logger';
+import { startSession, startScreen } from './tools/analytics/ym';
 
 export const App = () => {
     const [twaReady, setTwaReady] = useState<boolean>(false);
+    const location = useLocation();
 
     useEffect(() => {
         try {
@@ -47,7 +49,13 @@ export const App = () => {
             logger.error(e, 'TWA init error');
         }
         setTwaReady(true);
+        startSession();
     }, []);
+
+    useEffect(() => {
+        // track route changes as screens
+        startScreen(location.pathname);
+    }, [location.pathname]);
 
     if (!twaReady) {
         logger.info('[App] waiting for TWA init…');
