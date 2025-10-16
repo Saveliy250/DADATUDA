@@ -14,7 +14,7 @@ export const RegistrationPage = () => {
 
     return (
         <div className={styles.login}>
-            <ArrowSubtitle color="#ECFE54" subtitle="регистрация" className={styles.title} />
+            <ArrowSubtitle color="#000000" subtitle="Регистрация" className={styles.title} />
 
             {serverError && <p className={styles.error}>{serverError.message}</p>}
 

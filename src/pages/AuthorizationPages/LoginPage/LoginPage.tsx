@@ -81,7 +81,7 @@ export const LoginPage = () => {
         return (
             <div className={styles.login}>
                 <p>0.1.5</p>
-                <ArrowSubtitle color="#ECFE54" subtitle="вход в аккаунт" className={styles.title} />
+                <ArrowSubtitle color="#000000" subtitle="Вход в аккаунт" className={styles.title} />
                 <div>Загрузка...</div>
             </div>
         );
@@ -90,7 +90,7 @@ export const LoginPage = () => {
     return (
         <div className={styles.login}>
             <p>0.1.5</p>
-            <ArrowSubtitle color="#ECFE54" subtitle="вход в аккаунт" className={styles.title} />
+            <ArrowSubtitle color="#000000" subtitle="Вход в аккаунт" className={styles.title} />
 
             {error && <p className={styles.error}>{error.message}</p>}
 

@@ -16,10 +16,8 @@
     right: 0;
     bottom: -1px;
     height: 2px;
-    background: var(--color-acid);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.35s;
+    background: var(--color-dark-grey);
+
 }
 
 .inputWrapper:focus-within::after {
@@ -30,7 +28,7 @@
     width: 100%;
     border: none;
     background: transparent;
-    color: var(--color-white);
+    color: var(--color-black);
     padding: 14px 0 10px;
     font-size: 18px;
     outline: none;
@@ -41,7 +39,7 @@
 }
 
 .field::placeholder {
-    color: var(--color-white);
+    color: var(--color-black);
 }
 
 .row {
@@ -51,31 +49,29 @@
     gap: 8px;
 }
 
-.eyeButton {
-    display: flex;
-    align-items: center;
-    border: none;
-    background: transparent;
-}
 
 .forgotLink {
     flex: 0 0 auto;
     font-size: 14px;
-    color: var(--color-white);
+    color: var(--color-black);
     text-decoration: none;
     white-space: nowrap;
+    font-family: var(--font-Cyrge-Medium), sans-serif;
+    text-decoration: underline;
+    display: block;
+    width: 100%;
+    text-align: right;
+    margin-top: 8px;
 }
 
-.forgotLink:hover {
-    color: var(--color-acid);
-}
 
 .loginButton,
-.googleButton {
+.yandexButton {
     width: 100%;
     border: none;
     border-radius: 16px;
     font-size: 16px;
+    font-family: var(--font-Cyrge), sans-serif;
     padding: 14px 0;
     margin-top: 32px;
     cursor: pointer;
@@ -83,21 +79,24 @@
 }
 
 .loginButton {
-    background: #fff;
-    color: var(--color-dark);
+    background: var(--color-alt-grey);
+    color: var(--color-dark-grey);
+    margin-top: 20vh;
 }
 
 .loginButton:hover {
     background: var(--color-light-grey);
+    color: var(--color-black);
 }
 
-.googleButton {
-    background: var(--color-magenta);
-    color: var(--color-white);
+.yandexButton {
+    background: var(--color-primary-yellow);
+    color: var(--color-black);
+    margin-top: 16px;
 }
 
-.googleButton:hover {
-    background: var(--color-dark-magenta);
+.yandexButton:hover {
+    background: var(--color-bright-acid);
 }
 
 .error {
@@ -112,7 +111,7 @@
     }
 
     .loginButton,
-    .googleButton {
+    .yandexButton {
         font-size: 20px;
     }
 }
