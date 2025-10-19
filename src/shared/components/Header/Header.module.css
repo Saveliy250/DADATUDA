@@ -1,28 +1,52 @@
 @import '../../../shared/styles/variables.css';
 
-.header {
+.headerFilter {
     display: flex;
-    justify-content: space-around;
-    position: sticky;
+    justify-content: space-between;
+    align-items: center;
     padding: 8px 16px;
-    top: 0;
-    background-color: var(--color-dark);
-    width: 100%;
-    z-index: 100;
+    color: white;
+    /* Avoid overlap with Telegram bubbles on Android; on iOS body safe-area already applied */
+    padding-top: max(3vh, 36px);
+    margin-top: 0;
 }
 
-.icon {
-    padding: 16px 16px;
-    justify-self: start;
-    position: absolute;
-    left: 0;
-    top: 0;
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.title {
-    justify-self: center;
-    font-family: var(--font-nauryzRedKeds), sans-serif;
-    color: var(--color-acid);
-    font-size: 1em;
+.headerLeft h1 {
+    font-family: var(--font-Cyrge), sans-serif;
     font-weight: 500;
+    font-size: clamp(24px, 1vw, 1.2vw);
+    color: var(--color-black);
+    margin: 0;
+}
+
+.closeButton {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.closeButton::before,
+.closeButton::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    background-color: #000000;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.closeButton::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
 }

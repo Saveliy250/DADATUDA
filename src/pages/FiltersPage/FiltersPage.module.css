@@ -1,16 +1,24 @@
-.filters {
-    padding: 18px;
-    height: calc(100vh + 11vh);
+.pageWrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-top: max(4vh, 40px);
+}
+
+.contentWrapper {
+    flex-grow: 1;
     overflow: auto;
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
 }
 
-.categoryBlock {
-    margin-bottom: 12px;
+.buttonContainer {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--color-white);
+    z-index: 10;
 }
-
-@media screen and (min-width: 487px) {
-    .filters {
-        height: 100%;
-    }
-}
-

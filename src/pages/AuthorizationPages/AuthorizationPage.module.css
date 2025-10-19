@@ -1,8 +1,9 @@
 @import "../../shared/styles/variables.css";
 
 .login {
+    background-color: #FFFFFF;
     margin: 0 auto;
-    width: 100vw;
+    width: 100%;
     max-width: 430px;
     height: 100vh;
     padding: 0 24px ;
@@ -15,25 +16,24 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    font-family: var(--font-Soyuz-Grotesk), sans-serif;
+    font-family: var(--font-Cyrge), sans-serif;
     font-size: 2rem;
-    color: var(--color-acid);
+    color: var(--color-black);
 }
 
 .describe {
     margin-top: 3vh;
-    text-align: center;
-    color: var(--color-grey);
+    text-align: left;
+    color: var(--color-black);
     font-size: 15px;
+    font-family: var(--font-Cyrge), sans-serif;
 }
 
 .describeLink {
-    color: var(--color-acid);
+    color: var(--color-black);
     text-decoration: none;
-}
-
-.describeLink:hover {
     text-decoration: underline;
+    font-family: var(--font-Cyrge), sans-serif;
 }
 
 .error {
