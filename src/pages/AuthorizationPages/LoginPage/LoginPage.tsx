@@ -74,6 +74,7 @@ export const LoginPage = () => {
     }, [isAuthenticated, navigate]);
 
     if (isAuthenticated) {
+        navigate('/');
         return <div>You already logged in</div>;
     }
 

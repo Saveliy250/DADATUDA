@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './EventPage.module.css';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { WhiteLogoIcon } from '../../shared/icons/WhiteLogoIcon';
 import { ArrowSubtitle } from '../../shared/components/ArrowSubtitle/ArrowSubtitle';
 import { Event } from '../../shared/models/event';
@@ -9,6 +9,7 @@ import { readCachedFeedback, writeCachedFeedback } from '../../tools/feedbackCac
 
 export const EventPage = () => {
   const { eventId } = useParams<{ eventId: string }>();
+  const navigate = useNavigate();
   const [eventData, setEventData] = useState<Event | null>(null);
   const [noEvent, setNoEvent] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -84,6 +85,10 @@ export const EventPage = () => {
       {eventData && (
         <>
           <div className={styles.logo}>
+            <button className={styles.backButton} onClick={() => navigate(-1)}>
+              <img className={styles.backIcon} src={"/img/стрелочка.svg"} alt="назад" />
+              <span className={styles.backText}>Назад</span>
+            </button>
             <WhiteLogoIcon />
           </div>
 

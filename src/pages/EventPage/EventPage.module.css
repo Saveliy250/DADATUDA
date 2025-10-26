@@ -11,6 +11,27 @@
     z-index: 2;
 }
 
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: var(--color-light-gray);
+    cursor: pointer;
+    margin-right: 12px;
+}
+
+.backIcon {
+    transform: scaleX(-1);
+}
+
+.backText {
+    font-size: 14px;
+    font-family: 'Cygre-Regular', sans-serif;
+    color: #FFFFFF
+}
+
 .eventWrapper {
     width: 100%;
     height: calc(100vh - 75px);
