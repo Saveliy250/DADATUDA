@@ -59,7 +59,7 @@ export const Filters = () => {
                     color="#e5e5e5"
                     min={0}
                     max={10000}
-                    minRange={1000}
+                    minRange={0}
                     step={100}
                     value={price}
                     onChange={setPrice}

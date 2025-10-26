@@ -3,6 +3,7 @@ import { FormEvent, useState } from 'react';
 import styles from '../../AuthorizationPageForm.module.css';
 
 import { useAuthStore } from '../../../../store/authStore';
+import { useNavigate } from 'react-router-dom';
 
 
 interface FormErrorsProps {
@@ -12,12 +13,13 @@ interface FormErrorsProps {
 }
 
 export const RegistrationPageForm = () => {
-    const { registration, loading } = useAuthStore();
+    const { registration, login, loading } = useAuthStore();
 
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirm, setConfirm] = useState<string>('');
     const [errors, setErrors] = useState<FormErrorsProps>({});
+    const navigate = useNavigate();
 
     const validate = () => {
         const e: FormErrorsProps = {};
@@ -32,6 +34,8 @@ export const RegistrationPageForm = () => {
         e.preventDefault();
         if (!validate()) return;
         await registration(JSON.stringify({ username, password }));
+        await login(username, password);
+        await navigate('/');
     };
 
     return (
