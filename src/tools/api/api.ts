@@ -172,13 +172,13 @@ export async function authFetch<T>(path: string, init: RequestInit = {}): Promis
   });
   logger.info('[authFetch] response', { status: response.status, path });
   
-  // Handle 401 with retry logic
-  if (response.status === 401) {
+  // Handle 401/403 with retry logic
+  if (response.status === 401 || response.status === 403) {
     const initData = getInitData();
     
     if (initData && initData.trim()) {
       try {
-        logger.info('401 received, attempting initData re-login');
+        logger.info('401/403 received, attempting initData re-login');
         const tokens = await loginWithInitData(initData);
         saveTokens(tokens.accessToken, tokens.refreshToken);
         
@@ -195,8 +195,8 @@ export async function authFetch<T>(path: string, init: RequestInit = {}): Promis
         });
         logger.info('[authFetch] retry response', { status: retryResponse.status, path });
         
-        if (retryResponse.status === 401) {
-          logger.error('Retry also returned 401, logging out');
+        if (retryResponse.status === 401 || retryResponse.status === 403) {
+          logger.error('Retry also returned 401/403, logging out');
           if (onLogoutCallback) {
             onLogoutCallback();
           }

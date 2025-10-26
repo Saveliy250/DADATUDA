@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import styles from './MainPageCard.module.css';
 
 import { AnimatePresence, motion, PanInfo, useAnimation, useDragControls, useMotionValue, useTransform } from 'framer-motion';
-import { Skeleton } from '@mantine/core';
 import moment from 'moment';
 
 import { sendFeedback } from '../../../../tools/api/api';
@@ -51,7 +50,7 @@ export const MainPageCard = ({
     const start = useRef<number>(Date.now());
     const [moreOpened, setMoreOpened] = useState<boolean>(false);
     const [refClicked, setRefClicked] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [imageError, setImageError] = useState<boolean>(false);
 
     const x = useMotionValue(0);
@@ -159,17 +158,15 @@ export const MainPageCard = ({
     }, [totalImages]);
 
     useEffect(() => {
-        setIsLoading(true);
         setImageError(false);
     }, [event.imageURL[slide]]);
 
     const loadHandler = (): void => {
-        setIsLoading(false);
+        // No loading animation: simply ensure no error is shown
         setImageError(false);
     };
 
     const errorHandler = (): void => {
-        setIsLoading(false);
         setImageError(true);
     };
 
@@ -215,29 +212,17 @@ export const MainPageCard = ({
                 <motion.img
                     key={slide}
                     draggable={false}
-                    src={"/Users/savelijpoplavskij/WebstormProjects/DADATUDA/public/img/colorful-rectangle-banners-4136919.webp"}
+                    src={event.imageURL[slide]}
                     onLoad={loadHandler}
                     onError={errorHandler}
                     alt={event.name}
                     className={styles.cardImg}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: isLoading ? 0 : 1 }}
-                    transition={{ opacity: { duration: 0.4 } }}
+                    initial={false}
+                    animate={false}
+                    transition={undefined}
                 />
 
-                <AnimatePresence>
-                    {isLoading && (
-                        <motion.div
-                            key="loader"
-                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                            initial={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.4 }}
-                        >
-                            <Skeleton width="100%" height="100vh" />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                {/* Loading skeleton removed */}
 
                 {imageError && <div className={styles.errorMessage}>Изображение не загрузилось...</div>}
 
