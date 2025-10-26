@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { authenticate, registerUser, setOnLogoutCallback } from '../tools/api/api';
+import { authenticate, registerUser, setOnLogoutCallback, getShortlist } from '../tools/api/api';
+import { queryClient } from '../tools/queryClient';
 import { isCurrentSessionFirstVisit, markRegFirstVisitSent, wasRegFirstVisitSent, setUserParams } from '../tools/analytics/ym';
 import { jwtDecode } from 'jwt-decode';
 import { clearTokens, getAccessToken, getRefreshToken, saveTokens } from '../tools/storageHelpers';
@@ -72,6 +73,17 @@ export const useAuthStore = create<AuthState & AuthActions>()(
                     if (decoded?.sub) {
                         setUserParams({ userId: decoded.sub });
                     }
+                    // Prime shortlist cache for persistence
+                    try {
+                        const PAGE_SIZE = 10;
+                        const firstPage = await getShortlist(PAGE_SIZE, 0);
+                        queryClient.setQueryData(['shortlist', decoded?.sub ?? null], {
+                            pageParams: [0],
+                            pages: [firstPage],
+                        });
+                    } catch (e) {
+                        logger.warn('[authSlice.login] shortlist prime failed');
+                    }
                 } catch {}
                 set({ isAuthenticated: true });
             } catch (error: unknown) {
@@ -87,6 +99,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         logout: () => {
             logger.info('[authSlice.logout] called');
             clearTokens();
+            try {
+                queryClient.clear();
+            } catch {}
             set({ isAuthenticated: false });
         },
     })),

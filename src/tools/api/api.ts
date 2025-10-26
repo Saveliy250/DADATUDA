@@ -359,7 +359,7 @@ export const sendFeedback = async (
   });
 };
 
-export async function toggleFavorite(starred: boolean, id: string): Promise<void> {
+export async function toggleStarred(starred: boolean, id: string): Promise<void> {
   const newFavorite = !starred;
 
   return authFetch<void>(`/api/v3/feedback/${id}`, {
@@ -367,6 +367,16 @@ export async function toggleFavorite(starred: boolean, id: string): Promise<void
     body: JSON.stringify({
       starred: newFavorite,
     }),
+  });
+}
+
+export async function unlikeEvent(id: string): Promise<void> {
+  return authFetch<void>(`/api/v3/feedback/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+       like: false,
+       starred: false,
+      }),
   });
 }
 

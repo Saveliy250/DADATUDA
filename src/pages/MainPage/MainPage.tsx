@@ -29,7 +29,7 @@ export const MainPage = () => {
         resetFilters,
         addEventToDisplay,
     } = useFilterStore();
-    const { addFavorite } = useFavoritesStore();
+    const {} = useFavoritesStore();
     const navigate = useNavigate();
 
     const [lastAction, setLastAction] = useState<{ card: CustomEvent; liked: boolean } | null>(null);
@@ -48,9 +48,7 @@ export const MainPage = () => {
     const handleGoBack = () => {
         if (lastAction) {
             if (lastAction.liked) {
-                sendFeedback(String(lastAction.card.id), false, 0, false, false).catch((err) => {
-                    console.warn('Failed to undo like', err);
-                });
+                sendFeedback(String(lastAction.card.id), false, 0, false, false).catch(() => {});
             }
             addEventToDisplay(lastAction.card);
             setReturnedCardId(lastAction.card.id);
@@ -59,11 +57,7 @@ export const MainPage = () => {
     };
 
     const handleCardFinish = (card: CustomEvent, liked: boolean) => {
-        if (liked) {
-            addFavorite(card).catch((err) => {
-                console.warn('Failed to add favorite', err);
-            });
-        }
+        // Feedback is sent from the card; shortlist is handled via optimistic hook
         setLastAction({ card, liked });
         removeEventFromDisplay(card.id);
     };

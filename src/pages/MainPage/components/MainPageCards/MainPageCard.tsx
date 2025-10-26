@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Link } from 'react-router-dom';
 
+// @ts-expect-error CSS module types are provided via custom.d.ts
 import styles from './MainPageCard.module.css';
 
 import { AnimatePresence, motion, PanInfo, useAnimation, useDragControls, useMotionValue, useTransform } from 'framer-motion';
@@ -20,6 +21,7 @@ import { TheaterIcon } from '../../../../shared/icons/EventIcons/TheaterIcon.jsx
 
 import { Event as CustomEvent } from '../../../../shared/models/event';
 import { useFavoritesStore } from '../../../../store/favoritesStore';
+import { useOptimisticShortlist } from '../../../FavoritesPage/hooks/useOptimisticShortlist';
 
 interface MainPageCardProps {
     event: CustomEvent;
@@ -38,7 +40,8 @@ export const MainPageCard = ({
     onReturnAnimationComplete,
     isBackAvailable,
 }: MainPageCardProps) => {
-    const { toggleStar } = useFavoritesStore();
+    const {} = useFavoritesStore();
+    const { optimisticAdd } = useOptimisticShortlist();
 
     const [slide, setSlide] = useState<number>(0);
     const totalImages: number = event.imageURL.length;
@@ -105,6 +108,7 @@ export const MainPageCard = ({
         const viewedSeconds: number = Math.round((Date.now() - start.current) / 1000);
         addSwipe();
         try {
+            if (like) await optimisticAdd(event);
             await sendFeedback(String(event.id), like, viewedSeconds, moreOpened, refClicked);
         } catch (err) {
             console.warn('Произошла ошибка добавление в понравившиеся, попробуйте позже...', err);
@@ -114,7 +118,11 @@ export const MainPageCard = ({
 
     const addToFavorites = async () => {
         try {
-            await toggleStar(event.id);
+            // Optimistically add to shortlist cache
+            await optimisticAdd(event);
+            // Send feedback with starred=true (no PATCH toggle)
+            const viewedSeconds: number = Math.round((Date.now() - start.current) / 1000);
+            await sendFeedback(String(event.id), false, viewedSeconds, moreOpened, refClicked, true);
 
             await controls.start({
                 x: window.innerWidth,
